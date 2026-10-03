@@ -7,10 +7,17 @@ import { leistungen, zielgruppen } from './daten.mjs';
 
 // ---------- Bausteine ----------
 
-const seitenkopf = ({ krumen, eyebrow, titel, lead, aktionen, wasserzeichen }) =>
-  el('section', `page-hero${wasserzeichen ? ' page-hero--watermark' : ''}`, [
-    // Logo als Wasserzeichen, schimmert durch (rein dekorativ)
-    wasserzeichen && el('img', 'page-hero__watermark', [], { attrs: { src: wasserzeichen, alt: '', 'aria-hidden': 'true', width: '480', height: '480' } }),
+// Seitenkopf aller Unterseiten. Wasserzeichen: standardmäßig das Firmenlogo (helle Variante, der Kopf ist dunkel),
+// auf der Fernwartungsseite das PC-Visit-Signet (wasserzeichen: 'pcvisit'). Rein dekorativ.
+const WASSERZEICHEN = {
+  logo: { src: firma('logo_dunkel'), breite: '560', hoehe: '480' },
+  pcvisit: { src: '{options.kbs.pcvisit.logo}', breite: '480', hoehe: '480' },
+};
+const seitenkopf = ({ krumen, eyebrow, titel, lead, aktionen, wasserzeichen = 'logo' }) =>
+  el('section', 'page-hero page-hero--watermark', [
+    el('img', `page-hero__watermark page-hero__watermark--${wasserzeichen}`, [], {
+      attrs: { src: WASSERZEICHEN[wasserzeichen].src, alt: '', 'aria-hidden': 'true', width: WASSERZEICHEN[wasserzeichen].breite, height: WASSERZEICHEN[wasserzeichen].hoehe },
+    }),
     el('div', 'page-hero__inner container', [
       el('nav', 'breadcrumb', [
         el('ol', 'breadcrumb__list', [
@@ -281,7 +288,7 @@ const leistungenSeite = markup(
 );
 
 const fernwartungSeite = markup(
-  seitenkopf({ krumen: [['Fernwartung']], eyebrow: 'Fernwartung mit PC-Visit', titel: 'Schnelle Hilfe per Fernwartung', lead: 'Wir schauen uns Ihren Rechner direkt aus der Ferne an – sicher, schnell und ohne Anfahrtskosten.', aktionen: [btnTelefon('btn--primary')], wasserzeichen: '{options.kbs.pcvisit.logo}' }),
+  seitenkopf({ krumen: [['Fernwartung']], eyebrow: 'Fernwartung mit PC-Visit', titel: 'Schnelle Hilfe per Fernwartung', lead: 'Wir schauen uns Ihren Rechner direkt aus der Ferne an – sicher, schnell und ohne Anfahrtskosten.', aktionen: [btnTelefon('btn--primary')], wasserzeichen: 'pcvisit' }),
   abschnitt('', 'Downloads', [abschnittKopf('Downloads', 'Programm wählen', 'Für die spontane Hilfe genügt der Quick Support. Den Host installieren wir gemeinsam mit Ihnen auf Geräten, die wir regelmäßig betreuen.'), komponente('PcVisit')]),
   abschnitt('section--tint', 'Ablauf', [
     abschnittKopf('Ablauf', 'So einfach geht es', null, true),
