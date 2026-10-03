@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: KBS – Firmendaten
- * Description: Einstellungsseite „Firmendaten“ (Meta Box, Option firmendaten) mit Firma, Kontakt, Rechtlichem, PC-Visit-Downloads und Angebot. Stellt die Werte Etch fertig aufbereitet bereit: {options.kbs.firma.…} und {options.kbs.pcvisit.…}. Keine Shortcodes.
+ * Description: Einstellungsseite „Firmendaten“ (Meta Box, Option firmendaten) mit Firma, Kontakt, Rechtlichem, PC-Visit-Downloads (mit Logo) und Angebot. Stellt die Werte Etch fertig aufbereitet bereit: {options.kbs.firma.…} und {options.kbs.pcvisit.…}. Keine Shortcodes.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-firma.php
  */
@@ -92,6 +92,7 @@ add_filter(
 			array(
 				array( 'id' => 'pcvisit_kunden_url', 'name' => 'Download Quick Support', 'type' => 'url', 'size' => 80, 'desc' => 'Link zum Kunden-Modul (spontane Hilfe). Leer = Karte ausgeblendet.' ),
 				array( 'id' => 'pcvisit_host_url', 'name' => 'Download Host', 'type' => 'url', 'size' => 80, 'desc' => 'Link zum Host-Modul (dauerhafte Betreuung). Leer = Karte ausgeblendet.' ),
+				array( 'id' => 'pcvisit_logo', 'name' => 'Logo', 'type' => 'single_image', 'desc' => 'Optional. Ohne Bild erscheint das mitgelieferte PC-Visit-Signet (wp-content/kbs/medien/pcvisit-signet.svg).' ),
 				$text( 'pcvisit_hinweis', 'Hinweis', 'Erscheint unter den Downloads, z. B. „Bitte starten Sie die Fernwartung erst nach telefonischer Absprache.“' ),
 			)
 		);
@@ -177,6 +178,8 @@ function kbs_pcvisit_etch(): array {
 		'kunden_url' => esc_url_raw( trim( (string) ( $o['pcvisit_kunden_url'] ?? '' ) ) ),
 		'host_url'   => esc_url_raw( trim( (string) ( $o['pcvisit_host_url'] ?? '' ) ) ),
 		'hinweis'    => trim( (string) ( $o['pcvisit_hinweis'] ?? '' ) ),
+		// Logo aus den Firmendaten, sonst das mitgelieferte Signet (wordpress/medien/)
+		'logo'       => kbs_firma_bild( $o['pcvisit_logo'] ?? 0 ) ?: content_url( 'kbs/medien/pcvisit-signet.svg' ),
 	);
 	foreach ( array( 'kunden_url', 'host_url', 'hinweis' ) as $k ) {
 		$daten[ 'hat_' . $k ] = '' !== $daten[ $k ];

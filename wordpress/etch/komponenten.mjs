@@ -85,7 +85,7 @@ const footerKomponente = {
       footerListe('Leistungen', leistungen.map((l) => [l.titel, `/leistungen/${l.slug}/`])),
       footerListe('Unternehmen', [['Über uns', '/ueber-uns/'], ['Kontakt', '/kontakt/'], ['Fernwartung', '/fernwartung/']]),
       el('div', 'site-footer__col', [
-        t('h2', 'site-footer__title', 'Fernwartung'),
+        el('h2', 'site-footer__title site-footer__title--logo', [el('img', 'site-footer__logo', [], { attrs: { src: '{options.kbs.pcvisit.logo}', alt: '', width: '24', height: '24' } }), text('Fernwartung')]),
         t('p', 'site-footer__text', 'Nach telefonischer Absprache:'),
         el('ul', 'site-footer__list', [
           wenn('options.kbs.pcvisit.hat_kunden_url', [el('li', '', [el('a', 'site-footer__link', [icon('download'), text('PC-Visit Quick Support')], { attrs: { href: '{options.kbs.pcvisit.kunden_url}', rel: 'nofollow' } })])]),
@@ -132,22 +132,20 @@ const leistungskartenKomponente = {
 const pcvisitKomponente = {
   key: 'PcVisit',
   name: 'PC-Visit Fernwartung',
-  description: 'Downloads PC-Visit Quick Support (spontane Hilfe) und PC-Visit Host (dauerhafte Betreuung) mit Hinweis. Karten ohne Link werden ausgeblendet. Daten: Firmendaten › PC-Visit ({options.kbs.pcvisit.…}).',
+  description: 'Downloads PC-Visit Quick Support (spontane Hilfe) und PC-Visit Host (dauerhafte Betreuung) mit Hinweis. Karten ohne Link werden ausgeblendet. Mit PC-Visit-Logo zur Wiedererkennung (Firmendaten › PC-Visit › Logo, sonst mitgeliefertes Signet). Daten: Firmendaten › PC-Visit ({options.kbs.pcvisit.…}).',
   properties: [],
   content: el('div', 'remote', [
     el('div', 'remote__cards', [
       wenn('options.kbs.pcvisit.hat_kunden_url', [
         el('article', 'remote-card remote-card--featured', [
-          t('p', 'remote-card__badge', 'Spontane Hilfe'),
-          t('h3', 'remote-card__title', 'PC-Visit Quick Support'),
+          el('div', 'remote-card__head', [el('img', 'remote-card__logo', [], { attrs: { src: '{options.kbs.pcvisit.logo}', alt: '', width: '48', height: '48' } }), el('div', '', [t('p', 'remote-card__badge', 'Spontane Hilfe'), t('h3', 'remote-card__title', 'PC-Visit Quick Support')])]),
           t('p', 'remote-card__text', 'Für die schnelle Hilfe zwischendurch: Programm herunterladen, starten und uns die angezeigte Sitzungsnummer am Telefon nennen.'),
           el('a', 'btn--primary btn--s', [icon('download'), text('Quick Support herunterladen')], { attrs: { href: '{options.kbs.pcvisit.kunden_url}', rel: 'nofollow' } }),
         ]),
       ]),
       wenn('options.kbs.pcvisit.hat_host_url', [
         el('article', 'remote-card', [
-          t('p', 'remote-card__badge', 'Dauerhafte Betreuung'),
-          t('h3', 'remote-card__title', 'PC-Visit Host'),
+          el('div', 'remote-card__head', [el('img', 'remote-card__logo', [], { attrs: { src: '{options.kbs.pcvisit.logo}', alt: '', width: '48', height: '48' } }), el('div', '', [t('p', 'remote-card__badge', 'Dauerhafte Betreuung'), t('h3', 'remote-card__title', 'PC-Visit Host')])]),
           t('p', 'remote-card__text', 'Für Rechner und Server, die wir regelmäßig betreuen. Einmal eingerichtet, können wir nach Absprache helfen, ohne dass jemand am Gerät sitzen muss.'),
           el('a', 'btn--primary btn--outline btn--s', [icon('download'), text('Host herunterladen')], { attrs: { href: '{options.kbs.pcvisit.host_url}', rel: 'nofollow' } }),
         ]),

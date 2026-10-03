@@ -52,6 +52,13 @@ schreibe('daten/acss-buttons.json', JSON.stringify(acssButtons, null, 1) + '\n')
 schreibe('daten/einstellungen-firmendaten.json', JSON.stringify(firma, null, 2) + '\n');
 schreibe('daten/weiterleitungen.json', JSON.stringify(weiterleitungen, null, 2) + '\n');
 
+// Medien (Quelle wordpress/medien/), ausgeliefert unter /wp-content/kbs/medien/
+mkdirSync(join(dist, 'medien'), { recursive: true });
+for (const f of readdirSync(join(hier, '../medien'))) {
+  copyFileSync(join(hier, '../medien', f), join(dist, 'medien', f));
+  console.log(`medien/${f}`);
+}
+
 // PHP-Snippets (Quelle wordpress/snippets/) – jede Datei beginnt mit der ABSPATH-Prüfung
 for (const f of readdirSync(join(hier, '../snippets')).filter((n) => n.endsWith('.php'))) {
   copyFileSync(join(hier, '../snippets', f), join(dist, 'snippets', f));
