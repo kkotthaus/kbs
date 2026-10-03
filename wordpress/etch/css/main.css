@@ -216,11 +216,11 @@ address { font-style: normal; }
 .page-hero--watermark { position: relative; overflow: hidden; }
 .page-hero--watermark .page-hero__inner { position: relative; z-index: 1; }
 .page-hero__watermark { position: absolute; z-index: 0; top: 50%; height: auto; transform: translateY(-50%); pointer-events: none; user-select: none; }
-/* Firmenlogo: groß, rechts angeschnitten, leicht durchscheinend */
-.page-hero__watermark--logo { right: max(-4rem, -5vw); width: clamp(16rem, 34vw, 28rem); opacity: 0.1; }
+/* Firmenlogo: rechts, vollständig sichtbar (Höhe begrenzt auf den Seitenkopf), nur leicht durchscheinend */
+.page-hero__watermark--logo { right: max(var(--gutter), calc((100% - var(--content-width)) / 2)); width: auto; height: min(80%, 22rem); max-width: 45vw; opacity: 0.06; }
 /* PC-Visit-Signet (Fernwartung): gedreht wie eine Bewegung */
 .page-hero__watermark--pcvisit { right: max(-6rem, -8vw); width: clamp(16rem, 38vw, 30rem); transform: translateY(-50%) rotate(-12deg); opacity: 0.16; }
-@media (max-width: 47.99em) { .page-hero__watermark { right: -5rem; } .page-hero__watermark--logo { opacity: 0.06; } .page-hero__watermark--pcvisit { opacity: 0.09; } }
+@media (max-width: 47.99em) { .page-hero__watermark--logo { max-width: 70vw; opacity: 0.04; } .page-hero__watermark--pcvisit { right: -5rem; opacity: 0.09; } }
 .page-hero__inner { max-width: calc(var(--content-width) + 2 * var(--gutter)); }
 .page-hero__eyebrow { margin: var(--space-m) 0 var(--space-xs); font-size: var(--text-s); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary-light); }
 .page-hero__title { max-width: 22ch; margin: var(--space-s) 0 0; letter-spacing: -0.03em; }
