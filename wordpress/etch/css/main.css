@@ -98,6 +98,13 @@ body [class*="btn--"] { --focus-color: var(--primary-dark); }
 .prose li { margin-bottom: 0.35em; }
 .prose--legal { max-width: 48rem; }
 .legal-address__line { display: block; }
+/* Datenschutz: Inhaltsverzeichnis von OhMyEtch (aus den H2), auf breiten Bildschirmen als mitlaufende Spalte */
+.legal-layout { display: grid; gap: var(--space-l); }
+@media (min-width: 60em) { .legal-layout { grid-template-columns: 16rem minmax(0, 1fr); gap: var(--space-xxl); align-items: start; } .legal-layout__toc { position: sticky; top: calc(var(--kbs-header-h) + var(--space-m)); } }
+.legal-layout__toc .ome-toc { padding: var(--space-m); background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-l); font-size: var(--text-s); }
+.legal-layout__toc .ome-toc__list { padding-inline-start: 0; }
+.legal-layout__toc .ome-toc__link { display: block; padding-block: 0.15em; color: var(--base-semi-dark); }
+.legal-layout__toc .ome-toc__link:hover, .legal-layout__toc [data-ome-active] > .ome-toc__link { color: var(--primary-dark); }
 .legal-data { display: grid; gap: var(--space-xs); margin: 0; }
 .legal-data__row { display: grid; gap: 0 var(--space-m); }
 @media (min-width: 40em) { .legal-data__row { grid-template-columns: 16rem 1fr; } }
@@ -232,16 +239,18 @@ body [class*="btn--"] { --focus-color: var(--primary-dark); }
 .page-hero__watermark--pcvisit { right: max(-6rem, -8vw); width: clamp(16rem, 38vw, 30rem); transform: translateY(-50%) rotate(-12deg); opacity: 0.16; }
 @media (max-width: 47.99em) { .page-hero__watermark--logo { max-width: 70vw; opacity: 0.04; } .page-hero__watermark--pcvisit { right: -5rem; opacity: 0.09; } }
 .page-hero__inner { max-width: calc(var(--content-width) + 2 * var(--gutter)); }
+/* Brotkrumen von OhMyEtch im dunklen Seitenkopf */
+.page-hero .ome-breadcrumbs, .page-hero .ome-breadcrumbs__separator, .page-hero .ome-breadcrumbs__current { color: var(--secondary-light); }
+.page-hero .ome-breadcrumbs__current { font-weight: 400; }
+.page-hero .ome-breadcrumbs__link { color: var(--secondary-light); text-decoration: none; }
+.page-hero .ome-breadcrumbs__link:hover { color: var(--white); text-decoration: underline; }
+.page-hero .ome-breadcrumbs__list { gap: 0.3em; }
+.page-hero .ome-breadcrumbs__item { gap: 0.3em; }
 .page-hero__eyebrow { margin: var(--space-m) 0 var(--space-xs); font-size: var(--text-s); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary-light); }
 .page-hero__title { max-width: 22ch; margin: var(--space-s) 0 0; letter-spacing: -0.03em; }
 .page-hero__eyebrow + .page-hero__title { margin-top: 0; }
 .page-hero__lead { max-width: 44rem; margin-top: var(--space-s); font-size: var(--text-l); color: var(--secondary-light); }
 .page-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-s); margin-top: var(--space-l); }
-.breadcrumb__list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; gap: 0.3em; font-size: var(--text-s); }
-.breadcrumb__item { color: var(--secondary-light); }
-.breadcrumb__item + .breadcrumb__item::before { content: "/"; margin-right: 0.3em; opacity: 0.6; }
-.breadcrumb__link { color: var(--secondary-light); }
-.breadcrumb__link:hover { color: var(--white); }
 
 /* ---------- Leistungskarten ---------- */
 .service-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
@@ -283,14 +292,18 @@ body [class*="btn--"] { --focus-color: var(--primary-dark); }
 .chip-list { list-style: none; margin: 0; padding: 0; display: flex; flex-wrap: wrap; justify-content: center; gap: var(--space-xs); }
 .chip { padding: 0.5em 1.1em; border: 1px solid var(--base-light); border-radius: 999px; background: var(--white); font-weight: 600; font-size: var(--text-s); }
 
-/* ---------- Häufige Fragen ---------- */
-.accordion { display: grid; gap: var(--space-xs); }
-.accordion__item { background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-l); }
-.accordion__summary { display: flex; justify-content: space-between; align-items: center; gap: var(--space-s); padding: var(--space-s) var(--space-m); font-weight: 600; cursor: pointer; list-style: none; }
-.accordion__summary::-webkit-details-marker { display: none; }
-.accordion__summary::after { content: "+"; flex: none; display: grid; place-items: center; width: 1.8rem; height: 1.8rem; border-radius: 50%; background: var(--primary-ultra-light); color: var(--primary-dark); font-size: 1.2rem; line-height: 1; transition: transform var(--transition); }
-.accordion__item[open] > .accordion__summary::after { transform: rotate(45deg); }
-.accordion__content { padding: 0 var(--space-m) var(--space-m); color: var(--base-semi-dark); }
+/* ---------- Häufige Fragen: OhMyEtch-Accordion (Verhalten, ARIA, Tastatur von OhMyEtch; hier nur das Aussehen) ---------- */
+.ome-accordion { display: grid; gap: var(--space-xs); }
+.ome-accordion-item { background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-l); }
+.ome-accordion-trigger { display: flex; justify-content: space-between; align-items: center; gap: var(--space-s); padding: var(--space-s) var(--space-m); border: 0; border-radius: var(--kbs-radius-l); background: none; color: var(--base); font: inherit; font-weight: 600; text-align: start; cursor: pointer; }
+.ome-accordion-trigger:hover { color: var(--primary-dark); }
+.faq__chevron { flex: none; width: 1.8rem; height: 1.8rem; padding: 0.3rem; border-radius: 50%; background: var(--primary-ultra-light); color: var(--primary-dark); transition: transform var(--transition); }
+.ome-accordion-trigger[data-ome-state="open"] .faq__chevron, .ome-accordion-trigger[aria-expanded="true"] .faq__chevron { transform: rotate(180deg); }
+/* Geschlossener Inhalt darf keinen Platz belegen (OhMyEtch animiert die Höhe) */
+[data-ome-accordion-content] { overflow: hidden; }
+/* Abstand am Text statt am Innencontainer: OhMyEtch klappt per Grid-Zeile auf 0 zu, Innenabstand des Containers bliebe stehen */
+[data-ome-accordion-content-inner] { overflow: hidden; color: var(--base-semi-dark); }
+[data-ome-accordion-content-inner] > * { margin: 0; padding: 0 var(--space-m) var(--space-m); }
 
 /* ---------- Seitenkästen ---------- */
 .side-card { display: grid; gap: var(--space-s); justify-items: start; padding: var(--space-l); background: var(--white); border: 1px solid var(--base-light); border-top: 4px solid var(--primary); border-radius: var(--kbs-radius-l); box-shadow: var(--kbs-shadow-s); }

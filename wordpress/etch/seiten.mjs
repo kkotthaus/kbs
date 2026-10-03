@@ -2,7 +2,7 @@
 // Erzeugen: node wordpress/etch/build.mjs → wordpress/etch/dist/
 // Firmenangaben nur über firma('<feld>') bzw. {options.kbs.firma.…}, nie als Text.
 
-import { el, t, text, raw, wenn, markup, komponente, firma, FIRMA, icon, postContent } from './lib.mjs';
+import { el, t, text, raw, wenn, markup, komponente, ome, firma, FIRMA, icon, postContent } from './lib.mjs';
 import { leistungen, zielgruppen } from './daten.mjs';
 
 // ---------- Bausteine ----------
@@ -13,20 +13,14 @@ const WASSERZEICHEN = {
   logo: { src: firma('logo_dunkel'), breite: '560', hoehe: '480' },
   pcvisit: { src: '{options.kbs.pcvisit.logo}', breite: '480', hoehe: '480' },
 };
-const seitenkopf = ({ krumen, eyebrow, titel, lead, aktionen, wasserzeichen = 'logo' }) =>
+const seitenkopf = ({ eyebrow, titel, lead, aktionen, wasserzeichen = 'logo' }) =>
   el('section', 'page-hero page-hero--watermark', [
     el('img', `page-hero__watermark page-hero__watermark--${wasserzeichen}`, [], {
       attrs: { src: WASSERZEICHEN[wasserzeichen].src, alt: '', 'aria-hidden': 'true', width: WASSERZEICHEN[wasserzeichen].breite, height: WASSERZEICHEN[wasserzeichen].hoehe },
     }),
     el('div', 'page-hero__inner container', [
-      el('nav', 'breadcrumb', [
-        el('ol', 'breadcrumb__list', [
-          el('li', 'breadcrumb__item', [t('a', 'breadcrumb__link', 'Start', { attrs: { href: '/' } })]),
-          ...krumen.map(([label, href]) =>
-            href ? el('li', 'breadcrumb__item', [t('a', 'breadcrumb__link', label, { attrs: { href } })]) : t('li', 'breadcrumb__item', label, { attrs: { 'aria-current': 'page' } }),
-          ),
-        ]),
-      ], { attrs: { 'aria-label': 'Brotkrumen' } }),
+      // Brotkrumen von OhMyEtch: Pfad automatisch aus der Seitenhierarchie, mit BreadcrumbList-Schema für Google
+      ome('OmeBreadcrumbs', { content: { homeLabel: 'Start', separator: '/', ariaLabel: 'Brotkrumen' } }, {}, 'Brotkrumen'),
       eyebrow && t('p', 'page-hero__eyebrow', eyebrow),
       t('h1', 'page-hero__title', titel),
       lead && t('p', 'page-hero__lead', lead),
@@ -71,10 +65,19 @@ const schritte = (liste) =>
     el('li', 'steps__item', [t('span', 'steps__number', String(i + 1).padStart(2, '0')), t('h3', 'steps__title', titel), t('p', 'steps__text', inhalt)]),
   ));
 
+// Häufige Fragen: Accordion von OhMyEtch (Tastatur, ARIA, Animation). Kopf mit H3, mehrere Antworten gleichzeitig offen.
 const faq = (liste) =>
-  el('div', 'accordion', liste.map(([frage, antwort]) =>
-    el('details', 'accordion__item', [t('summary', 'accordion__summary', frage), el('div', 'accordion__content', [t('p', '', antwort)])]),
-  ));
+  ome('OmeAccordion', { settings: { type: 'multiple' } }, {
+    default: liste.map(([frage, antwort]) =>
+      ome('OmeAccordionItem', {}, {
+        default: [
+          // Frage als Slot-Inhalt des Triggers (die Eigenschaft content.label kommt bei Etch nicht an)
+          ome('OmeAccordionHeader', { structure: { level: '3' } }, { default: [ome('OmeAccordionTrigger', {}, { default: [t('span', 'faq__question', frage), icon('chevron', 'faq__chevron')] })] }),
+          ome('OmeAccordionContent', {}, { default: [t('p', '', antwort)] }),
+        ],
+      }),
+    ),
+  }, 'Häufige Fragen');
 
 const vorteile = (liste) =>
   el('ul', 'benefit-grid', liste.map(([ic, titel, inhalt]) =>
@@ -262,7 +265,7 @@ const leistungInhalte = {
 const leistungSeite = (l) => {
   const inhalt = leistungInhalte[l.slug];
   return markup(
-    seitenkopf({ krumen: [['Leistungen', '/leistungen/'], [l.titel]], eyebrow: inhalt.eyebrow, titel: inhalt.titel, lead: l.kurz, aktionen: [btnKontakt(firma('angebot_titel'), 'btn--primary')] }),
+    seitenkopf({ eyebrow: inhalt.eyebrow, titel: inhalt.titel, lead: l.kurz, aktionen: [btnKontakt(firma('angebot_titel'), 'btn--primary')] }),
     abschnitt('', 'Inhalt', [el('div', 'split split--wide-left', [prosa(inhalt.absaetze), ansprechKasten()])]),
     abschnitt('section--tint', 'Häufige Fragen', [el('div', 'split', [abschnittKopf('Häufige Fragen', inhalt.faqTitel, null), faq(inhalt.faq)])]),
     abschnitt('', 'Weitere Leistungen', [abschnittKopf('Weitere Leistungen', 'Das könnte Sie auch interessieren', null), komponente('Leistungskarten')]),
@@ -273,7 +276,7 @@ const leistungSeite = (l) => {
 // ---------- Weitere Seiten ----------
 
 const leistungenSeite = markup(
-  seitenkopf({ krumen: [['Leistungen']], eyebrow: 'Leistungen', titel: 'IT und Web aus einer Hand', lead: 'Wir betreuen kleine Unternehmen, die keine eigene IT-Abteilung haben – von der Hardware bis zur Website.' }),
+  seitenkopf({ eyebrow: 'Leistungen', titel: 'IT und Web aus einer Hand', lead: 'Wir betreuen kleine Unternehmen, die keine eigene IT-Abteilung haben – von der Hardware bis zur Website.' }),
   abschnitt('', 'Leistungen', [t('h2', 'visually-hidden', 'Unsere Leistungen'), komponente('Leistungskarten')]),
   abschnitt('section--tint', 'Vorteile', [
     abschnittKopf('Ihre Vorteile', `Warum ${firma('kurzname')}?`, null, true),
@@ -288,7 +291,7 @@ const leistungenSeite = markup(
 );
 
 const fernwartungSeite = markup(
-  seitenkopf({ krumen: [['Fernwartung']], eyebrow: 'Fernwartung mit PC-Visit', titel: 'Schnelle Hilfe per Fernwartung', lead: 'Wir schauen uns Ihren Rechner direkt aus der Ferne an – sicher, schnell und ohne Anfahrtskosten.', aktionen: [btnTelefon('btn--primary')], wasserzeichen: 'pcvisit' }),
+  seitenkopf({ eyebrow: 'Fernwartung mit PC-Visit', titel: 'Schnelle Hilfe per Fernwartung', lead: 'Wir schauen uns Ihren Rechner direkt aus der Ferne an – sicher, schnell und ohne Anfahrtskosten.', aktionen: [btnTelefon('btn--primary')], wasserzeichen: 'pcvisit' }),
   abschnitt('', 'Downloads', [abschnittKopf('Downloads', 'Programm wählen', 'Für die spontane Hilfe genügt der Quick Support. Den Host installieren wir gemeinsam mit Ihnen auf Geräten, die wir regelmäßig betreuen.'), komponente('PcVisit')]),
   abschnitt('section--tint', 'Ablauf', [
     abschnittKopf('Ablauf', 'So einfach geht es', null, true),
@@ -321,7 +324,7 @@ const fernwartungSeite = markup(
 );
 
 const ueberUnsSeite = markup(
-  seitenkopf({ krumen: [['Über uns']], eyebrow: 'Über uns', titel: 'Persönlich. Verständlich. Verlässlich.', lead: `${firma('name')} – Ihr IT-Partner aus ${firma('ort')}.` }),
+  seitenkopf({ eyebrow: 'Über uns', titel: 'Persönlich. Verständlich. Verlässlich.', lead: `${firma('name')} – Ihr IT-Partner aus ${firma('ort')}.` }),
   abschnitt('', 'Wer wir sind', [
     el('div', 'split split--wide-left', [
       prosa([
@@ -353,7 +356,7 @@ const ueberUnsSeite = markup(
 );
 
 const kontaktSeite = markup(
-  seitenkopf({ krumen: [['Kontakt']], eyebrow: 'Kontakt', titel: 'Wir freuen uns auf Ihre Anfrage', lead: 'Schreiben Sie uns, worum es geht – wir melden uns schnell. Für dringende Fälle rufen Sie am besten direkt an.' }),
+  seitenkopf({ eyebrow: 'Kontakt', titel: 'Wir freuen uns auf Ihre Anfrage', lead: 'Schreiben Sie uns, worum es geht – wir melden uns schnell. Für dringende Fälle rufen Sie am besten direkt an.' }),
   abschnitt('', 'Kontakt', [
     el('div', 'split split--wide-left', [
       el('div', 'panel', [t('h2', 'panel__title', 'Anfrage senden'), komponente('Kontaktformular')]),
@@ -376,7 +379,7 @@ const angabe = (label, wert) => el('div', 'legal-data__row', [t('dt', 'legal-dat
 const wennAngabe = (feld, label, wert) => wenn(`${FIRMA}.hat_${feld}`, [angabe(label, wert)]);
 
 const impressumSeite = markup(
-  seitenkopf({ krumen: [['Impressum']], titel: 'Impressum' }),
+  seitenkopf({ titel: 'Impressum' }),
   abschnitt('', 'Impressum', [
     el('div', 'prose prose--legal', [
       t('h2', '', 'Angaben gemäß § 5 DDG'),
@@ -404,8 +407,11 @@ const impressumSeite = markup(
 );
 
 const datenschutzSeite = markup(
-  seitenkopf({ krumen: [['Datenschutz']], titel: 'Datenschutzerklärung', lead: 'Wir nehmen den Schutz Ihrer Daten ernst. Hier erfahren Sie, welche Daten wir beim Besuch dieser Website verarbeiten und welche Rechte Sie haben.' }),
+  seitenkopf({ titel: 'Datenschutzerklärung', lead: 'Wir nehmen den Schutz Ihrer Daten ernst. Hier erfahren Sie, welche Daten wir beim Besuch dieser Website verarbeiten und welche Rechte Sie haben.' }),
   abschnitt('', 'Datenschutzerklärung', [
+    el('div', 'legal-layout', [
+    // Inhaltsverzeichnis von OhMyEtch, aus den H2 der Erklärung erzeugt
+    el('aside', 'legal-layout__toc', [ome('OmeTableOfContents', { content: { showLabel: true, label: 'Inhalt' }, settings: { depth: '2', offset: '96' }, targeting: { targetSelector: '.prose--legal' }, mobile: { enabled: true, breakpoint: '960', initialState: 'collapsed' } }, {}, 'Inhaltsverzeichnis')]),
     el('div', 'prose prose--legal', [
       t('h2', '', '1. Verantwortlicher'),
       t('p', '', 'Verantwortlich für die Datenverarbeitung auf dieser Website im Sinne der Datenschutz-Grundverordnung (DSGVO) ist:'),
@@ -456,6 +462,7 @@ const datenschutzSeite = markup(
       t('h2', '', '9. Aktualität'),
       t('p', '', 'Diese Datenschutzerklärung hat den Stand Oktober 2026. Wir passen sie an, wenn sich die Website oder die rechtlichen Vorgaben ändern.'),
     ]),
+    ]),
   ]),
 );
 
@@ -482,7 +489,7 @@ export const templates = [
     slug: '404',
     title: 'Seite nicht gefunden',
     content: rahmen(
-      seitenkopf({ krumen: [['Seite nicht gefunden']], eyebrow: 'Fehler 404', titel: 'Diese Seite gibt es nicht (mehr).', lead: 'Vielleicht hilft Ihnen einer dieser Links weiter – oder Sie rufen uns einfach an.', aktionen: [t('a', 'btn--primary-light', 'Zur Startseite', { attrs: { href: '/' } }), t('a', 'btn--primary-light btn--outline', 'Leistungen', { attrs: { href: '/leistungen/' } })] }),
+      seitenkopf({ eyebrow: 'Fehler 404', titel: 'Diese Seite gibt es nicht (mehr).', lead: 'Vielleicht hilft Ihnen einer dieser Links weiter – oder Sie rufen uns einfach an.', aktionen: [t('a', 'btn--primary-light', 'Zur Startseite', { attrs: { href: '/' } }), t('a', 'btn--primary-light btn--outline', 'Leistungen', { attrs: { href: '/leistungen/' } })] }),
       abschnitt('', 'Leistungen', [t('h2', 'visually-hidden', 'Unsere Leistungen'), komponente('Leistungskarten')]),
     ),
   },

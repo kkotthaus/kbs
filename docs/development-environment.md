@@ -8,7 +8,7 @@ Stack, allgemeine Konventionen und Betrieb: [etch-nodes](../etch-nodes/CLAUDE.md
 | --- | --- | --- |
 | Etch (+ Etch-Theme) | 1.6.8 | |
 | Automatic.css | 4.0.1 | Farbschema „light dark“ (folgt dem Betrachter) |
-| OhMyEtch | 1.6.0 | derzeit nicht genutzt |
+| OhMyEtch | 1.6.0 | Accordion, Breadcrumbs, Table of Contents |
 | Meta Box AIO | 3.12.0 | Einstellungsseite „Firmendaten“ (im Code registriert) |
 | WPCodeBox 2 | 1.4.1 | Ziel für die Snippets (Ordner „KBS“), siehe unten |
 | MCP Adapter | 0.6.1 | **nicht auf 0.7.x aktualisieren** (inkompatibel mit mcp-wordpress-remote) |
@@ -26,4 +26,5 @@ Kein EtchMegaMenuPro: Header und Navigation sind eigene Komponenten (`SiteHeader
   2. `kbs/snippets-sync` (legt die Snippets deaktiviert an).
   3. `wp-content/mu-plugins/kbs-loader.php` löschen.
   4. `kbs/snippets-sync` mit `aktivieren: true`.
+- **OhMyEtch:** Häufige Fragen (Accordion), Brotkrumen (Breadcrumbs, automatisch aus der Seitenhierarchie, mit Schema) und das Inhaltsverzeichnis der Datenschutzerklärung (Table of Contents) kommen von OhMyEtch, eingebunden per Key (`ome()` in `lib.mjs`, Sync löst `__REF_Ome…__` auf). Die Navigation bleibt eine eigene Komponente (keine OhMyEtch-Navigation).
 - **Buttons:** nur die ACSS-Klassen (`btn--primary`, `btn--primary btn--outline`, `btn--primary-light` und `btn--primary-light btn--outline` auf dunklen Flächen, Größe `btn--s`). Aussehen (Rundung, Schriftstärke, Innenabstand, Rahmen) in `wordpress/etch/acss-buttons.mjs`, übertragen mit `kbs/acss-colors` (`aus_datei: true`) in die ACSS-Einstellungen. Im eigenen CSS nur der Icon-Abstand.

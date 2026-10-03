@@ -71,6 +71,24 @@ export const firma = (feld) => `{${FIRMA}.${feld}}`;
 export const komponente = (key, attributes = {}) =>
   `<!-- wp:etch/component ${JSON.stringify({ ref: `__REF_${key}__`, attributes })} -->\n\n<!-- /wp:etch/component -->`;
 
+/**
+ * OhMyEtch-Komponente einbinden (Accordion, Breadcrumbs, NavigationMenu …), per Key statt WordPress-ID:
+ * Der Sync ersetzt "__REF_<Key>__" durch die ID der vorhandenen Komponente (etch_component_html_key).
+ * Gruppen-Eigenschaften als Objekt: { content: { label: 'Frage' } } → '{{"label":"Frage"}}' (Etch-Format).
+ * Slots: { default: [...kinder] }.
+ */
+export const ome = (key, eigenschaften = {}, slots = {}, name) => {
+  const attributes = Object.fromEntries(
+    Object.entries(eigenschaften).map(([k, v]) => [k, v !== null && typeof v === 'object' && !Array.isArray(v) ? `{${JSON.stringify(v)}}` : v]),
+  );
+  const a = { ref: `__REF_${key}__`, attributes };
+  if (name) a.metadata = { name };
+  const inhalt = Object.entries(slots)
+    .map(([slot, kinder]) => `<!-- wp:etch/slot-content ${json({ name: slot })} -->\n${join([kinder]) || ''}\n<!-- /wp:etch/slot-content -->`)
+    .join('\n\n');
+  return `<!-- wp:etch/component ${json(a)} -->\n${inhalt}\n<!-- /wp:etch/component -->`;
+};
+
 /** SVG-Icons (24er-Raster, Strichstärke über CSS). Etch filtert SVG aus Raw-HTML, deshalb als Etch-Elemente. */
 const iconPfade = {
   phone: ['M6.6 10.8a15.1 15.1 0 0 0 6.6 6.6l2.2-2.2a1 1 0 0 1 1-.25 11.4 11.4 0 0 0 3.6.57 1 1 0 0 1 1 1V20a1 1 0 0 1-1 1A17 17 0 0 1 3 4a1 1 0 0 1 1-1h3.5a1 1 0 0 1 1 1c0 1.25.2 2.45.57 3.57a1 1 0 0 1-.25 1z'],
