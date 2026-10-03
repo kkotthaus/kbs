@@ -16,6 +16,7 @@ Seiten, Templates, Komponenten und CSS werden im Repo als Code beschrieben, geba
 | `snippets/kbs-kontakt.php` | Kontaktformular – **live** |
 | `snippets/kbs-navigation.php` | Skript der Hauptnavigation – **live** |
 | `snippets/kbs-seo.php` | Meta-Beschreibung, schema.org, 301 von alten Adressen – **live** |
+| `medien/` | Firmenlogo (`kbs-logo.svg`, helle Variante `kbs-logo-hell.svg` für dunkle Flächen, Quelle: alte Website kotthaus-bs.de) und PC-Visit-Signet; ausgeliefert unter `/wp-content/kbs/medien/`, Rückfall, wenn unter Firmendaten kein eigenes Bild hochgeladen ist |
 | `mu-plugins/kbs-loader.php` | Übergangs-Lader, bis die Snippets in WPCodeBox liegen |
 
 ## Ablauf

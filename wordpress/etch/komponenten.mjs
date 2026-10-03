@@ -6,10 +6,18 @@ import { navigation, leistungen } from './daten.mjs';
 
 const KONTAKT = 'options.kbs.kontakt';
 
-// Logo: Bild aus den Firmendaten, sonst Wortmarke aus dem Kurznamen
+// Logo: Bild aus den Firmendaten bzw. mitgeliefertes Firmenlogo (kbs-firma.php), sonst Wortmarke aus dem Kurznamen.
+// Header: helle Variante im dunklen Farbschema (folgt der Systemeinstellung wie ACSS „light dark“). Footer: immer dunkle Fläche.
+const logoBild = (variante) =>
+  variante === 'footer'
+    ? el('img', 'site-logo__bild', [], { attrs: { src: firma('logo_dunkel'), alt: firma('name'), width: '56', height: '48' } })
+    : el('picture', 'site-logo__picture', [
+        el('source', '', [], { attrs: { srcset: firma('logo_dunkel'), media: '(prefers-color-scheme: dark)' } }),
+        el('img', 'site-logo__bild', [], { attrs: { src: firma('logo'), alt: firma('name'), width: '56', height: '48' } }),
+      ]);
 const logo = (variante) =>
   el('a', `site-logo site-logo--${variante}`, [
-    wenn(`${FIRMA}.hat_logo`, [el('img', 'site-logo__bild', [], { attrs: { src: firma(variante === 'footer' ? 'logo_dunkel' : 'logo'), alt: firma('name'), height: '48' } })]),
+    wenn(`${FIRMA}.hat_logo`, [logoBild(variante)]),
     wenn(`${FIRMA}.hat_logo`, [
       el('span', 'site-logo__mark', [text('{options.kbs.firma.initialen}')], { attrs: { 'aria-hidden': 'true' } }),
       el('span', 'site-logo__text', [t('span', 'site-logo__name', firma('wortmarke_1')), t('span', 'site-logo__sub', firma('wortmarke_2'))]),

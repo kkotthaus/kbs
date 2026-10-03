@@ -67,8 +67,8 @@ add_filter(
 				$text( 'firma_fax', 'Telefax', 'Leer = nicht anzeigen.' ),
 				array( 'id' => 'firma_email', 'name' => 'E-Mail', 'type' => 'email', 'size' => 60 ),
 				array( 'id' => 'firma_erreichbarkeit', 'name' => 'Erreichbarkeit', 'type' => 'textarea', 'rows' => 3, 'desc' => 'z. B. Bürozeiten, eine Angabe je Zeile. Leer = Abschnitt ausgeblendet.' ),
-				array( 'id' => 'firma_logo', 'name' => 'Logo', 'type' => 'single_image', 'desc' => 'Optional. Ohne Logo erscheint die Wortmarke aus dem Kurznamen.' ),
-				array( 'id' => 'firma_logo_dunkel', 'name' => 'Logo für dunkle Flächen', 'type' => 'single_image', 'desc' => 'Optional, für den Footer (helle Schrift). Ohne Angabe wird das normale Logo genutzt.' ),
+				array( 'id' => 'firma_logo', 'name' => 'Logo', 'type' => 'single_image', 'desc' => 'Optional. Ohne Bild erscheint das mitgelieferte Firmenlogo (wp-content/kbs/medien/kbs-logo.svg).' ),
+				array( 'id' => 'firma_logo_dunkel', 'name' => 'Logo für dunkle Flächen', 'type' => 'single_image', 'desc' => 'Optional, für den Footer und den Header im dunklen Farbschema (helle Schrift). Ohne Angabe: das hochgeladene Logo bzw. die mitgelieferte helle Variante.' ),
 				array( 'id' => 'kontakt_empfaenger', 'name' => 'Empfänger Kontaktformular', 'type' => 'email', 'size' => 60, 'desc' => 'Leer = E-Mail-Adresse der Firma.' ),
 			)
 		);
@@ -128,8 +128,11 @@ function kbs_firma_etch(): array {
 	if ( '' !== $telnr && '+' !== $telnr[0] ) {
 		$telnr = '+49' . ltrim( $telnr, '0' );
 	}
-	$logo   = kbs_firma_bild( $o['firma_logo'] ?? 0 );
-	$dunkel = kbs_firma_bild( $o['firma_logo_dunkel'] ?? 0 ) ?: $logo;
+	// Logo aus den Firmendaten, sonst das mitgelieferte Firmenlogo (wordpress/medien/kbs-logo*.svg).
+	// Für dunkle Flächen (Footer, Header im dunklen Schema) eine helle Variante.
+	$eigen  = kbs_firma_bild( $o['firma_logo'] ?? 0 );
+	$logo   = $eigen ?: content_url( 'kbs/medien/kbs-logo.svg' );
+	$dunkel = kbs_firma_bild( $o['firma_logo_dunkel'] ?? 0 ) ?: ( $eigen ?: content_url( 'kbs/medien/kbs-logo-hell.svg' ) );
 	$anschrift = trim( $s( 'firma_strasse' ) . ', ' . $s( 'firma_plz' ) . ' ' . $s( 'firma_ort' ), ', ' );
 	$zeilen = fn( string $k ) => implode( '<br>', array_map( 'esc_html', array_filter( array_map( 'trim', explode( "\n", $s( $k ) ) ) ) ) );
 

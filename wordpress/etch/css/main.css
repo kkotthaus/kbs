@@ -118,7 +118,9 @@ address { font-style: normal; }
 
 .site-logo { display: inline-flex; align-items: center; gap: 0.65rem; text-decoration: none; color: var(--base); flex: none; margin-right: var(--space-m); }
 .site-logo:hover { color: var(--base); }
-.site-logo__bild { display: block; height: 2.75rem; width: auto; max-width: 14rem; object-fit: contain; }
+.site-logo__picture { display: block; }
+.site-logo__bild { display: block; height: 4rem; width: auto; max-width: 14rem; object-fit: contain; }
+.site-footer .site-logo__bild { height: 4.5rem; }
 .site-logo__mark { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; flex: none; border-radius: 0.7rem; background: var(--primary); color: var(--white); font-weight: 800; font-size: 1.05rem; letter-spacing: -0.04em; }
 .site-logo__text { display: flex; flex-direction: column; line-height: 1.1; min-width: 0; }
 .site-logo__name { font-weight: 800; font-size: 1.15rem; letter-spacing: -0.02em; }
@@ -210,6 +212,11 @@ address { font-style: normal; }
 
 /* Seitenkopf */
 .page-hero { padding-block: var(--section-space-m) var(--section-space-m); }
+/* Wasserzeichen im Seitenkopf (z. B. PC-Visit-Signet auf der Fernwartungsseite): groß, rechts, schimmert durch */
+.page-hero--watermark { position: relative; overflow: hidden; }
+.page-hero--watermark .page-hero__inner { position: relative; z-index: 1; }
+.page-hero__watermark { position: absolute; z-index: 0; top: 50%; right: max(-6rem, -8vw); width: clamp(16rem, 38vw, 30rem); height: auto; transform: translateY(-50%) rotate(-12deg); opacity: 0.16; pointer-events: none; user-select: none; }
+@media (max-width: 47.99em) { .page-hero__watermark { opacity: 0.09; right: -5rem; } }
 .page-hero__inner { max-width: calc(var(--content-width) + 2 * var(--gutter)); }
 .page-hero__eyebrow { margin: var(--space-m) 0 var(--space-xs); font-size: var(--text-s); font-weight: 700; letter-spacing: 0.08em; text-transform: uppercase; color: var(--primary-light); }
 .page-hero__title { max-width: 22ch; margin: var(--space-s) 0 0; letter-spacing: -0.03em; }
@@ -223,7 +230,7 @@ address { font-style: normal; }
 .breadcrumb__link:hover { color: var(--white); }
 
 /* ---------- Leistungskarten ---------- */
-.service-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fill, minmax(min(100%, 19rem), 1fr)); }
+.service-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
 .service-card {
   position: relative; display: flex; flex-direction: column; gap: var(--space-xs);
   padding: var(--space-l); background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-l);

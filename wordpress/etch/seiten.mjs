@@ -7,8 +7,10 @@ import { leistungen, zielgruppen } from './daten.mjs';
 
 // ---------- Bausteine ----------
 
-const seitenkopf = ({ krumen, eyebrow, titel, lead, aktionen }) =>
-  el('section', 'page-hero', [
+const seitenkopf = ({ krumen, eyebrow, titel, lead, aktionen, wasserzeichen }) =>
+  el('section', `page-hero${wasserzeichen ? ' page-hero--watermark' : ''}`, [
+    // Logo als Wasserzeichen, schimmert durch (rein dekorativ)
+    wasserzeichen && el('img', 'page-hero__watermark', [], { attrs: { src: wasserzeichen, alt: '', 'aria-hidden': 'true', width: '480', height: '480' } }),
     el('div', 'page-hero__inner container', [
       el('nav', 'breadcrumb', [
         el('ol', 'breadcrumb__list', [
@@ -279,7 +281,7 @@ const leistungenSeite = markup(
 );
 
 const fernwartungSeite = markup(
-  seitenkopf({ krumen: [['Fernwartung']], eyebrow: 'Fernwartung mit PC-Visit', titel: 'Schnelle Hilfe per Fernwartung', lead: 'Wir schauen uns Ihren Rechner direkt aus der Ferne an – sicher, schnell und ohne Anfahrtskosten.', aktionen: [btnTelefon('btn--primary')] }),
+  seitenkopf({ krumen: [['Fernwartung']], eyebrow: 'Fernwartung mit PC-Visit', titel: 'Schnelle Hilfe per Fernwartung', lead: 'Wir schauen uns Ihren Rechner direkt aus der Ferne an – sicher, schnell und ohne Anfahrtskosten.', aktionen: [btnTelefon('btn--primary')], wasserzeichen: '{options.kbs.pcvisit.logo}' }),
   abschnitt('', 'Downloads', [abschnittKopf('Downloads', 'Programm wählen', 'Für die spontane Hilfe genügt der Quick Support. Den Host installieren wir gemeinsam mit Ihnen auf Geräten, die wir regelmäßig betreuen.'), komponente('PcVisit')]),
   abschnitt('section--tint', 'Ablauf', [
     abschnittKopf('Ablauf', 'So einfach geht es', null, true),
