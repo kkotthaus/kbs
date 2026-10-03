@@ -166,6 +166,34 @@ add_action(
 		);
 
 		kbs_mcp_ability(
+			'trash-content',
+			array(
+				'label'            => 'Seite oder Beitrag in den Papierkorb',
+				'description'      => 'Verschiebt Seiten (page) oder Beiträge (post) per ID in den Papierkorb (wiederherstellbar). Endgültiges Löschen ist nicht möglich; die Startseite wird nicht angefasst.',
+				'input_schema'     => array(
+					'type'       => 'object',
+					'required'   => array( 'ids' ),
+					'properties' => array( 'ids' => array( 'type' => 'array', 'items' => array( 'type' => 'integer' ) ) ),
+				),
+				'execute_callback' => function ( $input ) {
+					$log = array();
+					foreach ( (array) $input['ids'] as $id ) {
+						$post = get_post( (int) $id );
+						if ( ! $post || ! in_array( $post->post_type, array( 'page', 'post' ), true ) ) {
+							$log[] = array( 'id' => (int) $id, 'status' => 'nicht gefunden oder nicht erlaubt' );
+						} elseif ( (int) get_option( 'page_on_front' ) === $post->ID ) {
+							$log[] = array( 'id' => $post->ID, 'status' => 'Startseite – nicht verschoben' );
+						} else {
+							$log[] = array( 'id' => $post->ID, 'titel' => $post->post_title, 'status' => wp_trash_post( $post->ID ) ? 'im Papierkorb' : 'Fehler' );
+						}
+					}
+					return $log;
+				},
+			),
+			false
+		);
+
+		kbs_mcp_ability(
 			'site-title',
 			array(
 				'label'            => 'Titel der Website aus den Firmendaten setzen',
