@@ -197,7 +197,7 @@ const feld = (id, label, attrs = {}, { tag = 'input', pflicht = false, kinder = 
     }),
   ]);
 
-const anliegen = ['IT-Betreuung', 'IT-Beratung', 'WordPress-Website', 'Hosting', 'E-Learning mit ILIAS', 'Fernwartung', 'Sonstiges'];
+const anliegen = ['IT-Betreuung', 'IT-Beratung', 'WordPress-Website', 'Fernwartung', 'Sonstiges'];
 
 const kontaktformularKomponente = {
   key: 'Kontaktformular',

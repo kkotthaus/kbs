@@ -39,8 +39,6 @@ export const navigation = [
       ['IT-Betreuung', '/leistungen/it-betreuung/'],
       ['IT-Beratung', '/leistungen/it-beratung/'],
       ['WordPress-Websites', '/leistungen/wordpress-websites/'],
-      ['Hosting', '/leistungen/hosting/'],
-      ['E-Learning mit ILIAS', '/leistungen/e-learning/'],
     ],
   },
   { text: 'Fernwartung', link: '/fernwartung/' },
@@ -71,20 +69,6 @@ export const leistungen = [
     kurz: 'Moderne, schnelle Websites mit aktuellen Buildern wie Etch – die Sie danach selbst pflegen können.',
     punkte: ['Design, das zu Ihrem Unternehmen passt', 'Für Smartphone und Suchmaschine optimiert', 'Inhalte selbst ändern, ohne Programmierkenntnisse'],
   },
-  {
-    slug: 'hosting',
-    icon: 'server',
-    titel: 'Hosting',
-    kurz: 'Sicheres Hosting für WordPress, Nextcloud und ILIAS – mit Updates, Backups und einem Ansprechpartner.',
-    punkte: ['WordPress, Nextcloud und ILIAS', 'Updates und regelmäßige Backups', 'Persönlicher Support statt Hotline'],
-  },
-  {
-    slug: 'e-learning',
-    icon: 'cap',
-    titel: 'E-Learning mit ILIAS',
-    kurz: 'Interaktive Kurse mit Articulate 360 (Storyline und Rise), eingebunden in Ihre ILIAS-Lernplattform.',
-    punkte: ['Kurse mit Storyline und Rise', 'Einrichtung und Betrieb von ILIAS', 'Auswertung von Lernfortschritten'],
-  },
 ];
 
 // Für wen wir arbeiten (Startseite)
@@ -98,6 +82,9 @@ export const weiterleitungen = {
   '/leistung/it-service/beratung/': '/leistungen/it-beratung/',
   '/leistung/web-service/': '/leistungen/wordpress-websites/',
   '/leistung/web-service/wordpress/': '/leistungen/wordpress-websites/',
-  '/leistung/web-service/hosting/': '/leistungen/hosting/',
-  '/leistung/web-service/ilias/': '/leistungen/e-learning/',
+  '/leistung/web-service/hosting/': '/leistungen/',
+  '/leistung/web-service/ilias/': '/leistungen/',
+  // entfallene Leistungen (2026-10-03)
+  '/leistungen/hosting/': '/leistungen/',
+  '/leistungen/e-learning/': '/leistungen/',
 };

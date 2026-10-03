@@ -238,7 +238,7 @@ const leistungInhalte = {
         'Kontaktformular, Impressum und Datenschutzerklärung',
         'Grundlagen für Suchmaschinen (SEO)',
         'Einweisung, damit Sie Inhalte selbst ändern können',
-        'Auf Wunsch Hosting, Updates und Backups',
+        'Auf Wunsch Updates und Backups',
       ]],
     ],
     faqTitel: 'Fragen zu WordPress-Websites',
@@ -246,48 +246,6 @@ const leistungInhalte = {
       ['Wie lange dauert eine neue Website?', 'Das hängt vom Umfang ab. Eine typische Firmen-Website mit wenigen Seiten ist oft in wenigen Wochen fertig – vorausgesetzt, Texte und Bilder liegen vor. Den Zeitplan legen wir gemeinsam fest.'],
       ['Können Sie meine bestehende Website modernisieren?', 'Ja. Wir prüfen Ihre bestehende Seite und empfehlen, ob sich eine Überarbeitung lohnt oder ein Neuaufbau sinnvoller ist.'],
       ['Wer kümmert sich um Updates?', 'Auf Wunsch wir: Wir halten WordPress und alle Erweiterungen aktuell und sichern Ihre Website regelmäßig.'],
-    ],
-  },
-  hosting: {
-    eyebrow: 'Hosting',
-    titel: 'Hosting mit persönlichem Ansprechpartner',
-    absaetze: [
-      ['h2', 'Sicher, schnell und betreut'],
-      'Wir hosten Ihre Website und Ihre Anwendungen auf leistungsfähigen Servern und kümmern uns um Updates, Sicherheit und Datensicherung. Sie haben einen festen Ansprechpartner statt einer anonymen Hotline.',
-      ['h2', 'WordPress'],
-      'Optimierte Umgebung für WordPress mit SSL-Zertifikat, regelmäßigen Updates und Backups. Ideal in Kombination mit unseren WordPress-Websites.',
-      ['h2', 'Nextcloud'],
-      'Ihre eigene Cloud für Dateien, Kalender und Kontakte – als Alternative zu großen Anbietern. Wir richten Benutzer und Berechtigungen ein und sichern Ihre Daten regelmäßig.',
-      ['h2', 'ILIAS'],
-      'Für Bildungseinrichtungen und Unternehmen, die ILIAS als Lernplattform nutzen: stabiler Betrieb, Updates und Unterstützung bei Konfiguration und Fehlersuche.',
-    ],
-    faqTitel: 'Fragen zum Hosting',
-    faq: [
-      ['Kann ich mit meiner bestehenden Website umziehen?', 'Ja. Wir übernehmen den Umzug Ihrer Website und Ihrer Domain und achten darauf, dass es dabei keine Ausfälle gibt.'],
-      ['Was passiert bei einem Fehler auf der Website?', 'Dank regelmäßiger Backups können wir einen früheren Stand wiederherstellen. Melden Sie sich einfach bei uns.'],
-    ],
-  },
-  'e-learning': {
-    eyebrow: 'E-Learning',
-    titel: 'E-Learning mit ILIAS und Articulate 360',
-    absaetze: [
-      ['h2', 'Interaktive Kurse statt langer PDFs'],
-      'Wir erstellen E-Learning-Kurse mit Articulate 360 – mit Storyline für interaktive Übungen und Simulationen, mit Rise für übersichtliche Kurse, die auf jedem Gerät funktionieren. Die Kurse binden wir in Ihre ILIAS-Lernplattform ein.',
-      ['h2', 'Das bieten wir'],
-      ['ul', [
-        'Konzeption und Umsetzung von Kursen mit Storyline und Rise',
-        'Quizze, Übungen und Simulationen',
-        'Einbindung von Videos, Audio und Bildern',
-        'Einrichtung und Betrieb von ILIAS',
-        'Auswertung von Lernfortschritten und Ergebnissen',
-      ]],
-      ['h2', 'Für Unternehmen und Bildungseinrichtungen'],
-      'Ob Unterweisungen, Produktschulungen oder Weiterbildung: Wir entwickeln Kurse, die zu Ihren Inhalten und Ihren Lernenden passen.',
-    ],
-    faqTitel: 'Fragen zum E-Learning',
-    faq: [
-      ['Wir haben noch keine Lernplattform. Ist das ein Problem?', 'Nein. Wir richten ILIAS für Sie ein und betreiben es auf Wunsch auch für Sie.'],
-      ['Können vorhandene Schulungsunterlagen genutzt werden?', 'Ja. Aus vorhandenen Präsentationen und Dokumenten entwickeln wir interaktive Kurse.'],
     ],
   },
 };
@@ -496,7 +454,7 @@ const datenschutzSeite = markup(
 
 export const pages = [
   { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, IT-Beratung und moderne WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite },
-  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung, WordPress-Websites, Hosting und E-Learning für kleine Unternehmen ohne eigene IT-Abteilung.', content: leistungenSeite },
+  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung und WordPress-Websites für kleine Unternehmen ohne eigene IT-Abteilung.', content: leistungenSeite },
   ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.kurz, content: leistungSeite(l) })),
   { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite },
   { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen.', content: ueberUnsSeite },
