@@ -36,6 +36,11 @@ img, svg { max-width: 100%; }
 a { color: var(--primary-dark); text-decoration-thickness: 1px; text-underline-offset: 0.2em; }
 a:hover { color: var(--primary-hover); }
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
+/* Fokus auf dunklen und roten Flächen sichtbar halten (WCAG 2.4.7, Kontrast ≥ 3:1) */
+:is(.home-hero, .page-hero, .site-footer) :focus-visible { outline-color: var(--primary-light); }
+.cta-band :focus-visible { outline-color: var(--white); }
+/* Links im Fließtext nicht nur über die Farbe erkennbar (WCAG 1.4.1) */
+:is(p, li, label, dd) a:not([class]) { text-decoration: underline; }
 h1, h2, h3, h4 { font-family: var(--kbs-font); font-weight: 700; line-height: 1.15; color: var(--base); margin: 0 0 0.5em; letter-spacing: -0.02em; text-wrap: balance; }
 h1 { font-size: var(--h1); }
 h2 { font-size: var(--h2); }
@@ -61,6 +66,11 @@ address { font-style: normal; }
    Hier nur, was ACSS nicht mitbringt: Abstand zum Icon im Button. */
 [class*="btn--"] { gap: 0.5em; }
 [class*="btn--"] .icon { width: 1.1em; height: 1.1em; }
+/* Fokusring der ACSS-Buttons (Variable --focus-color von ACSS): btn--primary setzt --primary-light,
+   auf hellem Grund unter 3:1 (WCAG 1.4.11). Höhere Spezifität als .btn--primary, deshalb unabhängig von der Ladereihenfolge. */
+body [class*="btn--"] { --focus-color: var(--primary-dark); }
+:is(.home-hero, .page-hero, .site-footer) [class*="btn--"] { --focus-color: var(--primary-light); }
+.cta-band [class*="btn--"] { --focus-color: var(--white); }
 
 /* ---------- Abschnitte und Layout ---------- */
 .section { padding-block: var(--section-space-l); }

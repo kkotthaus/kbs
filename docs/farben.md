@@ -13,3 +13,9 @@ Palette zentral in `wordpress/etch/acss-farben.mjs`, übernehmen per MCP `kbs/ac
 - ACSS `website-color-scheme: light dark`: Die Seite folgt automatisch der Einstellung des Betrachters (kein Umschalter). ACSS rechnet alle Farben mit `light-dark()` und tauscht im dunklen Schema die Abstufungen; `--white` wird schwarz.
 - Immer gleich (Force light selectors, Liste `immerHell`): `.home-hero`, `.page-hero`, `.cta-band`, `.site-footer`.
 - Kontrastpaare (Rollen: Seite, Karte, Fläche) stehen in `kontrast.mjs`.
+
+## Fokus und Links
+
+- Fokusring: `--primary` (Links), bei ACSS-Buttons über `--focus-color` auf hellem Grund `--primary-dark`, auf dunklen Flächen `--primary-light`, im roten CTA-Band `--white` (main.css). ACSS-Standard für `btn--primary` (`--primary-light`) reicht auf Weiß nicht.
+- Links im Fließtext (`p`, `li`, `label`, `dd` ohne Klasse) sind unterstrichen, nicht nur farbig (WCAG 1.4.1).
+- Prüfung: `node wordpress/etch/kontrast.mjs` und Lighthouse (Kategorie Barrierefreiheit) auf allen Seiten.

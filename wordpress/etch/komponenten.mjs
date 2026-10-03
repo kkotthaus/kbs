@@ -182,7 +182,7 @@ const kontaktdatenKomponente = {
       el('span', 'contact-list__body', [
         t('span', 'contact-list__label', 'Anschrift'),
         t('span', 'contact-list__value', `${firma('strasse')}, ${firma('plz')} ${firma('ort')}`),
-        t('a', 'contact-list__link', 'Route planen', { attrs: { href: firma('route_url'), rel: 'nofollow noopener', target: '_blank' } }),
+        el('a', 'contact-list__link', [text('Route planen'), t('span', 'visually-hidden', ' (öffnet in neuem Fenster)')], { attrs: { href: firma('route_url'), rel: 'nofollow noopener', target: '_blank' } }),
       ]),
     ]),
     wenn(`${FIRMA}.hat_erreichbarkeit`, [

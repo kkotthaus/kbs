@@ -57,6 +57,7 @@ const paare = [
   ['primary', SEITE, 4.5, 'btn--outline Text'], ['primary', KARTE, 4.5, 'btn--outline Text auf Karten'], ['primary-ultra-light', 'primary-hover', 4.5, 'btn--outline Hover'],
   ['primary', SEITE, 3, 'Icons, Fokusrahmen (Grafik)'], ['primary', KARTE, 3, 'Icons auf Karten (Grafik)'],
   ['base-semi-dark', KARTE, 3, 'Rahmen Eingabefeld'],
+  ['primary-dark', SEITE, 3, 'Fokusring Buttons'], ['primary-dark', KARTE, 3, 'Fokusring Buttons auf Karten'], ['primary', KARTE, 3, 'Fokusring Links'],
   ['success', 'success-ultra-light', 4.5, 'Meldung gesendet'], ['danger', 'danger-ultra-light', 4.5, 'Fehlermeldung Formular'], ['danger', KARTE, 4.5, 'Fehlertext am Feld'],
 ];
 // Bereiche, die immer hell gerechnet werden (Hero, Seitenkopf, CTA-Band, Footer)
@@ -66,6 +67,7 @@ const immerHell = [
   ['primary-ultra-light', 'primary', 4.5, 'CTA-Band Nebentext'],
   ['primary', 'primary-ultra-light', 4.5, 'btn--primary-light (CTA-Band)'], ['primary-ultra-dark', 'primary-light', 4.5, 'btn--primary-light Hover'],
   ['primary-light', 'secondary-ultra-dark', 4.5, 'btn--primary-light btn--outline (Hero)'], ['primary-dark', 'primary-light', 4.5, 'btn--primary-light btn--outline Hover'], ['white', 'secondary-dark', 4.5, 'Seitenkopf-Karte'],
+  ['primary-light', 'secondary-ultra-dark', 3, 'Fokusring auf dunklen Flächen'], ['white', 'primary', 3, 'Fokusring im CTA-Band'],
 ];
 
 let fehler = 0;

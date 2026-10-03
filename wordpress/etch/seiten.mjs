@@ -274,7 +274,7 @@ const leistungSeite = (l) => {
 
 const leistungenSeite = markup(
   seitenkopf({ krumen: [['Leistungen']], eyebrow: 'Leistungen', titel: 'IT und Web aus einer Hand', lead: 'Wir betreuen kleine Unternehmen, die keine eigene IT-Abteilung haben – von der Hardware bis zur Website.' }),
-  abschnitt('', 'Leistungen', [komponente('Leistungskarten')]),
+  abschnitt('', 'Leistungen', [t('h2', 'visually-hidden', 'Unsere Leistungen'), komponente('Leistungskarten')]),
   abschnitt('section--tint', 'Vorteile', [
     abschnittKopf('Ihre Vorteile', `Warum ${firma('kurzname')}?`, null, true),
     vorteile([
@@ -483,7 +483,7 @@ export const templates = [
     title: 'Seite nicht gefunden',
     content: rahmen(
       seitenkopf({ krumen: [['Seite nicht gefunden']], eyebrow: 'Fehler 404', titel: 'Diese Seite gibt es nicht (mehr).', lead: 'Vielleicht hilft Ihnen einer dieser Links weiter – oder Sie rufen uns einfach an.', aktionen: [t('a', 'btn--primary-light', 'Zur Startseite', { attrs: { href: '/' } }), t('a', 'btn--primary-light btn--outline', 'Leistungen', { attrs: { href: '/leistungen/' } })] }),
-      abschnitt('', 'Leistungen', [komponente('Leistungskarten')]),
+      abschnitt('', 'Leistungen', [t('h2', 'visually-hidden', 'Unsere Leistungen'), komponente('Leistungskarten')]),
     ),
   },
 ];
