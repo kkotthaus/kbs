@@ -18,6 +18,7 @@ Seiten, Templates, Komponenten und CSS werden im Repo als Code beschrieben, geba
 | `snippets/kbs-ki.php` | KI-Kennzeichnung (Standard aus etch-nodes): Mediathek-Felder `ki_art` (ai, generated, modified; leer = keine KI), `ki_werkzeug`, `ki_position`; Einstellungsseite Medien › KI-Kennzeichnung (Option `kbs_ki`); eigenes Symbol `firmendaten.ki_logo`; Editor-Bilder per `render_block`, Etch über `kbs_ki_daten()` und `kiPlakette()` (lib.mjs); Mediathek: Spalte „KI“ und Filter `ki_filter` (Liste), Plakette auf den Kacheln (Raster, Medien-Fenster) – **live** |
 | `snippets/kbs-seo.php` | Meta-Beschreibung, schema.org, 301 von alten Adressen – **live** |
 | `medien/` | Firmenlogo (`kbs-logo.svg`, helle Variante `kbs-logo-hell.svg` für dunkle Flächen, Quelle: alte Website kotthaus-bs.de) und PC-Visit-Signet; ausgeliefert unter `/wp-content/kbs/medien/`, Rückfall, wenn unter Firmendaten kein eigenes Bild hochgeladen ist |
+| `medien/bilder/` | Optimierte Fotos und KI-Bilder (aus `D:/Projekte-KI/medien/raw/KBS` mit `optimize-images.mjs --out wordpress/medien/bilder`); ausgeliefert unter `/wp-content/kbs/medien/bilder/`. KI-Bilder für Seiteninhalte in die Mediathek hochladen und dort `ki_art` setzen. |
 | `mu-plugins/kbs-loader.php` | Übergangs-Lader, bis die Snippets in WPCodeBox liegen |
 
 ## Ablauf

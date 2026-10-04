@@ -4,7 +4,7 @@
 // Übertragen: dist nach wp-content/kbs/ kopieren, dann MCP kbs/sync-from-files (siehe wordpress/README.md).
 
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
-import { dirname, join } from 'node:path';
+import { dirname, join, relative } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { components } from './komponenten.mjs';
 import { pages, templates } from './seiten.mjs';
@@ -54,11 +54,14 @@ schreibe('daten/acss-schrift.json', JSON.stringify(acssSchrift, null, 1) + '\n')
 schreibe('daten/einstellungen-firmendaten.json', JSON.stringify(firma, null, 2) + '\n');
 schreibe('daten/weiterleitungen.json', JSON.stringify(weiterleitungen, null, 2) + '\n');
 
-// Medien (Quelle wordpress/medien/), ausgeliefert unter /wp-content/kbs/medien/
+// Medien (Quelle wordpress/medien/ samt Unterordnern wie bilder/), ausgeliefert unter /wp-content/kbs/medien/
 mkdirSync(join(dist, 'medien'), { recursive: true });
-for (const f of readdirSync(join(hier, '../medien'))) {
-  copyFileSync(join(hier, '../medien', f), join(dist, 'medien', f));
-  console.log(`medien/${f}`);
+for (const e of readdirSync(join(hier, '../medien'), { recursive: true, withFileTypes: true })) {
+  if (!e.isFile() || e.name === '.gitkeep') continue;
+  const rel = relative(join(hier, '../medien'), join(e.parentPath, e.name));
+  mkdirSync(dirname(join(dist, 'medien', rel)), { recursive: true });
+  copyFileSync(join(e.parentPath, e.name), join(dist, 'medien', rel));
+  console.log(`medien/${rel.replaceAll('\\', '/')}`);
 }
 
 // PHP-Snippets (Quelle wordpress/snippets/) – jede Datei beginnt mit der ABSPATH-Prüfung

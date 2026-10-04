@@ -1,2 +1,5 @@
 wordpress/etch/dist/
 node_modules/
+
+# Lokale Claude-Einstellungen
+.claude/settings.local.json
