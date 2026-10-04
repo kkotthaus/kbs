@@ -12,9 +12,10 @@ Stack, allgemeine Konventionen und Betrieb: [etch-nodes](../etch-nodes/CLAUDE.md
 | Meta Box AIO | 3.12.0 | Einstellungsseite „Firmendaten“ (im Code registriert) |
 | WPCodeBox 2 | 1.4.1 | Ziel für die Snippets (Ordner „KBS“), siehe unten |
 | MCP Adapter | 0.6.1 | **nicht auf 0.7.x aktualisieren** (inkompatibel mit mcp-wordpress-remote) |
+| SEOPress Pro | 10.3 | Titel, Beschreibung, Open Graph, Sitemap (`/sitemaps.xml`), Indexierung; `kbs-seo.php` tritt dafür zurück |
 | Duplicator Pro, Etch Font Manager, Media Bridge for Etch | – | |
 
-Kein EtchMegaMenuPro: Header und Navigation sind eigene Komponenten (`SiteHeader`, Skript `kbs-navigation.php`). Kein SEOPress: Meta-Beschreibung, strukturierte Daten und Weiterleitungen liefert `kbs-seo.php` (tritt bei SEOPress zurück).
+Kein EtchMegaMenuPro: Header und Navigation sind eigene Komponenten (`SiteHeader`, Skript `kbs-navigation.php`). SEO: SEOPress Pro liefert Titel, Meta-Beschreibung, Open Graph und Sitemap. `kbs-seo.php` liefert weiterhin die strukturierten Daten (ProfessionalService aus den Firmendaten) und die 301-Weiterleitungen von den alten Adressen; Meta-Beschreibung und Open Graph gibt es nur aus, wenn kein SEO-Plugin aktiv ist.
 
 ## Projektspezifische Konventionen
 
