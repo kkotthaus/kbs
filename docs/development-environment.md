@@ -12,10 +12,10 @@ Stack, allgemeine Konventionen und Betrieb: [etch-nodes](../etch-nodes/CLAUDE.md
 | Meta Box AIO | 3.12.0 | Einstellungsseite „Firmendaten“ (im Code registriert) |
 | WPCodeBox 2 | 1.4.1 | Ziel für die Snippets (Ordner „KBS“), siehe unten |
 | MCP Adapter | 0.6.1 | **nicht auf 0.7.x aktualisieren** (inkompatibel mit mcp-wordpress-remote) |
-| SEOPress Pro | 10.3 | Titel, Beschreibung, Open Graph, Sitemap (`/sitemaps.xml`), Indexierung; `kbs-seo.php` tritt dafür zurück |
+| SEOPress Pro | 10.3 | Meta-Ausgabe, Open Graph, Sitemap (`/sitemaps.xml`), Indexierung, Auslieferung von `/llms.txt`; Titel und Inhalte der `llms.txt` kommen aus `kbs-seo.php` |
 | Duplicator Pro, Etch Font Manager, Media Bridge for Etch | – | |
 
-Kein EtchMegaMenuPro: Header und Navigation sind eigene Komponenten (`SiteHeader`, Skript `kbs-navigation.php`). SEO: SEOPress Pro liefert Titel, Meta-Beschreibung, Open Graph und Sitemap. `kbs-seo.php` liefert weiterhin die strukturierten Daten (ProfessionalService aus den Firmendaten) und die 301-Weiterleitungen von den alten Adressen; Meta-Beschreibung und Open Graph gibt es nur aus, wenn kein SEO-Plugin aktiv ist.
+Kein EtchMegaMenuPro: Header und Navigation sind eigene Komponenten (`SiteHeader`, Skript `kbs-navigation.php`). SEO: SEOPress Pro gibt Titel, Meta-Beschreibung und Open Graph aus und liefert Sitemap und `/llms.txt`. Die Inhalte kommen aus dem Repo: In `seiten.mjs` hat jede Seite `seo` (Titel mit `firma()`, `faq`, `leistung`, `llms`-Abschnitt), der Build schreibt `daten/seo.json`, `kbs-seo.php` setzt daraus den Titel (ein im Seiteneditor gesetzter SEOPress-Titel geht vor) und die Beschreibung aus dem Auszug, gibt strukturierte Daten als @graph aus (ProfessionalService mit Öffnungszeiten aus „Erreichbarkeit“ und Geschäftsführer, Service auf Leistungsseiten, FAQPage) und füllt `/llms.txt` (Firma, Kontakt, Seiten, Fragen je Seite). Dazu die 301-Weiterleitungen von den alten Adressen. Ohne SEO-Plugin gibt `kbs-seo.php` Titel, Beschreibung und Open Graph selbst aus.
 
 ## Projektspezifische Konventionen
 

@@ -102,6 +102,14 @@ const heroBild = (variante) => {
   ]);
 };
 
+// Häufige Fragen der Startseite (auch für das FAQ-Schema und llms.txt, siehe seo unten)
+const startFaq = [
+  ['Was kostet die IT-Betreuung?', 'Das hängt von der Zahl der Arbeitsplätze und Ihren Anforderungen ab. Nach dem kostenlosen Erstgespräch erhalten Sie ein klares Angebot – Sie wissen vorher, womit Sie rechnen können.'],
+  ['Wie sicher ist die Fernwartung?', 'Eine Verbindung entsteht nur, wenn Sie das Programm selbst starten und uns die Sitzungsnummer nennen. Sie sehen alles mit und können die Sitzung jederzeit beenden.'],
+  ['Kann ich meine Website später selbst ändern?', 'Ja. Wir richten die Website so ein, dass Sie Texte, Bilder, Preise und Angebote ohne Programmierkenntnisse selbst pflegen können – auf Wunsch mit kurzer Einweisung.'],
+  ['Übernehmen Sie auch bestehende Systeme und Websites?', 'Ja. Wir verschaffen uns zuerst einen Überblick und sagen Ihnen offen, was bleiben kann und wo Handlungsbedarf besteht.'],
+];
+
 const startseite = markup(
   el('section', 'home-hero', [
     heroBild('hell'),
@@ -185,12 +193,7 @@ const startseite = markup(
   abschnitt('section--tint', 'Häufige Fragen', [
     el('div', 'split', [
       abschnittKopf('Häufige Fragen', 'Gut zu wissen', 'Ihre Frage ist nicht dabei? Rufen Sie uns einfach an.'),
-      faq([
-        ['Was kostet die IT-Betreuung?', 'Das hängt von der Zahl der Arbeitsplätze und Ihren Anforderungen ab. Nach dem kostenlosen Erstgespräch erhalten Sie ein klares Angebot – Sie wissen vorher, womit Sie rechnen können.'],
-        ['Wie sicher ist die Fernwartung?', 'Eine Verbindung entsteht nur, wenn Sie das Programm selbst starten und uns die Sitzungsnummer nennen. Sie sehen alles mit und können die Sitzung jederzeit beenden.'],
-        ['Kann ich meine Website später selbst ändern?', 'Ja. Wir richten die Website so ein, dass Sie Texte, Bilder, Preise und Angebote ohne Programmierkenntnisse selbst pflegen können – auf Wunsch mit kurzer Einweisung.'],
-        ['Übernehmen Sie auch bestehende Systeme und Websites?', 'Ja. Wir verschaffen uns zuerst einen Überblick und sagen Ihnen offen, was bleiben kann und wo Handlungsbedarf besteht.'],
-      ]),
+      faq(startFaq),
     ]),
   ]),
 
@@ -486,15 +489,25 @@ const datenschutzSeite = markup(
 
 // ---------- Ausgabe ----------
 
+// seo (nicht im Manifest, sondern in daten/seo.json für snippets/kbs-seo.php):
+// titel → <title> (SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), faq → FAQPage-Schema und llms.txt,
+// leistung → Service-Schema, llms → Abschnitt in /llms.txt (ohne: nicht aufgeführt). Firmenangaben über firma('<feld>').
+const marke = ` | ${firma('kurzname')}`;
 export const pages = [
-  { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, IT-Beratung und moderne WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite },
-  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung und WordPress-Websites für kleine Unternehmen ohne eigene IT-Abteilung.', content: leistungenSeite },
-  ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.kurz, content: leistungSeite(l) })),
-  { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite },
-  { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen.', content: ueberUnsSeite },
-  { slug: 'kontakt', title: 'Kontakt', order: 40, excerpt: 'Kontakt zu Kotthaus Business Service in Burscheid: Anfrage senden, anrufen oder kostenloses Erstgespräch vereinbaren.', content: kontaktSeite },
-  { slug: 'impressum', title: 'Impressum', order: 90, excerpt: 'Impressum der Kotthaus Business Service GmbH.', content: impressumSeite },
-  { slug: 'datenschutz', title: 'Datenschutz', order: 91, excerpt: 'Datenschutzerklärung der Kotthaus Business Service GmbH.', content: datenschutzSeite },
+  { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, IT-Beratung und moderne WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
+    seo: { titel: `IT-Service und WordPress-Websites in ${firma('ort')}${marke}`, faq: startFaq } },
+  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung und WordPress-Websites für kleine Unternehmen ohne eigene IT-Abteilung.', content: leistungenSeite,
+    seo: { titel: `IT-Betreuung, IT-Beratung und Websites in ${firma('ort')}${marke}`, llms: 'Seiten' } },
+  ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.kurz, content: leistungSeite(l),
+    seo: { titel: `${l.titel} für kleine Unternehmen in ${firma('ort')}${marke}`, faq: leistungInhalte[l.slug]?.faq, leistung: true, llms: 'Leistungen' } })),
+  { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite,
+    seo: { titel: `Fernwartung mit PC-Visit – schnelle IT-Hilfe${marke}`, llms: 'Seiten' } },
+  { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen.', content: ueberUnsSeite,
+    seo: { titel: `Über uns – IT-Service aus ${firma('ort')}${marke}`, llms: 'Seiten' } },
+  { slug: 'kontakt', title: 'Kontakt', order: 40, excerpt: 'Kontakt zu Kotthaus Business Service in Burscheid: Anfrage senden, anrufen oder kostenloses Erstgespräch vereinbaren.', content: kontaktSeite,
+    seo: { titel: `Kontakt und kostenloses Erstgespräch${marke}`, llms: 'Seiten' } },
+  { slug: 'impressum', title: 'Impressum', order: 90, excerpt: 'Impressum der Kotthaus Business Service GmbH.', content: impressumSeite, seo: { titel: `Impressum${marke}`, llms: 'Rechtliches' } },
+  { slug: 'datenschutz', title: 'Datenschutz', order: 91, excerpt: 'Datenschutzerklärung der Kotthaus Business Service GmbH.', content: datenschutzSeite, seo: { titel: `Datenschutz${marke}`, llms: 'Rechtliches' } },
 ];
 
 // Rahmen jeder Seite: Header, Inhalt, Footer

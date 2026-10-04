@@ -1,6 +1,6 @@
 // Baut alle Dateien für WordPress nach wordpress/etch/dist/:
 // component-<key>.html, page-<slug>.html, template-<slug>.html, manifest.json, kbs.css,
-// daten/acss-farben.json, daten/acss-buttons.json, daten/acss-schrift.json, daten/einstellungen-firmendaten.json, daten/weiterleitungen.json, snippets/*.php
+// daten/acss-farben.json, daten/acss-buttons.json, daten/acss-schrift.json, daten/einstellungen-firmendaten.json, daten/weiterleitungen.json, daten/seo.json, snippets/*.php
 // Übertragen: dist nach wp-content/kbs/ kopieren, dann MCP kbs/sync-from-files (siehe wordpress/README.md).
 
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -33,7 +33,7 @@ schreibe(
     {
       components: components.map(({ content, ...meta }) => meta),
       templates: templates.map(({ slug, title }) => ({ slug, title })),
-      pages: pages.map(({ content, ...meta }) => meta),
+      pages: pages.map(({ content, seo, ...meta }) => meta),
     },
     null,
     2,
@@ -53,6 +53,21 @@ schreibe('daten/acss-buttons.json', JSON.stringify(acssButtons, null, 1) + '\n')
 schreibe('daten/acss-schrift.json', JSON.stringify(acssSchrift, null, 1) + '\n');
 schreibe('daten/einstellungen-firmendaten.json', JSON.stringify(firma, null, 2) + '\n');
 schreibe('daten/weiterleitungen.json', JSON.stringify(weiterleitungen, null, 2) + '\n');
+
+// Suchmaschinen und KI-Suche (snippets/kbs-seo.php): Titel, Beschreibung, FAQ, Leistung, llms.txt je Seite (pfad wie get_page_uri(), Startseite '')
+schreibe(
+  'daten/seo.json',
+  JSON.stringify(
+    pages.map(({ slug, parent, title, excerpt, front_page, seo = {} }) => ({
+      pfad: front_page ? '' : parent ? `${parent}/${slug}` : slug,
+      name: title,
+      beschreibung: excerpt,
+      ...seo,
+    })),
+    null,
+    2,
+  ) + '\n',
+);
 
 // Medien (Quelle wordpress/medien/ samt Unterordnern wie bilder/), ausgeliefert unter /wp-content/kbs/medien/
 mkdirSync(join(dist, 'medien'), { recursive: true });
