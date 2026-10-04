@@ -11,6 +11,10 @@ Name, Adresse, Telefon, Erreichbarkeit, Rechtliches, PC-Visit-Links und das Ange
 - Dieselben Orte im **Google-Unternehmensprofil** als Einzugsgebiet eintragen; dort wirken sie für die Suche in der Nähe am stärksten.
 - **Kontaktformular** – anzeigen oder ausblenden. Ausgeblendet steht auf der Kontaktseite ein Hinweis mit Telefon und E-Mail.
 
+**Vorschaubild für Links** (Firmendaten › Firma & Kontakt): erscheint, wenn jemand einen Link zur Website teilt (WhatsApp, LinkedIn, Teams …), und bei Suchmaschinen und KI-Suche. Format 1200 × 630 px, JPEG oder PNG; wichtige Inhalte in die Mitte, manche Dienste schneiden quadratisch zu. Die Vorlage liegt unter `D:/Projekte-KI/medien/raw/KBS/kbs-vorschaubild.html` (im Browser öffnen, Text anpassen, als Bild speichern). Seiten mit eigenem Beitragsbild nutzen dieses.
+
+**Profil-Links** (Firmendaten › Firma & Kontakt): eine Adresse je Zeile – Google-Unternehmensprofil, LinkedIn, XING, Facebook. Nicht sichtbar; Google und KI-Dienste verbinden daran die Profile mit der Firma. Nur vollständige Adressen mit `https://` werden übernommen.
+
 **Hero-Bild der Startseite** (Firmendaten › Startseite): Bild aus der Mediathek wählen (Querformat, mindestens 1344 px breit; das Motiv gehört nach rechts, links steht der Text), optional ein zweites für das dunkle Farbschema. Den Alternativtext und – bei KI-Bildern – die KI-Kennzeichnung (`KI-Nutzung`, Werkzeug, Position des Symbols, z. B. „unten rechts“) tragen Sie beim Bild in der Mediathek ein. Leer = kein Bild im Hero.
 
 ## KI-generierte Bilder und Videos

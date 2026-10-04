@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: KBS – Suchmaschinen
- * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten und Geschäftsführer, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen), /llms.txt für KI-Suchdienste, 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
+ * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten und Geschäftsführer, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt für KI-Suchdienste, 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-seo.php
  */
@@ -170,6 +170,7 @@ function kbs_seo_schema(): array {
 		'areaServed'                => $gebiet,
 		'openingHoursSpecification' => kbs_seo_oeffnungszeiten( $s( 'firma_erreichbarkeit' ) ),
 		'founder'                   => '' !== $s( 'recht_vertretung' ) ? array( '@type' => 'Person', 'name' => $s( 'recht_vertretung' ), 'jobTitle' => 'Geschäftsführer' ) : null,
+		'sameAs'                    => function_exists( 'kbs_firma_profile' ) ? kbs_firma_profile() : array(),
 		'knowsAbout'                => array( 'IT-Betreuung', 'IT-Beratung', 'Netzwerk und WLAN', 'Server', 'Datensicherung', 'IT-Sicherheit', 'Fernwartung', 'WordPress', 'Webdesign' ),
 	);
 	$graph = array( array_filter( $org ) );
@@ -235,6 +236,66 @@ add_action(
 	2
 );
 
+/**
+ * Vorschaubild für geteilte Links (Firmendaten › Vorschaubild für Links) – nur, wenn die Seite kein eigenes Bild hat
+ * (Beitragsbild, SEOPress-Bild am Beitrag oder SEOPress-Standardbild), damit og:image nicht doppelt erscheint.
+ */
+function kbs_seo_vorschaubild(): array {
+	if ( is_404() ) {
+		return array();
+	}
+	$o  = (array) get_option( 'firmendaten', array() );
+	$id = is_array( $o['vorschaubild'] ?? null ) ? (int) ( $o['vorschaubild']['ID'] ?? 0 ) : (int) ( $o['vorschaubild'] ?? 0 );
+	if ( ! $id || ! wp_attachment_is_image( $id ) ) {
+		return array();
+	}
+	$seite = kbs_seo_id();
+	if ( $seite && ( has_post_thumbnail( $seite ) || '' !== (string) get_post_meta( $seite, '_seopress_social_fb_img', true ) ) ) {
+		return array();
+	}
+	if ( '' !== (string) ( ( (array) get_option( 'seopress_social_option_name', array() ) )['seopress_social_facebook_img'] ?? '' ) ) {
+		return array();
+	}
+	$bild = wp_get_attachment_image_src( $id, 'full' );
+	if ( ! $bild ) {
+		return array();
+	}
+	return array(
+		'url'    => (string) $bild[0],
+		'breite' => (int) $bild[1],
+		'hoehe'  => (int) $bild[2],
+		'typ'    => (string) get_post_mime_type( $id ),
+		'alt'    => trim( (string) get_post_meta( $id, '_wp_attachment_image_alt', true ) ),
+	);
+}
+
+add_action(
+	'wp_head',
+	function () {
+		$b = kbs_seo_vorschaubild();
+		if ( ! $b ) {
+			return;
+		}
+		printf( "<meta property=\"og:image\" content=\"%s\">\n", esc_url( $b['url'] ) );
+		printf( "<meta property=\"og:image:width\" content=\"%d\">\n<meta property=\"og:image:height\" content=\"%d\">\n", $b['breite'], $b['hoehe'] );
+		printf( "<meta property=\"og:image:type\" content=\"%s\">\n", esc_attr( $b['typ'] ) );
+		if ( '' !== $b['alt'] ) {
+			printf( "<meta property=\"og:image:alt\" content=\"%s\">\n", esc_attr( $b['alt'] ) );
+		}
+		printf( "<meta name=\"twitter:image\" content=\"%s\">\n", esc_url( $b['url'] ) );
+		if ( ! kbs_seo_plugin() ) {
+			echo "<meta name=\"twitter:card\" content=\"summary_large_image\">\n";
+		}
+	},
+	3
+);
+
+// Mit Vorschaubild die große Karte (SEOPress gibt sonst „summary“ aus)
+add_filter(
+	'seopress_social_twitter_card_summary',
+	fn( $html ) => kbs_seo_vorschaubild() ? '<meta name="twitter:card" content="summary_large_image">' : $html
+);
+
 /** Inhalt von /llms.txt (Markdown nach llmstxt.org): Firma, Kontakt, Seiten mit Kurzbeschreibung, häufige Fragen. */
 function kbs_seo_llms(): string {
 	$f = function_exists( 'kbs_firma_etch' ) ? kbs_firma_etch() : array();
@@ -256,6 +317,10 @@ function kbs_seo_llms(): string {
 	);
 	foreach ( $kontakt as $k => $v ) {
 		$z[] = '- ' . $k . ': ' . $v;
+	}
+	$profile = function_exists( 'kbs_firma_profile' ) ? kbs_firma_profile() : array();
+	if ( $profile ) {
+		$z[] = '- Profile: ' . implode( ', ', $profile );
 	}
 	$abschnitte = array();
 	$fragen     = array();

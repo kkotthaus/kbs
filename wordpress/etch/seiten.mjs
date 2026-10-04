@@ -492,22 +492,22 @@ const datenschutzSeite = markup(
 // ---------- Ausgabe ----------
 
 // seo (nicht im Manifest, sondern in daten/seo.json für snippets/kbs-seo.php):
-// titel → <title> (SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), faq → FAQPage-Schema und llms.txt,
+// titel → <title>, höchstens ca. 60 Zeichen inkl. Marke (Google kürzt längere) (SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), faq → FAQPage-Schema und llms.txt,
 // leistung → Service-Schema, llms → Abschnitt in /llms.txt (ohne: nicht aufgeführt). Firmenangaben über firma('<feld>').
 const marke = ` | ${firma('kurzname')}`;
 export const pages = [
   { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, IT-Beratung und moderne WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
-    seo: { titel: `IT-Service und WordPress-Websites in ${firma('ort')}${marke}`, faq: startFaq } },
+    seo: { titel: `IT-Service und Websites in ${firma('ort')}${marke}`, faq: startFaq } },
   { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung und WordPress-Websites für kleine Unternehmen ohne eigene IT-Abteilung.', content: leistungenSeite,
-    seo: { titel: `IT-Betreuung, IT-Beratung und Websites in ${firma('ort')}${marke}`, llms: 'Seiten' } },
+    seo: { titel: `IT-Leistungen in ${firma('ort')}${marke}`, llms: 'Seiten' } },
   ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.kurz, content: leistungSeite(l),
-    seo: { titel: `${l.titel} für kleine Unternehmen in ${firma('ort')}${marke}`, faq: leistungInhalte[l.slug]?.faq, leistung: true, llms: 'Leistungen' } })),
+    seo: { titel: `${l.titel} in ${firma('ort')}${marke}`, faq: leistungInhalte[l.slug]?.faq, leistung: true, llms: 'Leistungen' } })),
   { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite,
-    seo: { titel: `Fernwartung mit PC-Visit – schnelle IT-Hilfe${marke}`, llms: 'Seiten' } },
+    seo: { titel: `Fernwartung mit PC-Visit${marke}`, llms: 'Seiten' } },
   { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen.', content: ueberUnsSeite,
-    seo: { titel: `Über uns – IT-Service aus ${firma('ort')}${marke}`, llms: 'Seiten' } },
+    seo: { titel: `Über uns – IT aus ${firma('ort')}${marke}`, llms: 'Seiten' } },
   { slug: 'kontakt', title: 'Kontakt', order: 40, excerpt: 'Kontakt zu Kotthaus Business Service in Burscheid: Anfrage senden, anrufen oder kostenloses Erstgespräch vereinbaren.', content: kontaktSeite,
-    seo: { titel: `Kontakt und kostenloses Erstgespräch${marke}`, llms: 'Seiten' } },
+    seo: { titel: `Kontakt und Erstgespräch${marke}`, llms: 'Seiten' } },
   { slug: 'impressum', title: 'Impressum', order: 90, excerpt: 'Impressum der Kotthaus Business Service GmbH.', content: impressumSeite, seo: { titel: `Impressum${marke}`, llms: 'Rechtliches' } },
   { slug: 'datenschutz', title: 'Datenschutz', order: 91, excerpt: 'Datenschutzerklärung der Kotthaus Business Service GmbH.', content: datenschutzSeite, seo: { titel: `Datenschutz${marke}`, llms: 'Rechtliches' } },
 ];

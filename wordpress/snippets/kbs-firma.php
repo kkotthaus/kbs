@@ -71,6 +71,8 @@ add_filter(
 				array( 'id' => 'firma_erreichbarkeit', 'name' => 'Erreichbarkeit', 'type' => 'textarea', 'rows' => 3, 'desc' => 'z. B. Bürozeiten, eine Angabe je Zeile. Leer = Abschnitt ausgeblendet.' ),
 				array( 'id' => 'firma_logo', 'name' => 'Logo', 'type' => 'single_image', 'desc' => 'Optional. Ohne Bild erscheint das mitgelieferte Firmenlogo (wp-content/kbs/medien/kbs-logo.svg).' ),
 				array( 'id' => 'firma_logo_dunkel', 'name' => 'Logo für dunkle Flächen', 'type' => 'single_image', 'desc' => 'Optional, für den Footer und den Header im dunklen Farbschema (helle Schrift). Ohne Angabe: das hochgeladene Logo bzw. die mitgelieferte helle Variante.' ),
+				array( 'id' => 'vorschaubild', 'name' => 'Vorschaubild für Links', 'type' => 'single_image', 'desc' => 'Erscheint, wenn ein Link zur Website geteilt wird (WhatsApp, LinkedIn, Teams …) und bei Suchmaschinen und KI-Suche: 1200 × 630 px, JPEG oder PNG. Gilt für alle Seiten ohne eigenes Beitragsbild.' ),
+				array( 'id' => 'firma_profile', 'name' => 'Profil-Links', 'type' => 'textarea', 'rows' => 4, 'desc' => 'Eine Adresse je Zeile, z. B. Google-Unternehmensprofil, LinkedIn, XING, Facebook. Nicht sichtbar auf der Website; Suchmaschinen und KI-Suche erkennen daran, dass die Profile zu dieser Firma gehören.' ),
 				array( 'id' => 'kontakt_formular', 'name' => 'Kontaktformular', 'type' => 'select', 'options' => array( 'an' => 'anzeigen', 'aus' => 'ausblenden' ), 'std' => 'an', 'desc' => 'Ausgeblendet: Auf der Kontaktseite steht statt des Formulars ein Hinweis mit Telefon und E-Mail, und das Formular nimmt keine Anfragen an.' ),
 				array( 'id' => 'kontakt_empfaenger', 'name' => 'Empfänger Kontaktformular', 'type' => 'email', 'size' => 60, 'desc' => 'Leer = E-Mail-Adresse der Firma.' ),
 			)
@@ -134,6 +136,15 @@ function kbs_firma_einsatzorte(): array {
 	$orte  = array_values( array_unique( array_filter( array_map( 'trim', $orte ), fn( $x ) => '' !== $x ) ) );
 	$ort   = trim( (string) ( $o['firma_ort'] ?? '' ) );
 	return $orte ?: ( '' !== $ort ? array( $ort ) : array() );
+}
+
+/** Profil-Links (Firmendaten › Profil-Links), nur gültige http(s)-Adressen. */
+function kbs_firma_profile(): array {
+	$o     = (array) get_option( 'firmendaten', array() );
+	$links = preg_split( '/\s+/', trim( (string) ( $o['firma_profile'] ?? '' ) ) );
+	// erst prüfen, dann maskieren (esc_url_raw macht aus „xyz“ sonst „http://xyz“)
+	$links = array_filter( $links, fn( $u ) => (bool) preg_match( '#^https?://[^\s/]+\.[^\s]+#i', $u ) );
+	return array_values( array_unique( array_filter( array_map( 'esc_url_raw', $links ) ) ) );
 }
 
 /** Liste lesbar verbinden: „A, B und C“. */
