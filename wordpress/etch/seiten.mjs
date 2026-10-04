@@ -8,16 +8,16 @@ import { leistungen, zielgruppen } from './daten.mjs';
 // ---------- Bausteine ----------
 
 // Seitenkopf aller Unterseiten. Wasserzeichen: standardmäßig das Firmenlogo (der Kopf ist hell und folgt Hell/Dunkel,
-// deshalb im dunklen Schema die helle Logo-Variante), auf der Fernwartungsseite das PC-Visit-Signet (wasserzeichen: 'pcvisit'). Rein dekorativ.
+// deshalb beide Logo-Varianten, CSS zeigt die passende), auf der Fernwartungsseite das PC-Visit-Signet (wasserzeichen: 'pcvisit'). Rein dekorativ.
 const WASSERZEICHEN = {
   logo: { src: firma('logo'), dunkel: firma('logo_dunkel'), breite: '560', hoehe: '480' },
   pcvisit: { src: '{options.kbs.pcvisit.logo}', breite: '480', hoehe: '480' },
 };
 const wasserzeichenBild = (art) => {
   const w = WASSERZEICHEN[art];
-  const img = el('img', `page-hero__watermark page-hero__watermark--${art}`, [], { attrs: { src: w.src, alt: '', 'aria-hidden': 'true', width: w.breite, height: w.hoehe } });
-  if (!w.dunkel) return img;
-  return el('picture', '', [el('source', '', [], { attrs: { srcset: w.dunkel, media: '(prefers-color-scheme: dark)' } }), img]);
+  const img = (src, mod = '') => el('img', `page-hero__watermark page-hero__watermark--${art}${mod}`, [], { attrs: { src, alt: '', 'aria-hidden': 'true', width: w.breite, height: w.hoehe } });
+  if (!w.dunkel) return img(w.src);
+  return [img(w.src, ' scheme-bild--hell'), img(w.dunkel, ' scheme-bild--dunkel')];
 };
 const seitenkopf = ({ eyebrow, titel, lead, aktionen, wasserzeichen = 'logo' }) =>
   el('section', 'page-hero page-hero--watermark', [
@@ -436,7 +436,7 @@ const datenschutzSeite = markup(
 
       t('h2', '', '5. Cookies, Schriften und externe Inhalte'),
       t('p', '', 'Diese Website setzt für Besucher keine Cookies zu Analyse- oder Werbezwecken und verwendet keine Analyse- oder Tracking-Werkzeuge. Schriften werden nicht von externen Servern geladen; es werden keine Inhalte Dritter (z. B. Karten oder Videos) eingebettet. Technisch notwendige Cookies werden nur gesetzt, wenn Sie sich im Verwaltungsbereich der Website anmelden.'),
-      t('p', '', 'Die Darstellung in hellen oder dunklen Farben richtet sich nach der Einstellung Ihres Geräts. Dafür werden keine Daten gespeichert oder übertragen.'),
+      t('p', '', 'Die Darstellung in hellen oder dunklen Farben richtet sich nach der Einstellung Ihres Geräts. Schalten Sie die Darstellung über den Umschalter im Seitenkopf um, wird Ihre Wahl ausschließlich lokal in Ihrem Browser gespeichert (Local Storage), damit sie beim nächsten Seitenaufruf erhalten bleibt. Diese Angabe wird nicht an uns oder Dritte übertragen; Sie können sie jederzeit über die Einstellungen Ihres Browsers löschen. Die Speicherung ist für die von Ihnen gewünschte Funktion unbedingt erforderlich (§ 25 Abs. 2 Nr. 2 TDDDG).'),
 
       t('h2', '', '6. Kontaktformular, E-Mail und Telefon', { attrs: { id: 'kontakt' } }),
       t('p', '', 'Wenn Sie uns über das Kontaktformular, per E-Mail oder telefonisch kontaktieren, verarbeiten wir Ihre Angaben (z. B. Name, Firma, E-Mail-Adresse, Telefonnummer und Ihre Nachricht), um Ihre Anfrage zu bearbeiten. Rechtsgrundlage ist Art. 6 Abs. 1 lit. b DSGVO, wenn Ihre Anfrage mit einem Vertrag zusammenhängt oder der Durchführung vorvertraglicher Maßnahmen dient, im Übrigen Ihre Einwilligung (Art. 6 Abs. 1 lit. a DSGVO) bzw. unser berechtigtes Interesse an der Beantwortung von Anfragen (Art. 6 Abs. 1 lit. f DSGVO).'),

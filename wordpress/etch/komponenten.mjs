@@ -7,17 +7,17 @@ import { navigation, leistungen } from './daten.mjs';
 const KONTAKT = 'options.kbs.kontakt';
 
 // Logo: Bild aus den Firmendaten bzw. mitgeliefertes Firmenlogo (kbs-firma.php), sonst Wortmarke aus dem Kurznamen.
-// Header: helle Variante im dunklen Farbschema (folgt der Systemeinstellung wie ACSS „light dark“). Footer: immer dunkle Fläche.
+// Header: beide Varianten, CSS zeigt die passende (scheme-bild--hell/--dunkel folgen Gerät und Umschalter). Footer: immer dunkle Fläche.
 const logoBild = (variante) =>
   variante === 'footer'
-    ? el('img', 'site-logo__bild', [], { attrs: { src: firma('logo_dunkel'), alt: firma('name'), width: '56', height: '48' } })
-    : el('picture', 'site-logo__picture', [
-        el('source', '', [], { attrs: { srcset: firma('logo_dunkel'), media: '(prefers-color-scheme: dark)' } }),
-        el('img', 'site-logo__bild', [], { attrs: { src: firma('logo'), alt: firma('name'), width: '56', height: '48' } }),
-      ]);
+    ? [el('img', 'site-logo__bild', [], { attrs: { src: firma('logo_dunkel'), alt: firma('name'), width: '56', height: '48' } })]
+    : [
+        el('img', 'site-logo__bild scheme-bild--hell', [], { attrs: { src: firma('logo'), alt: firma('name'), width: '56', height: '48' } }),
+        el('img', 'site-logo__bild scheme-bild--dunkel', [], { attrs: { src: firma('logo_dunkel'), alt: firma('name'), width: '56', height: '48' } }),
+      ];
 const logo = (variante) =>
   el('a', `site-logo site-logo--${variante}`, [
-    wenn(`${FIRMA}.hat_logo`, [logoBild(variante)]),
+    wenn(`${FIRMA}.hat_logo`, logoBild(variante)),
     wenn(`${FIRMA}.hat_logo`, [
       el('span', 'site-logo__mark', [text('{options.kbs.firma.initialen}')], { attrs: { 'aria-hidden': 'true' } }),
       el('span', 'site-logo__text', [t('span', 'site-logo__name', firma('wortmarke_1')), t('span', 'site-logo__sub', firma('wortmarke_2'))]),
@@ -42,7 +42,7 @@ const navPunkt = (punkt, i) => {
 const headerKomponente = {
   key: 'SiteHeader',
   name: 'Header',
-  description: 'Kopfzeile mit Logo, Hauptnavigation (Untermenü Leistungen), Telefon und Button „Erstgespräch“. Mobil als ausklappbares Menü. Daten: Firmendaten (Logo, Telefon); Skript snippets/kbs-navigation.php.',
+  description: 'Kopfzeile mit Logo, Hauptnavigation (Untermenü Leistungen), Telefon, Button „Erstgespräch“ und Umschalter Hell/Dunkel. Mobil als ausklappbares Menü. Daten: Firmendaten (Logo, Telefon); Skript snippets/kbs-navigation.php.',
   properties: [],
   content: el('header', 'site-header', [
     t('a', 'skip-link', 'Zum Inhalt springen', { attrs: { href: '#main' } }),
@@ -60,6 +60,10 @@ const headerKomponente = {
           el('li', 'main-nav__item main-nav__item--cta', [t('a', 'btn--primary btn--s', 'Erstgespräch vereinbaren', { attrs: { href: '/kontakt/' } })]),
         ], { attrs: { id: 'hauptmenue' } }),
       ], { attrs: { 'aria-label': 'Hauptnavigation' } }),
+      // Hell/Dunkel: Wahl im Browser gespeichert, ohne Wahl folgt die Seite dem Gerät (snippets/kbs-navigation.php)
+      el('button', 'scheme-toggle', [t('span', 'visually-hidden', 'Dunkles Design'), icon('moon', 'scheme-toggle__moon'), icon('sun', 'scheme-toggle__sun')], {
+        attrs: { type: 'button', 'aria-pressed': 'false', 'data-scheme-toggle': '' },
+      }),
     ]),
   ], { name: 'Header' }),
 };

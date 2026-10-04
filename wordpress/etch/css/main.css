@@ -138,10 +138,17 @@ body [class*="btn--"] { --focus-color: var(--primary-dark); }
 .check-list--hero { margin-top: var(--space-l); color: var(--base-semi-dark); font-size: var(--text-s); font-weight: 600; }
 @media (min-width: 48em) { .check-list--hero { display: flex; flex-wrap: wrap; gap: var(--space-xs) var(--space-l); } }
 
+/* ---------- Bilder je Farbschema (Logo, Wasserzeichen) ----------
+   Folgen dem Gerät und dem Umschalter (ACSS-Klassen scheme--light/scheme--dark am <html>, snippets/kbs-navigation.php). */
+html .scheme-bild--dunkel { display: none; } /* html: schlägt .site-logo__bild { display: block } */
+@media (prefers-color-scheme: dark) { html:not(.scheme--light) .scheme-bild--hell { display: none; } html:not(.scheme--light) .scheme-bild--dunkel { display: block; } }
+html.scheme--dark .scheme-bild--hell { display: none; }
+html.scheme--dark .scheme-bild--dunkel { display: block; }
+
 /* ---------- Header und Navigation: schwebende, abgerundete Leiste ---------- */
 .site-header { position: sticky; top: 0; z-index: 50; padding: 0.75rem var(--gutter) 0; }
 .site-header__inner.container {
-  display: flex; align-items: center; justify-content: space-between; gap: var(--space-m);
+  display: flex; align-items: center; gap: var(--space-xs);
   max-width: calc(var(--content-width) + 2 * var(--space-m)); min-height: 4rem; padding-inline: var(--space-m) 0.5rem;
   background: color-mix(in oklch, var(--white) 82%, transparent);
   -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
@@ -150,7 +157,6 @@ body [class*="btn--"] { --focus-color: var(--primary-dark); }
 
 .site-logo { display: inline-flex; align-items: center; gap: 0.65rem; text-decoration: none; color: var(--base); flex: none; margin-right: var(--space-m); }
 .site-logo:hover { color: var(--base); }
-.site-logo__picture { display: block; }
 .site-logo__bild { display: block; height: 2.9rem; width: auto; max-width: 14rem; object-fit: contain; }
 .site-footer .site-logo__bild { height: 4.5rem; }
 .site-logo__mark { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; flex: none; border-radius: 0.8rem; background: var(--primary); color: var(--white); font-weight: 800; font-size: 1.05rem; letter-spacing: -0.04em; }
@@ -160,7 +166,16 @@ body [class*="btn--"] { --focus-color: var(--primary-dark); }
 .site-footer .site-logo, .site-footer .site-logo:hover { color: var(--white); }
 .site-footer .site-logo__sub { color: var(--secondary-light); }
 
+.main-nav { margin-left: auto; }
 .main-nav__toggle { display: none; }
+
+/* Umschalter Hell/Dunkel: Mond im hellen, Sonne im dunklen Schema; ohne JavaScript ausgeblendet */
+.scheme-toggle { display: inline-grid; place-items: center; flex: none; width: 2.6rem; height: 2.6rem; padding: 0; border: 1px solid var(--base-light); border-radius: 50%; background: var(--white); color: var(--base); cursor: pointer; transition: color var(--transition), background-color var(--transition), border-color var(--transition); }
+.scheme-toggle:hover { color: var(--primary-dark); background: var(--primary-ultra-light); border-color: color-mix(in oklch, var(--primary) 30%, var(--base-light)); }
+.scheme-toggle .icon { width: 1.2rem; height: 1.2rem; }
+.scheme-toggle__sun, .scheme-toggle[aria-pressed="true"] .scheme-toggle__moon { display: none; }
+.scheme-toggle[aria-pressed="true"] .scheme-toggle__sun { display: inline-block; }
+html:not(.js) .scheme-toggle { display: none; }
 .main-nav__list { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 0.15rem; }
 .main-nav__item { position: relative; }
 .main-nav__link, .main-nav__phone { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.55em 0.95em; border-radius: 999px; color: var(--base); font-weight: 650; font-size: var(--text-s); text-decoration: none; white-space: nowrap; }

@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: KBS – Navigation
- * Description: Skripte für die Hauptnavigation der Etch-Komponente „Header“: Menü auf kleinen Bildschirmen auf- und zuklappen ([data-nav-toggle]), Untermenüs als Disclosure ([data-nav-sub]), Escape schließt, aktueller Menüpunkt mit aria-current (auch der Elternpunkt auf Unterseiten). Setzt die Klasse „js“ am <html>, damit das Menü ohne JavaScript sichtbar bleibt. Keine Shortcodes, kein Markup.
+ * Description: Skripte für die Hauptnavigation der Etch-Komponente „Header“: Menü auf kleinen Bildschirmen auf- und zuklappen ([data-nav-toggle]), Untermenüs als Disclosure ([data-nav-sub]), Escape schließt, aktueller Menüpunkt mit aria-current (auch der Elternpunkt auf Unterseiten), Umschalter Hell/Dunkel ([data-scheme-toggle], ACSS-Klassen scheme--light/scheme--dark am <html>, Wahl im localStorage „kbs-farbschema“). Setzt die Klasse „js“ am <html>, damit das Menü ohne JavaScript sichtbar bleibt. Keine Shortcodes, kein Markup.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-navigation.php
  */
@@ -11,7 +11,8 @@ defined( 'ABSPATH' ) || exit;
 add_action(
 	'wp_head',
 	function () {
-		echo "<script>document.documentElement.classList.add('js')</script>\n";
+		// Gespeichertes Farbschema vor dem ersten Zeichnen setzen (kein Aufblitzen des anderen Schemas)
+		echo "<script>(function(d){d.classList.add('js');try{var s=localStorage.getItem('kbs-farbschema');if(s==='light'||s==='dark')d.classList.add('scheme--'+s);}catch(e){}})(document.documentElement)</script>\n";
 	},
 	0
 );
@@ -62,6 +63,33 @@ add_action(
 		if (ziel === pfad) a.setAttribute('aria-current', 'page');
 		else if (ziel !== '/' && pfad.indexOf(ziel) === 0 && a.classList.contains('main-nav__link')) a.classList.add('main-nav__link--active');
 	});
+})();
+
+// Hell/Dunkel: ohne gespeicherte Wahl folgt die Seite dem Gerät (ACSS „light dark“).
+// Entspricht die neue Wahl der Geräteeinstellung, wird die gespeicherte Wahl gelöscht.
+(function () {
+	var btn = document.querySelector('[data-scheme-toggle]');
+	if (!btn) return;
+	var html = document.documentElement, mq = window.matchMedia('(prefers-color-scheme: dark)'), KEY = 'kbs-farbschema';
+	function system() { return mq.matches ? 'dark' : 'light'; }
+	function aktuell() {
+		if (html.classList.contains('scheme--dark')) return 'dark';
+		if (html.classList.contains('scheme--light')) return 'light';
+		return system();
+	}
+	function zeige() { btn.setAttribute('aria-pressed', aktuell() === 'dark' ? 'true' : 'false'); }
+	btn.addEventListener('click', function () {
+		var neu = aktuell() === 'dark' ? 'light' : 'dark';
+		html.classList.remove('scheme--light', 'scheme--dark');
+		if (neu !== system()) html.classList.add('scheme--' + neu);
+		try {
+			if (neu === system()) localStorage.removeItem(KEY);
+			else localStorage.setItem(KEY, neu);
+		} catch (e) {}
+		zeige();
+	});
+	if (mq.addEventListener) mq.addEventListener('change', zeige);
+	zeige();
 })();
 </script>
 		<?php

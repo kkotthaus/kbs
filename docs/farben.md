@@ -10,7 +10,8 @@ Palette zentral in `wordpress/etch/acss-farben.mjs`, übernehmen per MCP `kbs/ac
 
 ## Hell/Dunkel
 
-- ACSS `website-color-scheme: light dark`: Die Seite folgt automatisch der Einstellung des Betrachters (kein Umschalter). ACSS rechnet alle Farben mit `light-dark()` und tauscht im dunklen Schema die Abstufungen; `--white` wird schwarz.
+- **Umschalter** im Header (`.scheme-toggle`, Skript in `kbs-navigation.php`): setzt die ACSS-Klasse `scheme--light` bzw. `scheme--dark` am `<html>` und speichert die Wahl im localStorage (`kbs-farbschema`, Hinweis in der Datenschutzerklärung). Entspricht die Wahl dem Gerät, wird sie gelöscht. Bilder je Schema über `scheme-bild--hell` / `scheme-bild--dunkel` (keine `<picture>`-Media-Query, die würde den Umschalter ignorieren).
+- ACSS `website-color-scheme: light dark`: Ohne Wahl folgt die Seite der Einstellung des Geräts. ACSS rechnet alle Farben mit `light-dark()` und tauscht im dunklen Schema die Abstufungen; `--white` wird schwarz.
 - Immer gleich (Force light selectors, Liste `immerHell`): die dunklen Akzentflächen `.hero-card`, `.service-card--cta`, `.cta-band`, `.site-footer`. Hero und Seitenkopf sind hell und folgen dem Schema.
 - Kontrastpaare (Rollen: Seite, Karte, Fläche) stehen in `kontrast.mjs`.
 
