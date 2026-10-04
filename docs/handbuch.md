@@ -18,6 +18,8 @@ Seit dem 2. August 2026 verlangt die EU-KI-Verordnung (Art. 50): Bilder und Vide
 
 Leer lassen, wenn keine KI im Spiel war. Optional tragen Sie das **Werkzeug** ein (z. B. „Firefly“). Auf der Website erscheint am Bild eine kleine Plakette **„KI“**; fährt man mit der Maus darüber (am Handy: antippen), klappt sie auf und zeigt die Art der KI-Nutzung. Screenreader lesen den Hinweis im Alternativtext vor. Verdeckt die Plakette etwas Wichtiges, wählen Sie am Bild eine andere **Position**.
 
+**In der Mediathek** sehen Sie gekennzeichnete Bilder sofort: In der Rasteransicht und im Medien-Fenster (beim Einfügen eines Bildes) trägt das Vorschaubild oben rechts eine dunkle Plakette mit der Kennung. In der Listenansicht zeigt die Spalte **KI** Kennung und Werkzeug; über die Auswahl **KI: alle Medien** oben in der Liste filtern Sie nach Bildern mit oder ohne KI bzw. nach der Art.
+
 **Aussehen einstellen:** Menü **Medien › KI-Kennzeichnung** – Position, Stil (dunkel, hell, Markenrot), Größe und ob das Werkzeug genannt wird. Ein eigenes Symbol (z. B. das offizielle EU-Symbol, sobald es veröffentlicht ist) hinterlegen Sie unter **Firmendaten › Firma & Kontakt › KI-Symbol**.
 
 > **Wichtig:** Fotos von Kunden, Mitarbeitern oder anderen Personen nicht ohne deren Einwilligung in KI-Dienste hochladen, auch nicht zum Bearbeiten – das ist eine Datenverarbeitung bei einem fremden Anbieter. Prüfen Sie außerdem, ob die Nutzungsbedingungen des Werkzeugs die Veröffentlichung erlauben.
