@@ -2,7 +2,14 @@
 
 ## Firmendaten
 
-Name, Adresse, Telefon, Erreichbarkeit, Rechtliches, PC-Visit-Links und das Angebot („Kostenloses Erstgespräch“) pflegen Sie im Backend unter **Firmendaten**. Die Website liest alle Angaben von dort; im Text der Seiten steht nichts davon fest.
+Name, Adresse, Telefon, Erreichbarkeit, Rechtliches, PC-Visit-Links und das Angebot („Kostenloses Erstgespräch“) pflegen Sie im Backend unter **Firmendaten**. Die Website liest alle Angaben von dort; im Text der Seiten steht nichts davon fest. Nach dem Speichern wird der Seitencache automatisch geleert.
+
+**Region und Einsatzorte** (Firmendaten › Firma & Kontakt):
+
+- **Region** – kurzer Name, z. B. „Bergisches Land und Rheinland“. Erscheint in den Texten als „in der Region …“ (Startseite, Über uns).
+- **Einsatzorte** – alle Orte mit Kunden, durch Komma getrennt. Sie stehen einmal sichtbar auf „Über uns“ („Zu unseren Kunden gehören Unternehmen in …“), dazu für Google und KI-Suchdienste in den strukturierten Daten und in `/llms.txt`. So wird die Website für diese Orte gefunden, ohne dass jede Seite alle Orte nennt. Keine eigenen Seiten je Ort anlegen – Google wertet fast gleiche Ortsseiten ab.
+- Dieselben Orte im **Google-Unternehmensprofil** als Einzugsgebiet eintragen; dort wirken sie für die Suche in der Nähe am stärksten.
+- **Kontaktformular** – anzeigen oder ausblenden. Ausgeblendet steht auf der Kontaktseite ein Hinweis mit Telefon und E-Mail.
 
 ## KI-generierte Bilder und Videos
 

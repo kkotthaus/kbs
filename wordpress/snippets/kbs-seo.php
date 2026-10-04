@@ -141,8 +141,13 @@ function kbs_seo_schema(): array {
 	}
 	$start  = home_url( '/' );
 	$firma  = function_exists( 'kbs_firma_etch' ) ? kbs_firma_etch() : array();
-	$region = array_values( array_filter( array_map( 'trim', preg_split( '/,|\bund\b/u', $s( 'firma_region' ) ) ), fn( $x ) => '' !== $x && 'Umgebung' !== $x ) );
-	$gebiet = array_map( fn( $ort ) => array( '@type' => 'City', 'name' => $ort ), $region );
+	// Einsatzgebiet: alle Einsatzorte als Städte, dazu die Region(en) aus „Region“ (z. B. Bergisches Land, Rheinland)
+	$orte     = function_exists( 'kbs_firma_einsatzorte' ) ? kbs_firma_einsatzorte() : array( $s( 'firma_ort' ) );
+	$regionen = array_values( array_filter( array_map( 'trim', preg_split( '/,|\bund\b/u', $s( 'firma_region' ) ) ), fn( $x ) => '' !== $x && 'Umgebung' !== $x && ! in_array( $x, $orte, true ) ) );
+	$gebiet   = array_merge(
+		array_map( fn( $ort ) => array( '@type' => 'City', 'name' => $ort ), array_filter( $orte ) ),
+		array_map( fn( $r ) => array( '@type' => 'AdministrativeArea', 'name' => $r ), $regionen )
+	);
 	$org    = array(
 		'@type'                     => 'ProfessionalService',
 		'@id'                       => $start . '#organisation',
@@ -235,7 +240,8 @@ function kbs_seo_llms(): string {
 	$f = function_exists( 'kbs_firma_etch' ) ? kbs_firma_etch() : array();
 	$z = array( '# ' . ( $f['name'] ?? get_bloginfo( 'name' ) ), '' );
 	if ( ! empty( $f['claim'] ) ) {
-		$z[] = '> ' . $f['claim'] . ( ! empty( $f['region'] ) ? ' in ' . $f['region'] . '.' : '' );
+		$z[] = '> ' . $f['claim'] . ( ! empty( $f['region'] ) ? ' in der Region ' . $f['region'] : '' ) . '.'
+			. ( ! empty( $f['einsatzorte'] ) ? ' Einsatzorte: ' . $f['einsatzorte'] . '.' : '' );
 		$z[] = '';
 	}
 	$kontakt = array_filter(

@@ -119,7 +119,7 @@ const startseite = markup(
       el('div', 'home-hero__content', [
         t('p', 'home-hero__eyebrow', `IT-Service und Webdesign aus ${firma('ort')}`),
         t('h1', 'home-hero__title', 'Ihre IT-Abteilung – ohne eigene IT-Abteilung.'),
-        t('p', 'home-hero__lead', `Wir betreuen kleine Unternehmen in ${firma('region')}: Computer, Netzwerk und Server ebenso wie moderne WordPress-Websites. Persönlich vor Ort und schnell per Fernwartung.`),
+        t('p', 'home-hero__lead', `Wir betreuen kleine Unternehmen in der Region ${firma('region')}: Computer, Netzwerk und Server ebenso wie moderne WordPress-Websites. Persönlich vor Ort und schnell per Fernwartung.`),
         el('div', 'home-hero__actions', [btnKontakt(firma('angebot_titel')), t('a', 'btn--primary btn--outline', 'Fernwartung starten', { attrs: { href: '/fernwartung/' } })]),
         checkListe(['Fester Ansprechpartner', 'Hilfe per Fernwartung ohne Anfahrtskosten', `Vor Ort in ${firma('ort')} und Umgebung`], 'hero'),
       ]),
@@ -186,7 +186,7 @@ const startseite = markup(
   ]),
 
   abschnitt('', 'Für wen', [
-    abschnittKopf('Für wen', 'Ideal für Unternehmen ohne eigene IT-Abteilung', `Wir arbeiten für kleine Firmen, Selbstständige und Vereine in ${firma('region')}.`, true),
+    abschnittKopf('Für wen', 'Ideal für Unternehmen ohne eigene IT-Abteilung', `Wir arbeiten für kleine Firmen, Selbstständige und Vereine in der Region ${firma('region')}.`, true),
     el('ul', 'chip-list', zielgruppen.map((z) => t('li', 'chip', z))),
   ]),
 
@@ -353,7 +353,8 @@ const ueberUnsSeite = markup(
         'Wir betreuen vor allem kleine Firmen, Selbstständige und Vereine, die keine eigene IT-Abteilung haben – und auch keine brauchen sollen. Wir kümmern uns um Computer, Netzwerk und Server und bauen moderne WordPress-Websites.',
         'Unser Anspruch: Technik so zu erklären, dass Sie sie verstehen, und Lösungen zu finden, die zu Ihrem Unternehmen passen – nicht die teuerste, sondern die richtige.',
         ['h2', 'Aus der Region, für die Region'],
-        `Unser Sitz ist in ${firma('ort')}. Wir betreuen Kunden in ${firma('region')} – vor Ort, wenn es nötig ist, und per Fernwartung, wenn es schneller geht.`,
+        `Unser Sitz ist in ${firma('ort')}. Wir betreuen Kunden in der Region ${firma('region')} – vor Ort, wenn es nötig ist, und per Fernwartung, wenn es schneller geht.`,
+        `Zu unseren Kunden gehören Unternehmen in ${firma('einsatzorte')}.`,
       ]),
       el('aside', 'side-card', [
         el('span', 'side-card__icon', [icon('user')]),

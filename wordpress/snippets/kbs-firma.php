@@ -62,7 +62,8 @@ add_filter(
 				$text( 'firma_strasse', 'Straße und Hausnummer' ),
 				$text( 'firma_plz', 'PLZ', '', array( 'size' => 10 ) ),
 				$text( 'firma_ort', 'Ort' ),
-				$text( 'firma_region', 'Einzugsgebiet', 'Orte, in denen Sie Kunden betreuen – erscheint in Texten („… in Burscheid, Leichlingen …“).' ),
+				$text( 'firma_region', 'Region', 'Kurzer Name der Region, in der Sie arbeiten, z. B. „Bergisches Land und Rheinland“ – erscheint in Texten als „in der Region …“.' ),
+				$text( 'firma_einsatzorte', 'Einsatzorte', 'Orte mit Kunden, durch Komma getrennt, z. B. „Burscheid, Leichlingen, Köln“. Erscheint einmal sichtbar auf „Über uns“ und für Suchmaschinen und KI-Suche in den strukturierten Daten und in /llms.txt.' ),
 				$text( 'firma_telefon', 'Telefon', 'Lesbar formatiert, z. B. 02174 666 47 17. Der Anruf-Link wird daraus erzeugt.' ),
 				$text( 'firma_fax', 'Telefax', 'Leer = nicht anzeigen.' ),
 				array( 'id' => 'firma_email', 'name' => 'E-Mail', 'type' => 'email', 'size' => 60 ),
@@ -117,6 +118,21 @@ function kbs_firma_bild( $id ): string {
 }
 
 /** Firmendaten für Etch, fertig formatiert. */
+/** Einsatzorte als Liste (Firmendaten › Einsatzorte, getrennt durch Komma, Zeilenumbruch oder „und“); leer: der Ort der Firma. */
+function kbs_firma_einsatzorte(): array {
+	$o     = (array) get_option( 'firmendaten', array() );
+	$orte  = preg_split( '/\s*(?:,|;|\R|\bund\b)\s*/u', trim( (string) ( $o['firma_einsatzorte'] ?? '' ) ) );
+	$orte  = array_values( array_unique( array_filter( array_map( 'trim', $orte ), fn( $x ) => '' !== $x ) ) );
+	$ort   = trim( (string) ( $o['firma_ort'] ?? '' ) );
+	return $orte ?: ( '' !== $ort ? array( $ort ) : array() );
+}
+
+/** Liste lesbar verbinden: „A, B und C“. */
+function kbs_firma_aufzaehlung( array $teile ): string {
+	$letzter = array_pop( $teile );
+	return $teile ? implode( ', ', $teile ) . ' und ' . $letzter : (string) $letzter;
+}
+
 function kbs_firma_etch(): array {
 	$o = (array) get_option( 'firmendaten', array() );
 	$s = fn( string $k ) => trim( (string) ( $o[ $k ] ?? '' ) );
@@ -148,6 +164,7 @@ function kbs_firma_etch(): array {
 		'plz'           => $s( 'firma_plz' ),
 		'ort'           => $s( 'firma_ort' ),
 		'region'        => $s( 'firma_region' ) ?: $s( 'firma_ort' ),
+		'einsatzorte'   => kbs_firma_aufzaehlung( kbs_firma_einsatzorte() ),
 		'anschrift'     => $anschrift,
 		'route_url'     => 'https://www.google.com/maps/dir/?api=1&destination=' . rawurlencode( $s( 'firma_name' ) . ', ' . $anschrift ),
 		'telefon'       => $tel,
