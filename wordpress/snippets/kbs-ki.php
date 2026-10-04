@@ -205,7 +205,7 @@ function kbs_ki_daten_fuer( string $art, string $werkzeug = '', string $position
 define(
 	'KBS_KI_DATEIEN',
 	array(
-		'hero_netzwerk' => array( 'art' => 'generated', 'werkzeug' => 'FLUX.1 schnell', 'position' => 'unten-rechts', 'beschreibung' => 'Abstraktes Netzwerk aus leuchtenden, verbundenen Knoten' ),
+		// Beispiel: 'schluessel' => array( 'art' => 'generated', 'werkzeug' => '…', 'position' => 'unten-rechts', 'beschreibung' => '…' ),
 	)
 );
 

@@ -33,6 +33,7 @@ add_filter(
 				'recht'   => 'Impressum & Datenschutz',
 				'pcvisit' => 'PC-Visit',
 				'angebot' => 'Angebot',
+				'start'   => 'Startseite',
 			),
 		);
 		return $seiten;
@@ -107,6 +108,15 @@ add_filter(
 				array( 'id' => 'angebot_text', 'name' => 'Text', 'type' => 'textarea', 'rows' => 3, 'desc' => 'Ein bis zwei Sätze zum Angebot.' ),
 			)
 		);
+		$boxen[] = $box(
+			'start',
+			'start',
+			'Startseite',
+			array(
+				array( 'id' => 'hero_bild', 'name' => 'Hero-Bild', 'type' => 'single_image', 'desc' => 'Hintergrund rechts im Startseiten-Hero (Querformat, mind. 1344 px breit; links steht der Text). Alternativtext und KI-Kennzeichnung kommen aus der Mediathek. Leer = kein Bild.' ),
+				array( 'id' => 'hero_bild_dunkel', 'name' => 'Hero-Bild für das dunkle Farbschema', 'type' => 'single_image', 'desc' => 'Optional. Leer = dasselbe Bild wie oben.' ),
+			)
+		);
 		return $boxen;
 	}
 );
@@ -117,7 +127,6 @@ function kbs_firma_bild( $id ): string {
 	return $id ? (string) wp_get_attachment_image_url( $id, 'medium' ) : '';
 }
 
-/** Firmendaten für Etch, fertig formatiert. */
 /** Einsatzorte als Liste (Firmendaten › Einsatzorte, getrennt durch Komma, Zeilenumbruch oder „und“); leer: der Ort der Firma. */
 function kbs_firma_einsatzorte(): array {
 	$o     = (array) get_option( 'firmendaten', array() );
@@ -133,6 +142,38 @@ function kbs_firma_aufzaehlung( array $teile ): string {
 	return $teile ? implode( ', ', $teile ) . ' und ' . $letzter : (string) $letzter;
 }
 
+/** Bilddaten eines Anhangs für ein img-Element (src, srcset, Maße, Alternativtext samt KI-Hinweis). */
+function kbs_firma_bilddaten( int $id ): array {
+	$meta = (array) wp_get_attachment_metadata( $id );
+	$alt  = trim( (string) get_post_meta( $id, '_wp_attachment_image_alt', true ) );
+	$ki   = function_exists( 'kbs_ki_daten' ) ? kbs_ki_daten( $id ) : array( 'hat' => false );
+	return array(
+		'src'    => (string) wp_get_attachment_image_url( $id, 'full' ),
+		'srcset' => (string) wp_get_attachment_image_srcset( $id, 'full' ),
+		'breite' => (string) ( $meta['width'] ?? '' ),
+		'hoehe'  => (string) ( $meta['height'] ?? '' ),
+		'alt'    => ! empty( $ki['hat'] ) ? kbs_ki_alt( $alt, (string) $ki['alt'] ) : $alt,
+	);
+}
+
+/** Hero der Startseite: Bild aus Firmendaten › Startseite (dunkle Variante optional), KI-Kennzeichnung aus der Mediathek. */
+function kbs_hero_etch(): array {
+	$o      = (array) get_option( 'firmendaten', array() );
+	$id     = fn( $v ) => is_array( $v ) ? (int) ( $v['ID'] ?? 0 ) : (int) $v;
+	$hell   = $id( $o['hero_bild'] ?? 0 );
+	$dunkel = $id( $o['hero_bild_dunkel'] ?? 0 ) ?: $hell;
+	if ( ! $hell || ! wp_attachment_is_image( $hell ) ) {
+		return array( 'hat' => false, 'ki' => array( 'hat' => false ) );
+	}
+	return array(
+		'hat'    => true,
+		'hell'   => kbs_firma_bilddaten( $hell ),
+		'dunkel' => kbs_firma_bilddaten( wp_attachment_is_image( $dunkel ) ? $dunkel : $hell ),
+		'ki'     => function_exists( 'kbs_ki_daten' ) ? kbs_ki_daten( $hell ) : array( 'hat' => false ),
+	);
+}
+
+/** Firmendaten für Etch, fertig formatiert. */
 function kbs_firma_etch(): array {
 	$o = (array) get_option( 'firmendaten', array() );
 	$s = fn( string $k ) => trim( (string) ( $o[ $k ] ?? '' ) );
@@ -214,6 +255,7 @@ add_filter(
 		if ( is_array( $data ) ) {
 			$data['kbs']['firma']   = kbs_firma_etch();
 			$data['kbs']['pcvisit'] = kbs_pcvisit_etch();
+			$data['kbs']['hero']    = kbs_hero_etch();
 		}
 		return $data;
 	}

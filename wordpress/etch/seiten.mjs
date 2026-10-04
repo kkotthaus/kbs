@@ -90,17 +90,20 @@ const vorteile = (liste) =>
 
 // ---------- Startseite ----------
 
-// Hero-Hintergrund: KI-Bild (wordpress/medien/bilder/, Kennzeichnung über KBS_KI_DATEIEN in kbs-ki.php), je Farbschema eine Variante.
-const BILDER = '/wp-content/kbs/medien/bilder';
-const KI_HERO = 'options.kbs.ki_bilder.hero_netzwerk';
-const heroBild = (variante) => {
-  const srcset = (typ) => [640, 1280, 1344].map((b) => `${BILDER}/hero-netzwerk-${variante}-${b}.${typ} ${b}w`).join(', ');
-  return el('picture', `home-hero__bild scheme-bild--${variante}`, [
-    el('source', '', [], { attrs: { type: 'image/avif', srcset: srcset('avif'), sizes: '100vw' } }),
-    el('source', '', [], { attrs: { type: 'image/webp', srcset: srcset('webp'), sizes: '100vw' } }),
-    el('img', '', [], { attrs: { src: `${BILDER}/hero-netzwerk-${variante}-1280.webp`, alt: `{${KI_HERO}.bild_alt}`, width: '1344', height: '768', fetchpriority: 'high', decoding: 'async' } }),
+// Hero-Hintergrund aus der Mediathek (Firmendaten › Startseite, snippets/kbs-firma.php → {options.kbs.hero.…}), je Farbschema ein Bild.
+// Alternativtext samt KI-Hinweis und die KI-Plakette kommen aus den Feldern des Anhangs (ki_art, ki_position).
+const HERO = 'options.kbs.hero';
+const heroBild = (variante) =>
+  el('div', `home-hero__bild scheme-bild--${variante}`, [
+    el('img', '', [], {
+      attrs: {
+        src: `{${HERO}.${variante}.src}`, srcset: `{${HERO}.${variante}.srcset}`, sizes: '100vw',
+        width: `{${HERO}.${variante}.breite}`, height: `{${HERO}.${variante}.hoehe}`, alt: `{${HERO}.${variante}.alt}`,
+        // nur das helle Bild mit hoher Priorität; das dunkle lädt der Browser bei Bedarf
+        ...(variante === 'hell' ? { fetchpriority: 'high' } : {}), decoding: 'async',
+      },
+    }),
   ]);
-};
 
 // Häufige Fragen der Startseite (auch für das FAQ-Schema und llms.txt, siehe seo unten)
 const startFaq = [
@@ -112,9 +115,7 @@ const startFaq = [
 
 const startseite = markup(
   el('section', 'home-hero', [
-    heroBild('hell'),
-    heroBild('dunkel'),
-    kiPlakette(KI_HERO),
+    wenn(`${HERO}.hat`, [heroBild('hell'), heroBild('dunkel'), kiPlakette(`${HERO}.ki`)]),
     el('div', 'home-hero__inner container', [
       el('div', 'home-hero__content', [
         t('p', 'home-hero__eyebrow', `IT-Service und Webdesign aus ${firma('ort')}`),

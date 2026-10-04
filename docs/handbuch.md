@@ -11,6 +11,8 @@ Name, Adresse, Telefon, Erreichbarkeit, Rechtliches, PC-Visit-Links und das Ange
 - Dieselben Orte im **Google-Unternehmensprofil** als Einzugsgebiet eintragen; dort wirken sie für die Suche in der Nähe am stärksten.
 - **Kontaktformular** – anzeigen oder ausblenden. Ausgeblendet steht auf der Kontaktseite ein Hinweis mit Telefon und E-Mail.
 
+**Hero-Bild der Startseite** (Firmendaten › Startseite): Bild aus der Mediathek wählen (Querformat, mindestens 1344 px breit; das Motiv gehört nach rechts, links steht der Text), optional ein zweites für das dunkle Farbschema. Den Alternativtext und – bei KI-Bildern – die KI-Kennzeichnung (`KI-Nutzung`, Werkzeug, Position des Symbols, z. B. „unten rechts“) tragen Sie beim Bild in der Mediathek ein. Leer = kein Bild im Hero.
+
 ## KI-generierte Bilder und Videos
 
 Seit dem 2. August 2026 verlangt die EU-KI-Verordnung (Art. 50): Bilder und Videos, die mit KI erzeugt oder so verändert wurden, dass sie echt wirken können, müssen als künstlich erkennbar sein. Dazu kommt das Wettbewerbsrecht: Bilder dürfen nicht über Tatsachen täuschen (z. B. Büro, Team, Referenzen).
