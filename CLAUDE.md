@@ -6,7 +6,7 @@ Gemeinsame Standards (Stack, Konventionen, Betrieb): @etch-nodes/CLAUDE.md
 
 Projektspezifisch (Prefix, Aufbau, Ablauf): @docs/development-environment.md
 
-Farben und Farbregeln (nur lokal, nicht in etch-nodes): @docs/farben.md
+Design dieser Website (nur lokal, nie in etch-nodes) – Farben und Farbregeln: @docs/farben.md
 
 Seiten und Inhalte: [docs/seitenstruktur.md](docs/seitenstruktur.md). Ablauf Build → WordPress: [wordpress/README.md](wordpress/README.md).
 
