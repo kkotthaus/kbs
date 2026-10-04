@@ -69,6 +69,7 @@ add_filter(
 				array( 'id' => 'firma_erreichbarkeit', 'name' => 'Erreichbarkeit', 'type' => 'textarea', 'rows' => 3, 'desc' => 'z. B. Bürozeiten, eine Angabe je Zeile. Leer = Abschnitt ausgeblendet.' ),
 				array( 'id' => 'firma_logo', 'name' => 'Logo', 'type' => 'single_image', 'desc' => 'Optional. Ohne Bild erscheint das mitgelieferte Firmenlogo (wp-content/kbs/medien/kbs-logo.svg).' ),
 				array( 'id' => 'firma_logo_dunkel', 'name' => 'Logo für dunkle Flächen', 'type' => 'single_image', 'desc' => 'Optional, für den Footer und den Header im dunklen Farbschema (helle Schrift). Ohne Angabe: das hochgeladene Logo bzw. die mitgelieferte helle Variante.' ),
+				array( 'id' => 'kontakt_formular', 'name' => 'Kontaktformular', 'type' => 'select', 'options' => array( 'an' => 'anzeigen', 'aus' => 'ausblenden' ), 'std' => 'an', 'desc' => 'Ausgeblendet: Auf der Kontaktseite steht statt des Formulars ein Hinweis mit Telefon und E-Mail, und das Formular nimmt keine Anfragen an.' ),
 				array( 'id' => 'kontakt_empfaenger', 'name' => 'Empfänger Kontaktformular', 'type' => 'email', 'size' => 60, 'desc' => 'Leer = E-Mail-Adresse der Firma.' ),
 			)
 		);

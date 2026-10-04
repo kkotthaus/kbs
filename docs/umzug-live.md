@@ -123,23 +123,27 @@ Nach dem Umzug ist kotthaus-bs.de für Claude unter dem Namen **kbs-live** errei
 - Schreiben, Hochladen, Sync, Snippet-Änderungen nur auf **ausdrückliche Anweisung** und nach dem Ablauf unten; live gepflegte Inhalte nie ohne Rückfrage überschreiben.
 - Die Baufunktionen `kbs/*` sind live per MCP nicht verfügbar (kein `KBS_MCP_LIVE` in der `wp-config.php`). Gebraucht werden sie nur für eine Übertragung – dann per WP-CLI und nur für diesen einen Aufruf:
   ```bash
-  ssh kbs-live "cd ~/public_html && wp --user=kkotthaus --exec=\"define('KBS_MCP_LIVE', true);\" eval '…'"
+  ssh kbs-live '/usr/local/lsws/lsphp85/bin/php /usr/local/bin/wp --path=/srv/www/kbs --user=kkotthaus --exec="define(\"KBS_MCP_LIVE\", true);" eval "…"'
   ```
 - Was MCP live sonst anbietet (WordPress-Grundfunktionen, Meta Box, lesende WPCodeBox-Werkzeuge), wird ebenfalls nur lesend genutzt, außer auf ausdrückliche Anweisung.
 
 **Einrichten (nach dem Umzug):**
 
-1. **SSH-Schlüssel:** liegt schon bereit (`~/.ssh/kbs_live`, öffentlicher Teil `~/.ssh/kbs_live.pub`, Kommentar `claude-kbs-live`). Den öffentlichen Schlüssel beim Hoster für den SSH-Benutzer der Domain kotthaus-bs.de hinterlegen (z. B. CyberPanel › SSH-Zugang bzw. `~/.ssh/authorized_keys`).
-2. **SSH-Alias** in `~/.ssh/config` (Server von kotthaus-bs.de: 152.53.13.207 – nicht derselbe wie gcdb-staging; Benutzer beim Hoster nachsehen):
+1. **SSH-Schlüssel:** `~/.ssh/kbs_live` (Kommentar `claude-kbs-live`). Auf dem Server (netcup2, eingerichtet 2026-10-04) liegt der öffentliche Schlüssel außerhalb des Webroots in `/etc/ssh/authorized_keys/kbs`; `/etc/ssh/sshd_config.d/kbs.conf` erlaubt für den Benutzer `kbs` nur Schlüssel, keine Weiterleitungen. `kbs` besitzt die Website und ist auch der PHP-Benutzer (`lsphp`) – kein root.
+2. **SSH-Alias** in `~/.ssh/config` (Server von kotthaus-bs.de: 152.53.13.207 – nicht derselbe wie gcdb-staging):
    ```
    Host kbs-live
        HostName 152.53.13.207
-       User <ssh-benutzer>
+       User kbs
        Port 22
        IdentityFile ~/.ssh/kbs_live
        IdentitiesOnly yes
    ```
-   Test: `ssh kbs-live "cd ~/public_html && wp core version && wp option get home"` → `https://kotthaus-bs.de`.
+   WordPress liegt in `/srv/www/kbs`. **WP-CLI immer mit dem PHP der Website** aufrufen – dem System-PHP fehlt `mysqli`, und `/usr/local/bin/wp` (Phar) nimmt sonst das System-PHP:
+   ```bash
+   ssh kbs-live '/usr/local/lsws/lsphp85/bin/php /usr/local/bin/wp --path=/srv/www/kbs option get home'
+   ```
+   → `https://kotthaus-bs.de`. Ändert sich die PHP-Version der Website, den Pfad anpassen (`readlink /proc/$(pgrep -u kbs -x lsphp | head -1)/exe`). Die Meldung „Could not chdir to home directory /home/kbs“ ist harmlos.
 3. **Anwendungspasswort:** live unter Benutzer › Profil › Anwendungspasswörter „Claude kbs-live“ anlegen.
 4. **MCP-Server** in `D:\Projekte\.mcp.json` ergänzen (wie `wp-gcdb-staging`, ohne `NODE_EXTRA_CA_CERTS`, die Live-Seite hat ein echtes Zertifikat):
    ```json
@@ -166,7 +170,7 @@ Nach dem Umzug ist kotthaus-bs.de für Claude unter dem Namen **kbs-live** errei
 1. **Lokal entwickeln und prüfen** auf kbs.local (Build → kopieren → Sync, Browser, `kontrast.mjs`).
 2. **Committen und pushen.**
 3. **Live sichern:** Duplicator-Paket auf kotthaus-bs.de (oder Sicherung beim Hoster) – vor jeder größeren Übertragung.
-4. **Dateien hochladen:** `wordpress/etch/dist/` nach `~/public_html/wp-content/kbs/` (per `tar` über SSH). Dateien, die nicht mehr gebaut werden, nur melden, nicht löschen.
+4. **Dateien hochladen:** `wordpress/etch/dist/` nach `/srv/www/kbs/wp-content/kbs/` (`tar -cf - . | ssh kbs-live 'tar -xf - -C /srv/www/kbs/wp-content/kbs --no-same-owner'`). Dateien, die nicht mehr gebaut werden, nur melden, nicht löschen.
 5. **Snippets** (nur wenn PHP geändert), einer von zwei Wegen:
    - **Von Hand:** in WPCodeBox das betroffene Snippet öffnen, Code aus `wordpress/snippets/<datei>.php` einfügen, speichern. Für einzelne Dateien am einfachsten.
    - **Per Snippet-Sync:** in WPCodeBox › Einstellungen › MCP kurzzeitig „Update Snippet“ (und „List Snippets/Folders“) freigeben, `kbs_mcp_snippets_sync( [ 'nur' => [ '<datei ohne .php>' ] ] )` per WP-CLI, danach die Freigaben wieder entziehen.
@@ -175,7 +179,7 @@ Nach dem Umzug ist kotthaus-bs.de für Claude unter dem Namen **kbs-live** errei
 6. **Prüfen, dann übertragen** (Etch-Inhalte):
    1. Sync mit `pruefen: true` → Liste ansehen.
    2. Bei **live geändert**: nachfragen – Änderung erst ins Repo übernehmen (Live-Inhalt lesen, in `seiten.mjs`/`komponenten.mjs` einarbeiten, neu bauen) oder diesen Inhalt auslassen.
-   3. Sync ausführen; nur die gewünschten Bereiche (`what`: `stylesheet`, `components`, `templates`, `pages`).
+   3. Sync ausführen, live immer gezielt: Bereich (`what`: `stylesheet`, `components`, `templates`, `pages`) und Auswahl (`nur`: Komponenten-Keys bzw. Seiten-/Template-Slugs), z. B. `{ what: "components", nur: ["Kontaktformular"] }`.
 7. **ACSS** (nur wenn Farben/Buttons/Schrift geändert): `kbs_mcp_acss_colors( [ 'aus_datei' => true ] )` per WP-CLI.
 8. **Live im Browser prüfen.**
 

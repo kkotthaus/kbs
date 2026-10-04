@@ -212,9 +212,23 @@ const anliegen = ['IT-Betreuung', 'IT-Beratung', 'WordPress-Website', 'Fernwartu
 const kontaktformularKomponente = {
   key: 'Kontaktformular',
   name: 'Kontaktformular',
-  description: 'Anfrageformular (Name, Firma, E-Mail, Telefon, Anliegen, Nachricht, Datenschutz-Zustimmung) mit Spam-Schutz ohne Cookies. Versand und Meldungen: snippets/kbs-kontakt.php ({options.kbs.kontakt.…}); Empfänger aus den Firmendaten.',
+  description: 'Anfrageformular (Name, Firma, E-Mail, Telefon, Anliegen, Nachricht, Datenschutz-Zustimmung) mit Spam-Schutz ohne Cookies. Abschaltbar unter Firmendaten › Kontaktformular (dann Hinweis mit Telefon und E-Mail). Daten: snippets/kbs-kontakt.php ({options.kbs.kontakt.…}); Empfänger aus den Firmendaten.',
   properties: [],
   content: el('div', 'contact-form', [
+    // Ausgeschaltet (Firmendaten › Kontaktformular): Hinweis mit Telefon und E-Mail statt Formular
+    wenn(`${KONTAKT}.formular_aktiv`, [
+      el('div', 'form-message', [
+        t('p', 'form-message__title', 'Das Kontaktformular ist gerade nicht verfügbar.'),
+        el('p', '', [
+          text('Rufen Sie uns gern an unter '),
+          t('a', '', firma('telefon'), { attrs: { href: firma('telefon_href') } }),
+          text(' oder schreiben Sie an '),
+          t('a', '', firma('email'), { attrs: { href: `mailto:${firma('email')}` } }),
+          text('.'),
+        ]),
+      ], { attrs: { id: 'formular-meldung' } }),
+    ], 'isFalsy'),
+    wenn(`${KONTAKT}.formular_aktiv`, [
     wenn(`${KONTAKT}.gesendet`, [
       el('div', 'form-message form-message--success', [t('p', 'form-message__title', 'Vielen Dank für Ihre Anfrage!'), t('p', '', 'Wir melden uns in der Regel innerhalb eines Werktags bei Ihnen.')], { attrs: { role: 'status', id: 'formular-meldung' } }),
     ]),
@@ -248,6 +262,7 @@ const kontaktformularKomponente = {
       ]),
       el('button', 'btn--primary contact-form__submit', [text('Anfrage senden'), icon('arrow')], { attrs: { type: 'submit' } }),
     ], { attrs: { method: 'post', action: `{${KONTAKT}.action}`, id: 'formular' } }),
+    ]),
   ], { name: 'Kontaktformular' }),
 };
 

@@ -103,11 +103,12 @@ add_action(
 			'sync-from-files',
 			array(
 				'label'            => 'Seiten, Templates, Komponenten und Stylesheet aus dem Build übernehmen',
-				'description'      => 'Liest die gebauten Dateien aus wp-content/kbs/ (manifest.json, component-<key>.html, template-<slug>.html, page-<slug>.html, kbs.css) und speichert sie: Komponenten per Key, Templates per Slug, Seiten per Pfad (mit Auszug, Startseite), globales Etch-Stylesheet „KBS“ – jeweils anlegen oder aktualisieren, nichts löschen.',
+				'description'      => 'Liest die gebauten Dateien aus wp-content/kbs/ (manifest.json, component-<key>.html, template-<slug>.html, page-<slug>.html, kbs.css) und speichert sie: Komponenten per Key, Templates per Slug, Seiten per Pfad (mit Auszug, Startseite), globales Etch-Stylesheet „KBS“ – jeweils anlegen oder aktualisieren, nichts löschen. nur: gezielt einzelne Keys/Slugs.',
 				'input_schema'     => array(
 					'type'       => 'object',
 					'properties' => array(
 						'what' => array( 'type' => 'string', 'enum' => array( 'all', 'components', 'templates', 'pages', 'stylesheet' ), 'default' => 'all' ),
+						'nur'  => array( 'type' => 'array', 'items' => array( 'type' => 'string' ), 'description' => 'Nur diese Komponenten-Keys bzw. Template-/Seiten-Slugs übertragen (leer = alle). Live immer gezielt einsetzen.' ),
 					),
 				),
 				'execute_callback' => 'kbs_mcp_sync_from_files',
@@ -452,6 +453,9 @@ function kbs_mcp_sync_from_files( $input ) {
 	$dir      = KBS_DATEN;
 	$what     = $input['what'] ?? 'all';
 	$log      = array();
+	// nur: Keys bzw. Slugs, die übertragen werden (z. B. live gezielt eine Komponente); leer = alle
+	$nur      = array_filter( array_map( 'strval', (array) ( $input['nur'] ?? array() ) ) );
+	$gewaehlt = fn( string $name ) => ! $nur || in_array( $name, $nur, true );
 	$manifest = json_decode( (string) @file_get_contents( $dir . '/manifest.json' ), true );
 	if ( ! is_array( $manifest ) && 'stylesheet' !== $what ) {
 		return new WP_Error( 'kbs_manifest', 'manifest.json fehlt oder ist ungültig.' );
@@ -488,7 +492,7 @@ function kbs_mcp_sync_from_files( $input ) {
 				'fields'         => 'ids',
 			)
 		);
-		if ( in_array( $what, array( 'all', 'components' ), true ) ) {
+		if ( in_array( $what, array( 'all', 'components' ), true ) && $gewaehlt( $key ) ) {
 			$file = $dir . '/component-' . $key . '.html';
 			if ( ! is_readable( $file ) ) {
 				$log[] = array( 'component' => $key, 'status' => 'Datei fehlt' );
@@ -520,6 +524,9 @@ function kbs_mcp_sync_from_files( $input ) {
 		}
 		foreach ( $manifest['templates'] ?? array() as $tpl ) {
 			$slug = sanitize_key( $tpl['slug'] );
+			if ( ! $gewaehlt( $slug ) ) {
+				continue;
+			}
 			$file = $dir . '/template-' . $slug . '.html';
 			if ( ! is_readable( $file ) ) {
 				$log[] = array( 'template' => $slug, 'status' => 'Datei fehlt' );
@@ -541,6 +548,9 @@ function kbs_mcp_sync_from_files( $input ) {
 	if ( in_array( $what, array( 'all', 'pages' ), true ) ) {
 		foreach ( (array) ( $manifest['pages'] ?? array() ) as $seite ) {
 			$slug = sanitize_title( $seite['slug'] );
+			if ( ! $gewaehlt( $slug ) ) {
+				continue;
+			}
 			$file = $dir . '/page-' . $slug . '.html';
 			if ( ! is_readable( $file ) ) {
 				$log[] = array( 'page' => $slug, 'status' => 'Datei fehlt' );

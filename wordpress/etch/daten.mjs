@@ -22,6 +22,7 @@ export const firma = {
   recht_ust_id: 'DE322384610',
   recht_verantwortlich: 'Klaus Kotthaus, Anschrift wie oben',
   recht_hoster: '',
+  kontakt_formular: 'an',
   kontakt_empfaenger: '',
   pcvisit_kunden_url: 'https://gw47.pcvisit.de/v1/hosted/jumplink?func=download&productrole=guestSetup&gateway=lb3.pcvisit.de&companyid=0103297178',
   pcvisit_host_url: 'https://gw60.pcvisit.de/v1/hosted/jumplink?func=download&productrole=remoteHostSetup&gateway=stable-update.pcvisit.de&companyid=0103297178',
