@@ -1,6 +1,6 @@
 # Konventionen für Etch-Projekte
 
-Regeln für Komponenten, Block-Markup, Daten und CSS. Platzhalter: `<prefix>` steht für das Kürzel des jeweiligen Projekts (Datenschlüssel, Funktionsnamen, Ordner), `<PREFIX>` für dessen Konstanten.
+Regeln für Komponenten, Block-Markup, Daten, CSS und Hell/Dunkel. Platzhalter: `<prefix>` steht für das Kürzel des jeweiligen Projekts (Datenschlüssel, Funktionsnamen, Ordner), `<PREFIX>` für dessen Konstanten.
 
 ## Architektur
 
@@ -61,6 +61,34 @@ Regeln für Komponenten, Block-Markup, Daten und CSS. Platzhalter: `<prefix>` st
 - EMMP markiert den aktiven Menüpunkt selbst mit `aria-current="page"`, aber nur bei exakt gleicher URL (Elternbereiche auf Unterseiten nicht).
 - **Tabellarische Daten** in Komponenten als CSS-Grid aus `div`s mit Tabellen-Rollen (`role="table|row|columnheader|rowheader|cell"`, Name per `aria-label`). Breite Tabellen seitlich scrollbar, erste Spalte bei Bedarf fixiert.
 
+## Hell/Dunkel
+
+**Standard für jede Website:** helles und dunkles Farbschema. Welche Farben in welchem Schema gelten, legt das Design des Projekts fest.
+
+- ACSS-Einstellungen `auto-color-scheme: on` und `website-color-scheme: light dark`. Ohne Wahl folgt die Seite der Einstellung des Geräts (`prefers-color-scheme`).
+- Im CSS nur ACSS-Farbvariablen verwenden. ACSS rechnet sie mit `light-dark()` und tauscht im dunklen Schema die Abstufungen (`--white` wird schwarz). Feste Farbwerte wirken in beiden Schemata gleich und brechen das dunkle Schema.
+- Flächen, die in beiden Schemata gleich aussehen sollen (z. B. dunkle Markenflächen mit heller Schrift), über die ACSS-Einstellung `color-scheme-force-light-selectors` festlegen, nicht mit eigenen Farben.
+- **Bilder je Schema** (z. B. Logo in heller und dunkler Variante): beide Bilder ausgeben und per CSS-Klasse umschalten, nicht per `<picture>`/`<source media="(prefers-color-scheme: dark)">` – die Media-Query sieht nur das Gerät, nicht einen Umschalter:
+  ```css
+  html .scheme-bild--dunkel { display: none; }
+  @media (prefers-color-scheme: dark) {
+    html:not(.scheme--light) .scheme-bild--hell { display: none; }
+    html:not(.scheme--light) .scheme-bild--dunkel { display: block; }
+  }
+  html.scheme--dark .scheme-bild--hell { display: none; }
+  html.scheme--dark .scheme-bild--dunkel { display: block; }
+  ```
+  `html` vor der Klasse, damit die Regel gegen BEM-Klassen mit eigenem `display` gewinnt.
+- Kontraste in **beiden** Schemata prüfen (WCAG 2.1 AA), auch die festgelegten Flächen.
+
+**Optional: Umschalter** (je Projekt entscheiden):
+
+- Schaltet die ACSS-Klassen `scheme--light` bzw. `scheme--dark` am `<html>`. Damit rechnen alle ACSS-Farben im gewählten Schema.
+- Die Wahl im `localStorage` speichern (Schlüssel z. B. `<prefix>-farbschema`) und per Inline-Skript im `<head>` setzen, bevor die Seite gezeichnet wird – sonst blitzt kurz das andere Schema auf. Entspricht die neue Wahl der Geräteeinstellung, die gespeicherte Wahl löschen; die Seite folgt dann wieder dem Gerät.
+- `<button type="button" aria-pressed="true|false">` mit sichtbar verborgenem, gleichbleibendem Namen (z. B. „Dunkles Design“); den Zustand meldet `aria-pressed`. Symbol je Zustand per CSS über `[aria-pressed]`. Ohne JavaScript ausblenden (Klasse `js` am `<html>`).
+- `localStorage`-Zugriffe in `try`/`catch` (gesperrter Speicher, private Fenster); die Umschaltung funktioniert dann für die aktuelle Seite trotzdem.
+- In der Datenschutzerklärung erwähnen: Die Wahl wird nur lokal im Browser gespeichert, nicht übertragen; unbedingt erforderlich für die gewünschte Funktion (§ 25 Abs. 2 Nr. 2 TDDDG).
+
 ## Meta Box
 
 - **Beziehungen** zwischen Beitragstypen als Feld vom Typ **Post** statt MB Relationships, wenn Strukturen per MCP angelegt werden – Relationships lassen sich darüber nicht anlegen.
@@ -71,7 +99,7 @@ Regeln für Komponenten, Block-Markup, Daten und CSS. Platzhalter: `<prefix>` st
 
 ## Barrierefreiheit
 
-- Ziel ist WCAG 2.1 AA. Farbkontraste regelt das Projekt.
+- Ziel ist WCAG 2.1 AA. Farbkontraste regelt das Projekt, geprüft in beiden Farbschemata (siehe [Hell/Dunkel](#helldunkel)).
 - Ausgeblendete Elemente (z. B. inaktive Slides, geschlossene Menüs) dürfen per Tab nicht erreichbar sein.
 - Der zugängliche Name von Schaltflächen entspricht dem sichtbaren Text (WCAG 2.5.3); kein abweichendes `aria-label`.
 - Tabellarische Daten mit Tabellen-Rollen (siehe [CSS](#css)), Screenreader-Ansagen bei dynamischen Wechseln (z. B. „Element 3 von 18“).
