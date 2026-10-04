@@ -28,7 +28,16 @@ add_action(
 	var toggle = nav.querySelector('[data-nav-toggle]');
 	var subs = nav.querySelectorAll('[data-nav-sub]');
 
-	function setze(btn, offen) { btn.setAttribute('aria-expanded', offen ? 'true' : 'false'); }
+	function setze(btn, offen) {
+		btn.setAttribute('aria-expanded', offen ? 'true' : 'false');
+		// Geschlossenes Untermenü sofort verstecken (ohne Ausblenden): sonst ist es während der Animation noch per Tab erreichbar.
+		// Nach der Animationsdauer wieder freigeben, damit das Öffnen per Maus (:hover) weiter funktioniert.
+		var sub = btn.hasAttribute('data-nav-sub') && document.getElementById(btn.getAttribute('aria-controls'));
+		if (!sub) return;
+		clearTimeout(sub.kbsZu);
+		sub.classList.toggle('main-nav__sub--zu', !offen);
+		if (!offen) sub.kbsZu = setTimeout(function () { sub.classList.remove('main-nav__sub--zu'); }, 400);
+	}
 	function schliesseSubs(ausser) { subs.forEach(function (b) { if (b !== ausser) setze(b, false); }); }
 
 	if (toggle) {

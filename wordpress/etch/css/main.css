@@ -203,6 +203,8 @@ html:not(.js) .scheme-toggle { display: none; }
   .main-nav__sub::before { content: ""; position: absolute; inset: -1rem 0 auto; height: 1rem; }
   .main-nav__item--has-sub:hover > .main-nav__sub,
   .main-nav__sub-toggle[aria-expanded="true"] + .main-nav__sub { opacity: 1; visibility: visible; transform: none; }
+  /* Gerade geschlossen (kbs-navigation.php): sofort weg, damit Tab nicht in das ausblendende Menü springt */
+  .main-nav__item--has-sub > .main-nav__sub.main-nav__sub--zu { opacity: 0; visibility: hidden; transition: none; }
 }
 
 @media (max-width: 63.99em) {
