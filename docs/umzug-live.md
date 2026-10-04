@@ -63,8 +63,8 @@ Im Installer:
 
 1. **`wp-config.php`: `define( 'WP_ENVIRONMENT_TYPE', 'local' );` entfernen** (oder `'production'`). Die Zeile kommt aus kbs.local mit. Steht sie dort, sind die MCP-Baufunktionen (`kbs/*`) live aktiv!
 2. `KBS_MCP_LIVE` darf **nicht** in der `wp-config.php` stehen.
-3. MCP Adapter deaktivieren; WPCodeBox › Einstellungen › MCP ausschalten.
-4. Anwendungspasswörter (für MCP) bei allen Benutzern widerrufen, Benutzer und Admin-Passwörter prüfen.
+3. MCP Adapter (0.6.1, kommt mit) bleibt aktiv – er ist der Zugang für Claude (`kbs-live`, siehe [Zugang für Claude](#zugang-für-claude-kbs-live)). WPCodeBox › Einstellungen › MCP: nur die **lesenden** Werkzeuge frei, Create/Update/Enable/Disable/Delete/Run aus (Soll „live“ der Prüfliste in etch-nodes/docs/betrieb.md).
+4. Alle Anwendungspasswörter aus kbs.local widerrufen (sie kommen mit). Danach live ein neues Anwendungspasswort „Claude kbs-live“ anlegen (siehe unten). Benutzer und Admin-Passwörter prüfen.
 5. Installer-Dateien von Duplicator löschen (Duplicator weist darauf hin).
 
 **Betrieb:**
@@ -113,14 +113,53 @@ Heute überschreibt `kbs/sync-from-files` Seiten, Templates, Komponenten und Aus
 
 Bis das umgesetzt ist: vor jeder Übertragung den Live-Inhalt der betroffenen Seiten mit `kbs/get-content` bzw. im Editor vergleichen und nur einzelne, geprüfte Teile übertragen.
 
-### Werkzeuge für live (einmal einrichten)
+### Zugang für Claude: kbs-live
 
-- **SSH-Zugang** zu kotthaus-bs.de mit WP-CLI (SSH-Alias, z. B. `kbs-live`, in `~/.ssh/config`). Über WP-CLI laufen dieselben PHP-Funktionen wie per MCP, ohne dass live ein MCP-Endpunkt offen ist.
-- Die Baufunktionen werden **nur für den einen WP-CLI-Aufruf** freigeschaltet, nicht dauerhaft in der `wp-config.php`:
+Nach dem Umzug ist kotthaus-bs.de für Claude unter dem Namen **kbs-live** erreichbar – wie `gcdb-staging`, aber für die echte Live-Seite: per **SSH** (Alias `kbs-live`, WP-CLI) und per **MCP** (Server `wp-kbs-live`).
+
+**Regeln für kbs-live:**
+
+- Standard ist **lesen** (Seiten, Einstellungen, Snippets, Logs ansehen, vergleichen).
+- Schreiben, Hochladen, Sync, Snippet-Änderungen nur auf **ausdrückliche Anweisung** und nach dem Ablauf unten; live gepflegte Inhalte nie ohne Rückfrage überschreiben.
+- Die Baufunktionen `kbs/*` sind live per MCP nicht verfügbar (kein `KBS_MCP_LIVE` in der `wp-config.php`). Gebraucht werden sie nur für eine Übertragung – dann per WP-CLI und nur für diesen einen Aufruf:
   ```bash
-  ssh kbs-live "cd ~/public_html && wp --user=<admin> --exec=\"define('KBS_MCP_LIVE', true);\" eval '…'"
+  ssh kbs-live "cd ~/public_html && wp --user=kkotthaus --exec=\"define('KBS_MCP_LIVE', true);\" eval '…'"
   ```
-- Kein MCP-Server für live in der Claude-Konfiguration, solange es nicht ausdrücklich gebraucht wird.
+- Was MCP live sonst anbietet (WordPress-Grundfunktionen, Meta Box, lesende WPCodeBox-Werkzeuge), wird ebenfalls nur lesend genutzt, außer auf ausdrückliche Anweisung.
+
+**Einrichten (nach dem Umzug):**
+
+1. **SSH-Schlüssel:** liegt schon bereit (`~/.ssh/kbs_live`, öffentlicher Teil `~/.ssh/kbs_live.pub`, Kommentar `claude-kbs-live`). Den öffentlichen Schlüssel beim Hoster für den SSH-Benutzer der Domain kotthaus-bs.de hinterlegen (z. B. CyberPanel › SSH-Zugang bzw. `~/.ssh/authorized_keys`).
+2. **SSH-Alias** in `~/.ssh/config` (Server von kotthaus-bs.de: 152.53.13.207 – nicht derselbe wie gcdb-staging; Benutzer beim Hoster nachsehen):
+   ```
+   Host kbs-live
+       HostName 152.53.13.207
+       User <ssh-benutzer>
+       Port 22
+       IdentityFile ~/.ssh/kbs_live
+       IdentitiesOnly yes
+   ```
+   Test: `ssh kbs-live "cd ~/public_html && wp core version && wp option get home"` → `https://kotthaus-bs.de`.
+3. **Anwendungspasswort:** live unter Benutzer › Profil › Anwendungspasswörter „Claude kbs-live“ anlegen.
+4. **MCP-Server** in `D:\Projekte\.mcp.json` ergänzen (wie `wp-gcdb-staging`, ohne `NODE_EXTRA_CA_CERTS`, die Live-Seite hat ein echtes Zertifikat):
+   ```json
+   "wp-kbs-live": {
+     "command": "cmd",
+     "args": ["/c", "npx", "-y", "@automattic/mcp-wordpress-remote@latest"],
+     "env": {
+       "WP_API_URL": "https://kotthaus-bs.de/wp-json/mcp/mcp-adapter-default-server",
+       "WP_API_USERNAME": "kkotthaus",
+       "WP_API_PASSWORD": "<Anwendungspasswort>"
+     }
+   }
+   ```
+   Claude Code neu starten, dann `mcp-adapter-discover-abilities` auf `wp-kbs-live`: es dürfen **keine** `kbs/*`-Funktionen und keine schreibenden `wpcodebox/*`-Werkzeuge auftauchen.
+5. **Bot-Schutz des Servers:** kotthaus-bs.de antwortet heute (2026-10-04) auf Anfragen ohne Browser-Kennung mit **403** (z. B. `curl`), auch auf `/wp-json/`. Prüfen, ob das nach dem Umzug noch gilt; falls ja, beim Hoster bzw. in der LiteSpeed-/Firewall-Einstellung freigeben:
+   - `/wp-json/mcp/` für den MCP-Zugang (authentifiziert per Anwendungspasswort),
+   - die Crawler der Suchmaschinen und KI-Suchdienste (Googlebot, Bingbot, OAI-SearchBot, ChatGPT-User, PerplexityBot, Claude-SearchBot …), sonst sehen sie Seite, Sitemap und `/llms.txt` nicht.
+6. **Eintrag in `D:\Projekte\CLAUDE.md`** (Abschnitt kbs) von „geplant“ auf „eingerichtet“ setzen.
+
+**Abschalten**, falls der Zugang nicht mehr gebraucht wird: Anwendungspasswort „Claude kbs-live“ widerrufen, Eintrag aus `.mcp.json` entfernen, öffentlichen Schlüssel beim Hoster löschen.
 
 ### Ablauf einer Änderung
 
