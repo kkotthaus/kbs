@@ -15,7 +15,7 @@ export const firma = {
   firma_telefon: '02174 666 47 17',
   firma_fax: '02174 666 47 15',
   firma_email: 'info@kotthaus-bs.de',
-  firma_erreichbarkeit: '', // z. B. Bürozeiten; leer = Abschnitt ausgeblendet
+  firma_erreichbarkeit: 'Mo–Do 8:00–17:00 Uhr\nFr 8:00–12:00 Uhr', // eine Angabe je Zeile; leer = Abschnitt ausgeblendet
   recht_vertretung: 'Klaus Kotthaus',
   recht_registergericht: 'Amtsgericht Köln',
   recht_registernummer: 'HRB 96787',

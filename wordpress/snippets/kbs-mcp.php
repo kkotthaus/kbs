@@ -594,9 +594,9 @@ function kbs_mcp_sync_from_files( $input ) {
 	return $log;
 }
 
-/** Nur Farb-Einstellungen und das Aussehen der Buttons von Automatic.css. */
+/** Nur Farb-Einstellungen, das Aussehen der Buttons und die Schrift von Automatic.css. */
 function kbs_mcp_acss_farbschluessel( string $key ): bool {
-	return (bool) preg_match( '/^(color-[a-z0-9-]+|option-[a-z]+-clr|option-palette-unify-[a-z-]+|auto-color-scheme|website-color-scheme|option-ref-color-tokens|btn-(primary|secondary)-(hover-)?text|link-color(-hover)?|btn-(border-radius|border-width|font-weight|line-height|padding-block|padding-inline)|(primary|secondary|tertiary|accent|base|neutral|success|warning|danger|info)(-(ultra-light|light|semi-light|semi-dark|dark|ultra-dark|hover))?-[lch](-alt)?-oklch)$/', $key );
+	return (bool) preg_match( '/^(color-[a-z0-9-]+|option-[a-z]+-clr|option-palette-unify-[a-z-]+|auto-color-scheme|website-color-scheme|option-ref-color-tokens|btn-(primary|secondary)-(hover-)?text|link-color(-hover)?|btn-(border-radius|border-width|font-weight|line-height|padding-block|padding-inline)|text-font-family|heading-(font-family|weight|letter-spacing)|(primary|secondary|tertiary|accent|base|neutral|success|warning|danger|info)(-(ultra-light|light|semi-light|semi-dark|dark|ultra-dark|hover))?-[lch](-alt)?-oklch)$/', $key );
 }
 
 function kbs_mcp_acss_colors( $input ) {
@@ -609,9 +609,11 @@ function kbs_mcp_acss_colors( $input ) {
 		if ( ! is_array( $werte ) ) {
 			return new WP_Error( 'kbs_daten', 'daten/acss-farben.json fehlt oder ist ungültig.' );
 		}
-		// Button-Aussehen (etch/acss-buttons.mjs)
-		$buttons = json_decode( (string) @file_get_contents( KBS_DATEN . '/daten/acss-buttons.json' ), true );
-		$werte   = array_merge( $werte, is_array( $buttons ) ? $buttons : array() );
+		// Button-Aussehen (etch/acss-buttons.mjs) und Schrift (etch/acss-schrift.mjs)
+		foreach ( array( 'acss-buttons', 'acss-schrift' ) as $datei ) {
+			$zusatz = json_decode( (string) @file_get_contents( KBS_DATEN . '/daten/' . $datei . '.json' ), true );
+			$werte  = array_merge( $werte, is_array( $zusatz ) ? $zusatz : array() );
+		}
 	}
 	if ( $werte ) {
 		$abgelehnt = array_values( array_filter( array_keys( $werte ), fn( $k ) => ! kbs_mcp_acss_farbschluessel( (string) $k ) ) );

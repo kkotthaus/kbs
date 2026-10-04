@@ -55,19 +55,18 @@ const paare = [
   // ACSS-Buttons (btn--primary, btn--primary btn--outline)
   ['white', 'primary', 4.5, 'btn--primary'], ['white', 'primary-hover', 4.5, 'btn--primary Hover'],
   ['primary', SEITE, 4.5, 'btn--outline Text'], ['primary', KARTE, 4.5, 'btn--outline Text auf Karten'], ['primary-ultra-light', 'primary-hover', 4.5, 'btn--outline Hover'],
-  ['primary', SEITE, 3, 'Icons, Fokusrahmen (Grafik)'], ['primary', KARTE, 3, 'Icons auf Karten (Grafik)'],
+  ['primary', SEITE, 3, 'Icons, Fokusrahmen (Grafik)'], ['primary', KARTE, 3, 'Icons auf Karten (Grafik)'], ['white', 'primary', 3, 'Symbol auf Markenfläche (Leistungskarten)'], ['primary-dark', KARTE, 4.5, 'Eyebrow-Pille, Brotkrumen'],
   ['base-semi-dark', KARTE, 3, 'Rahmen Eingabefeld'],
   ['primary-dark', SEITE, 3, 'Fokusring Buttons'], ['primary-dark', KARTE, 3, 'Fokusring Buttons auf Karten'], ['primary', KARTE, 3, 'Fokusring Links'],
   ['success', 'success-ultra-light', 4.5, 'Meldung gesendet'], ['danger', 'danger-ultra-light', 4.5, 'Fehlermeldung Formular'], ['danger', KARTE, 4.5, 'Fehlertext am Feld'],
 ];
-// Bereiche, die immer hell gerechnet werden (Hero, Seitenkopf, CTA-Band, Footer)
+// Dunkle Akzentflächen, die immer hell gerechnet werden (Notfall-Karte, Erstgespräch-Karte, Aufruf-Panel, Footer)
 const immerHell = [
-  ['white', 'secondary-ultra-dark', 4.5, 'Hero/Footer-Text'], ['secondary-light', 'secondary-ultra-dark', 4.5, 'Hero/Footer-Nebentext'],
-  ['primary-light', 'secondary-ultra-dark', 4.5, 'Hero-Eyebrow, Footer-Links-Hover'], ['white', 'primary', 4.5, 'CTA-Band'],
-  ['primary-ultra-light', 'primary', 4.5, 'CTA-Band Nebentext'],
-  ['primary', 'primary-ultra-light', 4.5, 'btn--primary-light (CTA-Band)'], ['primary-ultra-dark', 'primary-light', 4.5, 'btn--primary-light Hover'],
-  ['primary-light', 'secondary-ultra-dark', 4.5, 'btn--primary-light btn--outline (Hero)'], ['primary-dark', 'primary-light', 4.5, 'btn--primary-light btn--outline Hover'], ['white', 'secondary-dark', 4.5, 'Seitenkopf-Karte'],
-  ['primary-light', 'secondary-ultra-dark', 3, 'Fokusring auf dunklen Flächen'], ['white', 'primary', 3, 'Fokusring im CTA-Band'],
+  ['white', 'secondary-ultra-dark', 4.5, 'Titel/Text auf dunkler Fläche'], ['secondary-light', 'secondary-ultra-dark', 4.5, 'Nebentext auf dunkler Fläche'],
+  ['primary-light', 'secondary-ultra-dark', 4.5, 'Eyebrow, Links, Footer-Hover auf dunkler Fläche'],
+  ['white', 'primary', 4.5, 'btn--primary auf dunkler Fläche'], ['white', 'primary-hover', 4.5, 'btn--primary Hover auf dunkler Fläche'],
+  ['primary-light', 'secondary-ultra-dark', 4.5, 'btn--primary-light btn--outline (Aufruf-Panel)'], ['primary-dark', 'primary-light', 4.5, 'btn--primary-light btn--outline Hover'],
+  ['primary-light', 'secondary-ultra-dark', 3, 'Fokusring auf dunklen Flächen'], ['primary', 'secondary-ultra-dark', 3, 'Telefon-Symbol (Grafik)'],
 ];
 
 let fehler = 0;

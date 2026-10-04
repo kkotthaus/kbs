@@ -1,6 +1,6 @@
 // Baut alle Dateien für WordPress nach wordpress/etch/dist/:
 // component-<key>.html, page-<slug>.html, template-<slug>.html, manifest.json, kbs.css,
-// daten/acss-farben.json, daten/einstellungen-firmendaten.json, daten/weiterleitungen.json, snippets/*.php
+// daten/acss-farben.json, daten/acss-buttons.json, daten/acss-schrift.json, daten/einstellungen-firmendaten.json, daten/weiterleitungen.json, snippets/*.php
 // Übertragen: dist nach wp-content/kbs/ kopieren, dann MCP kbs/sync-from-files (siehe wordpress/README.md).
 
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -10,6 +10,7 @@ import { components } from './komponenten.mjs';
 import { pages, templates } from './seiten.mjs';
 import { acssEinstellungen } from './acss-farben.mjs';
 import { acssButtons } from './acss-buttons.mjs';
+import { acssSchrift } from './acss-schrift.mjs';
 import { firma, weiterleitungen } from './daten.mjs';
 
 const hier = dirname(fileURLToPath(import.meta.url));
@@ -49,6 +50,7 @@ schreibe('kbs.css', css + '\n');
 
 schreibe('daten/acss-farben.json', JSON.stringify(acssEinstellungen(), null, 1) + '\n');
 schreibe('daten/acss-buttons.json', JSON.stringify(acssButtons, null, 1) + '\n');
+schreibe('daten/acss-schrift.json', JSON.stringify(acssSchrift, null, 1) + '\n');
 schreibe('daten/einstellungen-firmendaten.json', JSON.stringify(firma, null, 2) + '\n');
 schreibe('daten/weiterleitungen.json', JSON.stringify(weiterleitungen, null, 2) + '\n');
 

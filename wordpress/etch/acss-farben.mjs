@@ -26,8 +26,8 @@ export const palette = {
 };
 
 // Farbschema: folgt der Einstellung des Betrachters (prefers-color-scheme), ACSS „light dark“.
-// Diese Bereiche bleiben in beiden Schemata gleich (dunkle Markenflächen mit heller Schrift).
-export const immerHell = ['.home-hero', '.page-hero', '.cta-band', '.site-footer'];
+// Diese Bereiche bleiben in beiden Schemata gleich (dunkle Akzentflächen mit heller Schrift). Hero und Seitenkopf sind hell und folgen dem Schema.
+export const immerHell = ['.hero-card', '.service-card--cta', '.cta-band', '.site-footer'];
 
 // sRGB-Hex → OKLCH (Björn Ottosson)
 export function hexToOklch(hex) {

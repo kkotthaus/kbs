@@ -7,17 +7,21 @@ import { leistungen, zielgruppen } from './daten.mjs';
 
 // ---------- Bausteine ----------
 
-// Seitenkopf aller Unterseiten. Wasserzeichen: standardmäßig das Firmenlogo (helle Variante, der Kopf ist dunkel),
-// auf der Fernwartungsseite das PC-Visit-Signet (wasserzeichen: 'pcvisit'). Rein dekorativ.
+// Seitenkopf aller Unterseiten. Wasserzeichen: standardmäßig das Firmenlogo (der Kopf ist hell und folgt Hell/Dunkel,
+// deshalb im dunklen Schema die helle Logo-Variante), auf der Fernwartungsseite das PC-Visit-Signet (wasserzeichen: 'pcvisit'). Rein dekorativ.
 const WASSERZEICHEN = {
-  logo: { src: firma('logo_dunkel'), breite: '560', hoehe: '480' },
+  logo: { src: firma('logo'), dunkel: firma('logo_dunkel'), breite: '560', hoehe: '480' },
   pcvisit: { src: '{options.kbs.pcvisit.logo}', breite: '480', hoehe: '480' },
+};
+const wasserzeichenBild = (art) => {
+  const w = WASSERZEICHEN[art];
+  const img = el('img', `page-hero__watermark page-hero__watermark--${art}`, [], { attrs: { src: w.src, alt: '', 'aria-hidden': 'true', width: w.breite, height: w.hoehe } });
+  if (!w.dunkel) return img;
+  return el('picture', '', [el('source', '', [], { attrs: { srcset: w.dunkel, media: '(prefers-color-scheme: dark)' } }), img]);
 };
 const seitenkopf = ({ eyebrow, titel, lead, aktionen, wasserzeichen = 'logo' }) =>
   el('section', 'page-hero page-hero--watermark', [
-    el('img', `page-hero__watermark page-hero__watermark--${wasserzeichen}`, [], {
-      attrs: { src: WASSERZEICHEN[wasserzeichen].src, alt: '', 'aria-hidden': 'true', width: WASSERZEICHEN[wasserzeichen].breite, height: WASSERZEICHEN[wasserzeichen].hoehe },
-    }),
+    wasserzeichenBild(wasserzeichen),
     el('div', 'page-hero__inner container', [
       // Brotkrumen von OhMyEtch: Pfad automatisch aus der Seitenhierarchie, mit BreadcrumbList-Schema für Google
       ome('OmeBreadcrumbs', { content: { homeLabel: 'Start', separator: '/', ariaLabel: 'Brotkrumen' } }, {}, 'Brotkrumen'),
@@ -93,7 +97,7 @@ const startseite = markup(
         t('p', 'home-hero__eyebrow', `IT-Service und Webdesign aus ${firma('ort')}`),
         t('h1', 'home-hero__title', 'Ihre IT-Abteilung – ohne eigene IT-Abteilung.'),
         t('p', 'home-hero__lead', `Wir betreuen kleine Unternehmen in ${firma('region')}: Computer, Netzwerk und Server ebenso wie moderne WordPress-Websites. Persönlich vor Ort und schnell per Fernwartung.`),
-        el('div', 'home-hero__actions', [btnKontakt(firma('angebot_titel')), t('a', 'btn--primary-light btn--outline', 'Fernwartung starten', { attrs: { href: '/fernwartung/' } })]),
+        el('div', 'home-hero__actions', [btnKontakt(firma('angebot_titel')), t('a', 'btn--primary btn--outline', 'Fernwartung starten', { attrs: { href: '/fernwartung/' } })]),
         checkListe(['Fester Ansprechpartner', 'Hilfe per Fernwartung ohne Anfahrtskosten', `Vor Ort in ${firma('ort')} und Umgebung`], 'hero'),
       ]),
       el('aside', 'hero-card', [
@@ -168,7 +172,6 @@ const startseite = markup(
       abschnittKopf('Häufige Fragen', 'Gut zu wissen', 'Ihre Frage ist nicht dabei? Rufen Sie uns einfach an.'),
       faq([
         ['Was kostet die IT-Betreuung?', 'Das hängt von der Zahl der Arbeitsplätze und Ihren Anforderungen ab. Nach dem kostenlosen Erstgespräch erhalten Sie ein klares Angebot – Sie wissen vorher, womit Sie rechnen können.'],
-        ['Kommen Sie auch zu uns ins Büro?', `Ja. Wir sind in ${firma('ort')} zu Hause und betreuen Kunden in der ganzen Umgebung vor Ort. Vieles lässt sich aber schneller per Fernwartung erledigen.`],
         ['Wie sicher ist die Fernwartung?', 'Eine Verbindung entsteht nur, wenn Sie das Programm selbst starten und uns die Sitzungsnummer nennen. Sie sehen alles mit und können die Sitzung jederzeit beenden.'],
         ['Kann ich meine Website später selbst ändern?', 'Ja. Wir richten die Website so ein, dass Sie Texte, Bilder, Preise und Angebote ohne Programmierkenntnisse selbst pflegen können – auf Wunsch mit kurzer Einweisung.'],
         ['Übernehmen Sie auch bestehende Systeme und Websites?', 'Ja. Wir verschaffen uns zuerst einen Überblick und sagen Ihnen offen, was bleiben kann und wo Handlungsbedarf besteht.'],
@@ -489,7 +492,7 @@ export const templates = [
     slug: '404',
     title: 'Seite nicht gefunden',
     content: rahmen(
-      seitenkopf({ eyebrow: 'Fehler 404', titel: 'Diese Seite gibt es nicht (mehr).', lead: 'Vielleicht hilft Ihnen einer dieser Links weiter – oder Sie rufen uns einfach an.', aktionen: [t('a', 'btn--primary-light', 'Zur Startseite', { attrs: { href: '/' } }), t('a', 'btn--primary-light btn--outline', 'Leistungen', { attrs: { href: '/leistungen/' } })] }),
+      seitenkopf({ eyebrow: 'Fehler 404', titel: 'Diese Seite gibt es nicht (mehr).', lead: 'Vielleicht hilft Ihnen einer dieser Links weiter – oder Sie rufen uns einfach an.', aktionen: [t('a', 'btn--primary', 'Zur Startseite', { attrs: { href: '/' } }), t('a', 'btn--primary btn--outline', 'Leistungen', { attrs: { href: '/leistungen/' } })] }),
       abschnitt('', 'Leistungen', [t('h2', 'visually-hidden', 'Unsere Leistungen'), komponente('Leistungskarten')]),
     ),
   },

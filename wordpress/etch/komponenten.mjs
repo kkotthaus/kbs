@@ -250,7 +250,7 @@ const kontaktformularKomponente = {
 const ctaKomponente = {
   key: 'CtaBand',
   name: 'Aufruf Erstgespräch',
-  description: 'Farbiges Band mit Aufruf zum kostenlosen Erstgespräch: Überschrift (Eigenschaft titel), Angebotstext, Buttons Kontakt und Telefon. Daten: Firmendaten (Angebot, Telefon).',
+  description: 'Dunkles Panel mit Aufruf zum kostenlosen Erstgespräch: Überschrift (Eigenschaft titel), Angebotstext, Buttons Kontakt und Telefon. Daten: Firmendaten (Angebot, Telefon).',
   properties: [{ key: 'titel', name: 'Überschrift', type: { primitive: 'string' }, default: 'Lassen Sie uns über Ihre IT sprechen.' }],
   content: el('section', 'cta-band', [
     el('div', 'cta-band__inner container', [
@@ -260,7 +260,7 @@ const ctaKomponente = {
         t('p', 'cta-band__lead', firma('angebot_text')),
       ]),
       el('div', 'cta-band__actions', [
-        t('a', 'btn--primary-light', 'Erstgespräch vereinbaren', { attrs: { href: '/kontakt/' } }),
+        t('a', 'btn--primary', 'Erstgespräch vereinbaren', { attrs: { href: '/kontakt/' } }),
         el('a', 'btn--primary-light btn--outline', [icon('phone'), text(firma('telefon'))], { attrs: { href: firma('telefon_href') } }),
       ]),
     ]),
