@@ -601,6 +601,10 @@ function kbs_mcp_sync_from_files( $input ) {
 		$log[] = array( 'stylesheet' => 'KBS', 'status' => $res['status'], 'id' => $id ?? ( $res['data']['id'] ?? null ) );
 	}
 
+	// Komponenten, Templates und Stylesheet wirken auf alle Seiten: Seitencache leeren (LiteSpeed Cache; ohne Plugin wirkungslos)
+	if ( $log ) {
+		do_action( 'litespeed_purge_all' );
+	}
 	return $log;
 }
 

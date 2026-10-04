@@ -190,7 +190,7 @@ Kleine reine CSS-Änderung: Schritte 1–4, dann nur `what: stylesheet` – betr
 Damit kbs.local die echten Inhalte (Firmendaten, Mediathek, live angelegte Seiten) kennt, gelegentlich in **diese** Richtung kopieren:
 
 1. Duplicator-Paket auf kotthaus-bs.de erstellen, auf kbs.local installieren (Adresse `https://kbs.local`).
-2. Danach auf kbs.local: `WP_ENVIRONMENT_TYPE` wieder `local`, MCP Adapter 0.6.1 aktiv (nicht 0.7.x), Anwendungspasswort für MCP neu anlegen, WPCodeBox-MCP-Werkzeuge wieder freigeben, „Suchmaschinen abhalten“ an, SMTP aus bzw. auf Testpostfach.
+2. Danach auf kbs.local: `WP_ENVIRONMENT_TYPE` wieder `local`, MCP Adapter 0.6.1 aktiv (nicht 0.7.x), Anwendungspasswort für MCP neu anlegen, WPCodeBox-MCP-Werkzeuge wieder freigeben, „Suchmaschinen abhalten“ an, SMTP aus bzw. auf Testpostfach. Nur-live-Plugins deaktivieren: LiteSpeed Cache (und `wp-content/object-cache.php` entfernen), MainWP Child, Matomo; Security Ninja prüfen, damit es den lokalen MCP-Zugang nicht sperrt (Liste: [development-environment.md](development-environment.md#plugins-stand-2026-10-04)).
 3. Build kopieren und syncen, damit lokal wieder der Repo-Stand gilt.
 
 Diese Richtung überschreibt nur kbs.local und ist unkritisch.

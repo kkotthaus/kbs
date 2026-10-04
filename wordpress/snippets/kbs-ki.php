@@ -425,3 +425,7 @@ add_action(
 		<?php
 	}
 );
+
+// Darstellung der KI-Kennzeichnung wirkt auf alle Seiten: nach dem Speichern den Seitencache leeren (LiteSpeed Cache)
+add_action( 'update_option_' . KBS_KI_OPTION, fn() => do_action( 'litespeed_purge_all' ) );
+add_action( 'add_option_' . KBS_KI_OPTION, fn() => do_action( 'litespeed_purge_all' ) );

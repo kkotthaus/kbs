@@ -201,3 +201,7 @@ add_filter(
 		return $data;
 	}
 );
+
+// Firmendaten erscheinen auf allen Seiten: nach dem Speichern den Seitencache leeren (LiteSpeed Cache; ohne Plugin wirkungslos)
+add_action( 'update_option_firmendaten', fn() => do_action( 'litespeed_purge_all' ) );
+add_action( 'add_option_firmendaten', fn() => do_action( 'litespeed_purge_all' ) );

@@ -2,18 +2,33 @@
 
 Stack, allgemeine Konventionen und Betrieb: [etch-nodes](../etch-nodes/CLAUDE.md). Projekt-Prefix (`<prefix>` in etch-nodes): `kbs`.
 
-## Plugins (kbs.local, Stand 2026-10-03)
+## Plugins (Stand 2026-10-04)
 
-| Baustein | Version | Anmerkung |
-| --- | --- | --- |
-| Etch (+ Etch-Theme) | 1.6.8 | |
-| Automatic.css | 4.0.1 | Farbschema „light dark“ (folgt dem Betrachter) |
-| OhMyEtch | 1.6.0 | Accordion, Breadcrumbs, Table of Contents |
-| Meta Box AIO | 3.12.0 | Einstellungsseite „Firmendaten“ (im Code registriert) |
-| WPCodeBox 2 | 1.4.1 | Ziel für die Snippets (Ordner „KBS“), siehe unten |
-| MCP Adapter | 0.6.1 | **nicht auf 0.7.x aktualisieren** (inkompatibel mit mcp-wordpress-remote) |
-| SEOPress Pro | 10.3 | Meta-Ausgabe, Open Graph, Sitemap (`/sitemaps.xml`), Indexierung, Auslieferung von `/llms.txt`; Titel und Inhalte der `llms.txt` kommen aus `kbs-seo.php` |
-| Duplicator Pro, Etch Font Manager, Media Bridge for Etch | – | |
+WordPress 7.1.2 auf beiden Seiten. Spalten: **lokal** = kbs.local, **live** = kotthaus-bs.de (gelesen per `kbs-live`, `wp plugin list`). Automatische Updates sind überall aus.
+
+| Baustein | Slug | Version | lokal | live | Anmerkung |
+| --- | --- | --- | --- | --- | --- |
+| Etch (+ Etch-Theme 0.0.7) | `etch` | 1.6.8 | aktiv | aktiv | |
+| Automatic.css | `automatic-css` | 4.0.1 | aktiv | aktiv | Farbschema „light dark“ (folgt dem Betrachter) |
+| OhMyEtch | `oh-my-etch` | 1.6.0 | aktiv | aktiv | Accordion, Breadcrumbs, Table of Contents |
+| Meta Box AIO | `meta-box-aio` | 3.12.0 | aktiv | aktiv | Einstellungsseite „Firmendaten“ (im Code registriert) |
+| WPCodeBox 2 | `wpcodebox2` | 1.4.1 | aktiv | aktiv | Snippets (Ordner „KBS“); MCP lokal mit Schreibwerkzeugen, live nur lesend |
+| MCP Adapter | `mcp-adapter` | 0.6.1 | aktiv | aktiv | **nicht auf 0.7.x aktualisieren** (inkompatibel mit mcp-wordpress-remote) – live wird ein Update angeboten, nicht einspielen. Live Zugang für Claude (`wp-kbs-live`) |
+| SEOPress + SEOPress Pro | `wp-seopress`, `wp-seopress-pro` | 10.3 | aktiv | aktiv | Meta-Ausgabe, Open Graph, Sitemap (`/sitemaps.xml`), Indexierung, Auslieferung von `/llms.txt`; Titel und Inhalte der `llms.txt` kommen aus `kbs-seo.php` |
+| Duplicator Pro | `duplicator-pro` | 5.0.5 | aktiv | aktiv | Umzug und Sicherung; nie mehr von lokal nach live |
+| Etch Font Manager | `etch-font-manager` | 1.0.16 | aktiv | aktiv | lädt nur ein leeres `efm-fonts.css` (Manrope kommt aus `main.css`) |
+| Uplink Media Bridge for Etch | `media-bridge-for-etch` | 2.2.7 | aktiv | aktiv | |
+| Uplink Editorial Title | `uplink-editorial-title` | 1.1.3 | aktiv | aktiv | |
+| Uplink Unified Ops Center | `uplink-unified-ops-center` | 1.6.0 | aktiv | aktiv | |
+| **LiteSpeed Cache** | `litespeed-cache` | 7.9.1 | – | aktiv | Seitencache (Server ist LiteSpeed) und Object-Cache-Drop-in `wp-content/object-cache.php`. Seiten werden 7 Tage gecacht. Den ganzen Cache leeren automatisch: Speichern der Firmendaten (`kbs-firma.php`) und der KI-Darstellung (`kbs-ki.php`) sowie jeder Sync (`kbs-mcp.php`), jeweils über `do_action( 'litespeed_purge_all' )`; Seiten leert LiteSpeed beim Speichern selbst |
+| **MainWP Child** | `mainwp-child` | 6.2.1 | – | aktiv | Fernverwaltung über MainWP |
+| **Matomo Analytics** | `matomo` | 5.13.1 | – | aktiv | Stand 2026-10-04 **ohne Tracking** (kein Code in den Seiten). Vor dem Einschalten die Datenschutzerklärung anpassen (Abschnitt 5 sagt: keine Analyse-Werkzeuge) |
+| **Security Ninja (Premium)** | `security-ninja-premium` | 5.303 | – | aktiv | Sicherheit; darf `/wp-json/mcp/` (Zugang `wp-kbs-live`) nicht sperren |
+| Temporary Login Without Password | `temporary-login-without-password` | 1.9.10 | – | inaktiv | nur bei Bedarf einschalten |
+
+Themes: nur das Etch-Theme (die Bricks-Themes von live sind seit 2026-10-04 gelöscht).
+
+Plugins, die nur live laufen, kommen nicht automatisch nach kbs.local; bei „Live → lokal“ (Duplicator von live) kommen sie mit – lokal dann LiteSpeed Cache, MainWP Child und Matomo deaktivieren, Security Ninja prüfen (darf den lokalen MCP-Zugang nicht sperren).
 
 Kein EtchMegaMenuPro: Header und Navigation sind eigene Komponenten (`SiteHeader`, Skript `kbs-navigation.php`). SEO: SEOPress Pro gibt Titel, Meta-Beschreibung und Open Graph aus und liefert Sitemap und `/llms.txt`. Die Inhalte kommen aus dem Repo: In `seiten.mjs` hat jede Seite `seo` (Titel mit `firma()`, `faq`, `leistung`, `llms`-Abschnitt), der Build schreibt `daten/seo.json`, `kbs-seo.php` setzt daraus den Titel (ein im Seiteneditor gesetzter SEOPress-Titel geht vor) und die Beschreibung aus dem Auszug, gibt strukturierte Daten als @graph aus (ProfessionalService mit Öffnungszeiten aus „Erreichbarkeit“ und Geschäftsführer, Service auf Leistungsseiten, FAQPage) und füllt `/llms.txt` (Firma, Kontakt, Seiten, Fragen je Seite). Dazu die 301-Weiterleitungen von den alten Adressen. Ohne SEO-Plugin gibt `kbs-seo.php` Titel, Beschreibung und Open Graph selbst aus.
 
