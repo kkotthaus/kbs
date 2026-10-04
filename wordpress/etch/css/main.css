@@ -6,8 +6,7 @@
   große Rundungen, dunkle „Ink“-Flächen nur als Akzent (Notfall-Karte, Erstgespräch-Karte, Aufruf-Panel, Footer).
 */
 
-/* Schrift: Manrope Variable (OFL, wordpress/lizenzen), vom eigenen Server – keine externen Schriftquellen */
-@font-face { font-family: "Manrope"; font-style: normal; font-weight: 200 800; font-display: swap; src: url("/wp-content/kbs/medien/manrope-latin-wght.woff2") format("woff2"); }
+/* Schriften (Manrope, Sora): Etch Font Manager (wp-content/fonts/, selbst gehostet), Zuordnung in acss-schrift.mjs – kein @font-face hier */
 
 /* ---------- Grundlagen (etch-nodes/docs/konventionen.md) ---------- */
 section:where([class]) { display: block; gap: normal; padding-block: 0; padding-inline: 0; }
