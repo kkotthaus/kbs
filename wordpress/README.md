@@ -19,7 +19,6 @@ Seiten, Templates, Komponenten und CSS werden im Repo als Code beschrieben, geba
 | `snippets/kbs-seo.php` | SEO-Titel aus `daten/seo.json`, schema.org (ProfessionalService, Service, FAQPage), Inhalt von `/llms.txt`, 301 von alten Adressen; Meta-Beschreibung/Open Graph nur ohne SEOPress – **live** |
 | `medien/` | Firmenlogo (`kbs-logo.svg`, helle Variante `kbs-logo-hell.svg` für dunkle Flächen, Quelle: alte Website kotthaus-bs.de) und PC-Visit-Signet; ausgeliefert unter `/wp-content/kbs/medien/`, Rückfall, wenn unter Firmendaten kein eigenes Bild hochgeladen ist |
 | `medien/bilder/` | Optimierte Fotos und KI-Bilder (aus `D:/Projekte-KI/medien/raw/KBS` mit `optimize-images.mjs --out wordpress/medien/bilder`); ausgeliefert unter `/wp-content/kbs/medien/bilder/`. KI-Bilder für Seiteninhalte in die Mediathek hochladen und dort `ki_art` setzen; KI-Bilder, die das Markup direkt einbindet (z. B. Hero der Startseite, `hero-netzwerk-hell-*` / `-dunkel-*`), in `KBS_KI_DATEIEN` (`snippets/kbs-ki.php`) eintragen – Daten dann unter `{options.kbs.ki_bilder.<schlüssel>.…}`. |
-| `mu-plugins/kbs-loader.php` | Übergangs-Lader, bis die Snippets in WPCodeBox liegen |
 
 ## Ablauf
 
@@ -31,8 +30,9 @@ cp -r wordpress/etch/dist/. "$HOME/Local Sites/kbs/app/public/wp-content/kbs/"
 
 Dann per MCP `wp-kbs`:
 
-1. `kbs/sync-from-files` (`all`) – Komponenten, Templates, Seiten (inkl. Startseite und Auszug), Stylesheet.
-2. Nur bei Änderungen an Farben, Buttons oder Schrift: `kbs/acss-colors` mit `aus_datei: true`.
-3. Nur bei der Ersteinrichtung: `kbs/import-settings` (`firmendaten`, überschreibt standardmäßig nur leere Felder), `kbs/site-title`, `kbs/flush-permalinks`.
+1. Nur bei Änderungen an `snippets/`: `kbs/snippets-sync` (neue Snippets mit `aktivieren: true`), danach `wpcodebox/list-errored-snippets` – muss leer sein. Snippets liegen immer in WPCodeBox, nie als mu-plugin.
+2. `kbs/sync-from-files` (`all`) – Komponenten, Templates, Seiten (inkl. Startseite und Auszug), Stylesheet.
+3. Nur bei Änderungen an Farben, Buttons oder Schrift: `kbs/acss-colors` mit `aus_datei: true`.
+4. Nur bei der Ersteinrichtung: `kbs/import-settings` (`firmendaten`, überschreibt standardmäßig nur leere Felder), `kbs/site-title`, `kbs/flush-permalinks`.
 
 Der Sync überschreibt Änderungen, die im Etch-Editor an diesen Seiten gemacht wurden. Texte deshalb im Repo ändern.

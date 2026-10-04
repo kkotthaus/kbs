@@ -22,10 +22,6 @@ Kein EtchMegaMenuPro: Header und Navigation sind eigene Komponenten (`SiteHeader
 - **Dynamische Daten:** `{options.kbs.firma.…}`, `{options.kbs.pcvisit.…}`, `{options.kbs.kontakt.…}`.
 - **Einstellungsseite „Firmendaten“** (Option `firmendaten`) und ihre Felder sind in `kbs-firma.php` registriert, nicht im Meta-Box-Builder: Das Repo bleibt die einzige Quelle. Recht `edit_pages`.
 - **Datenordner:** `wp-content/kbs` über die Konstante `KBS_DATEN`.
-- **Snippets, Übergang:** Solange die WPCodeBox-MCP-Schreibfunktionen nicht freigegeben sind, lädt `wp-content/mu-plugins/kbs-loader.php` die Dateien aus `wp-content/kbs/snippets/`. Umstellung auf WPCodeBox:
-  1. In WPCodeBox › Einstellungen › MCP die Werkzeuge Create Folder, Create/Update/Enable Snippet freigeben.
-  2. `kbs/snippets-sync` (legt die Snippets deaktiviert an).
-  3. `wp-content/mu-plugins/kbs-loader.php` löschen.
-  4. `kbs/snippets-sync` mit `aktivieren: true`.
+- **Snippets:** liegen immer in WPCodeBox (Standard aus etch-nodes, seit 2026-10-04 auch lokal): Ordner „KBS“, Schlagwörter `kbs` + Dateiname, Einfügepunkt Root. Angelegt und aktualisiert werden sie nur mit `kbs/snippets-sync` aus `wp-content/kbs/snippets/` (neue Snippets zunächst ausgeschaltet, `aktivieren: true` schaltet ein). Kein Lader, kein mu-plugin. Nach einer PHP-Änderung: bauen, `dist` kopieren, `kbs/snippets-sync`, dann `wpcodebox/list-errored-snippets` muss leer sein. Lokal freigegebene WPCodeBox-MCP-Werkzeuge: List/Get, Create Folder, Create/Update/Enable/Disable Snippet (nicht Delete und Run).
 - **OhMyEtch:** Häufige Fragen (Accordion), Brotkrumen (Breadcrumbs, automatisch aus der Seitenhierarchie, mit Schema) und das Inhaltsverzeichnis der Datenschutzerklärung (Table of Contents) kommen von OhMyEtch, eingebunden per Key (`ome()` in `lib.mjs`, Sync löst `__REF_Ome…__` auf). Die Navigation bleibt eine eigene Komponente (keine OhMyEtch-Navigation).
 - **Buttons:** nur die ACSS-Klassen (`btn--primary`, `btn--primary btn--outline`, `btn--primary-light` und `btn--primary-light btn--outline` auf dunklen Flächen, Größe `btn--s`). Aussehen (Rundung, Schriftstärke, Innenabstand, Rahmen) in `wordpress/etch/acss-buttons.mjs`, übertragen mit `kbs/acss-colors` (`aus_datei: true`) in die ACSS-Einstellungen. Im eigenen CSS nur der Icon-Abstand.
