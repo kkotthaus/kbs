@@ -169,15 +169,18 @@ function kbs_ki_art( int $id ): string {
 
 /** Daten für die Plakette (Etch und Editor-Bilder). Ohne KI-Nutzung: hat = false. */
 function kbs_ki_daten( int $id ): array {
-	$art = kbs_ki_art( $id );
-	if ( '' === $art ) {
+	return kbs_ki_daten_fuer( kbs_ki_art( $id ), (string) get_post_meta( $id, 'ki_werkzeug', true ), (string) get_post_meta( $id, 'ki_position', true ) );
+}
+
+/** Daten für die Plakette aus Art, Werkzeug und eigener Position (leer = Einstellung); auch für Bilder ohne Anhang. */
+function kbs_ki_daten_fuer( string $art, string $werkzeug = '', string $position = '' ): array {
+	if ( ! isset( KBS_KI_ARTEN[ $art ] ) ) {
 		return array( 'hat' => false, 'kurz' => '', 'logo' => '', 'hat_logo' => false, 'label' => '', 'zusatz' => '', 'text' => '', 'mod' => '', 'alt' => '' );
 	}
-	$d    = kbs_ki_darstellung();
-	// Position am Bild (Feld ki_position) geht vor der Einstellung
-	$eigene        = (string) get_post_meta( $id, 'ki_position', true );
-	$d['position'] = isset( KBS_KI_DARSTELLUNG['position'][ $eigene ] ) ? $eigene : $d['position'];
-	$werkzeug      = $d['werkzeug'] ? trim( (string) get_post_meta( $id, 'ki_werkzeug', true ) ) : '';
+	$d = kbs_ki_darstellung();
+	// Position am Bild geht vor der Einstellung
+	$d['position'] = isset( KBS_KI_DARSTELLUNG['position'][ $position ] ) ? $position : $d['position'];
+	$werkzeug      = $d['werkzeug'] ? trim( $werkzeug ) : '';
 	$a             = KBS_KI_ARTEN[ $art ];
 	$text          = $a['text'] . ( '' !== $werkzeug ? ' (' . $werkzeug . ')' : '' );
 	$logo          = kbs_ki_logo();
@@ -194,6 +197,31 @@ function kbs_ki_daten( int $id ): array {
 		'alt'      => $a['label'] . ': ' . $text,
 	);
 }
+
+/**
+ * Mitgelieferte KI-Bilder (wordpress/medien/bilder/, kein Anhang in der Mediathek): Art, Werkzeug, Position, Beschreibung.
+ * In Etch als {options.kbs.ki_bilder.<schlüssel>.…} mit den Feldern von kbs_ki_daten(), dazu bild_alt (Beschreibung + Hinweis).
+ */
+define(
+	'KBS_KI_DATEIEN',
+	array(
+		'hero_netzwerk' => array( 'art' => 'generated', 'werkzeug' => 'FLUX.1 schnell', 'position' => 'unten-rechts', 'beschreibung' => 'Abstraktes Netzwerk aus leuchtenden, verbundenen Knoten' ),
+	)
+);
+
+add_filter(
+	'etch/dynamic_data/option',
+	function ( $data ) {
+		if ( is_array( $data ) ) {
+			foreach ( KBS_KI_DATEIEN as $schluessel => $b ) {
+				$k        = kbs_ki_daten_fuer( $b['art'], $b['werkzeug'], $b['position'] );
+				$k['bild_alt'] = kbs_ki_alt( $b['beschreibung'], $k['alt'] );
+				$data['kbs']['ki_bilder'][ $schluessel ] = $k;
+			}
+		}
+		return $data;
+	}
+);
 
 /** Alternativtext um den Hinweis ergänzen (Screenreader); auch bei leerem Alternativtext. */
 function kbs_ki_alt( string $alt, string $hinweis ): string {

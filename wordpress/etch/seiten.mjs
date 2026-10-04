@@ -2,7 +2,7 @@
 // Erzeugen: node wordpress/etch/build.mjs → wordpress/etch/dist/
 // Firmenangaben nur über firma('<feld>') bzw. {options.kbs.firma.…}, nie als Text.
 
-import { el, t, text, raw, wenn, markup, komponente, ome, firma, FIRMA, icon, postContent } from './lib.mjs';
+import { el, t, text, raw, wenn, markup, komponente, ome, firma, FIRMA, icon, postContent, kiPlakette } from './lib.mjs';
 import { leistungen, zielgruppen } from './daten.mjs';
 
 // ---------- Bausteine ----------
@@ -90,8 +90,23 @@ const vorteile = (liste) =>
 
 // ---------- Startseite ----------
 
+// Hero-Hintergrund: KI-Bild (wordpress/medien/bilder/, Kennzeichnung über KBS_KI_DATEIEN in kbs-ki.php), je Farbschema eine Variante.
+const BILDER = '/wp-content/kbs/medien/bilder';
+const KI_HERO = 'options.kbs.ki_bilder.hero_netzwerk';
+const heroBild = (variante) => {
+  const srcset = (typ) => [640, 1280, 1344].map((b) => `${BILDER}/hero-netzwerk-${variante}-${b}.${typ} ${b}w`).join(', ');
+  return el('picture', `home-hero__bild scheme-bild--${variante}`, [
+    el('source', '', [], { attrs: { type: 'image/avif', srcset: srcset('avif'), sizes: '100vw' } }),
+    el('source', '', [], { attrs: { type: 'image/webp', srcset: srcset('webp'), sizes: '100vw' } }),
+    el('img', '', [], { attrs: { src: `${BILDER}/hero-netzwerk-${variante}-1280.webp`, alt: `{${KI_HERO}.bild_alt}`, width: '1344', height: '768', fetchpriority: 'high', decoding: 'async' } }),
+  ]);
+};
+
 const startseite = markup(
   el('section', 'home-hero', [
+    heroBild('hell'),
+    heroBild('dunkel'),
+    kiPlakette(KI_HERO),
     el('div', 'home-hero__inner container', [
       el('div', 'home-hero__content', [
         t('p', 'home-hero__eyebrow', `IT-Service und Webdesign aus ${firma('ort')}`),
