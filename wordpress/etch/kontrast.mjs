@@ -66,7 +66,7 @@ const immerHell = [
   ['primary-light', 'secondary-ultra-dark', 4.5, 'Eyebrow, Links, Footer-Hover auf dunkler Fläche'],
   ['white', 'primary', 4.5, 'btn--primary auf dunkler Fläche'], ['white', 'primary-hover', 4.5, 'btn--primary Hover auf dunkler Fläche'],
   ['primary-light', 'secondary-ultra-dark', 4.5, 'btn--primary-light btn--outline (Aufruf-Panel)'], ['primary-dark', 'primary-light', 4.5, 'btn--primary-light btn--outline Hover'],
-  ['primary-light', 'secondary-ultra-dark', 3, 'Fokusring auf dunklen Flächen'], ['primary', 'secondary-ultra-dark', 3, 'Telefon-Symbol (Grafik)'],
+  ['primary-light', 'secondary-ultra-dark', 3, 'Fokusring auf dunklen Flächen'], ['base', 'white', 4.5, 'KI-Plakette hell'], ['primary-dark', 'white', 3, 'KI-Symbol hell (Grafik)'], ['primary', 'secondary-ultra-dark', 3, 'Telefon-Symbol (Grafik)'],
 ];
 
 let fehler = 0;

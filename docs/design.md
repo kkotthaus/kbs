@@ -15,6 +15,7 @@ Modern, hell und vertrauenswürdig: IT-Service und Websites für kleine Unterneh
 - **Karten:** weiß, Rundung `--kbs-radius-xl` (2rem), weiche Schatten (`--kbs-shadow-s/m/l`). Leistungskarten mit rotem Symbol-Quadrat und Glühen beim Überfahren; Seitenkästen mit auslaufender roter Linie oben.
 - **Abschnittsköpfe:** Eyebrow in Versalien mit kurzer roter Linie (zentriert beidseitig).
 - **Buttons:** ACSS, Pillenform (`acss-buttons.mjs`). Auf hellen Flächen `btn--primary` / `btn--primary btn--outline`, auf dunklen Flächen `btn--primary` / `btn--primary-light btn--outline`.
+- **KI-Kennzeichnung** (Standard aus etch-nodes, `snippets/kbs-ki.php`): Pille mit Funken-Symbol und „KI“ am Bild, aufgeklappt „generiert · Vollständig mit KI erzeugt (Werkzeug)“. Stile dunkel (Ink, Standard), hell, Markenrot; Größe normal/klein; Position je Einstellung oder je Bild. Deckend und in beiden Farbschemata gleich. Eigenes Symbol (z. B. EU-Symbol) unter Firmendaten › Firma & Kontakt. Texte in `KBS_KI_ARTEN`: KI-unterstützt, KI-generiert, KI-bearbeitet.
 - **Bewegung:** dezent (Karten heben sich, Pfeile rücken, pulsierender Punkt im Hero-Eyebrow); bei „Bewegung reduzieren“ abgeschaltet.
 
 ## Werte

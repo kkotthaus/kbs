@@ -124,3 +124,20 @@ export const icon = (name, klasse = '') =>
 export const postContent = () => '<!-- wp:post-content {"align":"full","layout":{"type":"default"}} /-->';
 
 export const markup = (...kinder) => join(kinder);
+
+/**
+ * KI-Kennzeichnung am Bild (snippets/kbs-ki.php, Daten aus kbs_ki_daten() je Bild, z. B. als {item.kbs.bild_ki}):
+ * Plakette „KI“, beim Darüberfahren Art und Erklärung. Position, Stil und Größe als Klassen-Modifier ({…mod}).
+ * Für Screenreader steht der Hinweis im Alternativtext des Bildes. Gleicher Aufbau wie kbs_ki_plakette() für Editor-Bilder.
+ * Das Bild und die Plakette brauchen einen gemeinsamen Rahmen mit position: relative (z. B. span.ki-bild__rahmen).
+ */
+export const kiPlakette = (pfad) =>
+  wenn(`${pfad}.hat`, [
+    el('span', `ki-plakette {${pfad}.mod}`, [
+      el('span', 'ki-plakette__icon', [
+        wenn(`${pfad}.hat_logo`, [el('img', 'ki-plakette__logo', [], { attrs: { src: `{${pfad}.logo}`, alt: '' } })]),
+        wenn(`${pfad}.hat_logo`, [text(`{${pfad}.kurz}`)], 'isFalsy'),
+      ]),
+      el('span', 'ki-plakette__text', [t('strong', '', `{${pfad}.zusatz}`), text(` {${pfad}.text}`)]),
+    ], { attrs: { 'aria-hidden': 'true', title: `{${pfad}.alt}` }, name: 'KI-Kennzeichnung' }),
+  ]);
