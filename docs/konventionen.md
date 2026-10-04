@@ -56,8 +56,8 @@ Regeln für Komponenten, Block-Markup, Daten und CSS. Platzhalter: `<prefix>` st
   `section:where([class])` hat Spezifität 0,0,1: schlägt `:where()`, verliert gegen jede BEM-Klasse.
 - ACSS setzt Überschriften- und Absatzabstände auf 0 – Abstände in Komponenten ausdrücklich setzen.
 - ACSS steuert die Buttonbreite über `--btn-width` und lädt nach dem eigenen Stylesheet: `--btn-width: 100%` statt `width: 100%`.
-- Eigene Tokens nur für das, was ACSS nicht kennt (z. B. Schriften, Schatten) – vorher in den ACSS-Variablen nachsehen. Farben regelt das Projekt. Abstände, Schriftgrößen, Radius und Container kommen aus ACSS.
-- **EMMP anpassen** über seine Variablen (`--menu-item-clr`, `--menu-cta-bg`, `--dropdown-content-bg` …), gesetzt mit doppelter Klasse (`.dwc-top-level-items-vars.dwc-top-level-items-vars`), damit sie unabhängig von der Ladereihenfolge gewinnen. Farbwerte nach den Farbregeln des Projekts.
+- Eigene Tokens nur für das, was ACSS nicht kennt (z. B. Schriften, Schatten) – vorher in den ACSS-Variablen nachsehen. Abstände, Schriftgrößen, Radius und Container kommen aus ACSS. Welche Werte gelten (Farben, Schriften, Schatten, ACSS-Einstellungen), legt das Design des Projekts fest.
+- **EMMP anpassen** über seine Variablen (`--menu-item-clr`, `--menu-cta-bg`, `--dropdown-content-bg` …), gesetzt mit doppelter Klasse (`.dwc-top-level-items-vars.dwc-top-level-items-vars`), damit sie unabhängig von der Ladereihenfolge gewinnen. Werte nach dem Design des Projekts.
 - EMMP markiert den aktiven Menüpunkt selbst mit `aria-current="page"`, aber nur bei exakt gleicher URL (Elternbereiche auf Unterseiten nicht).
 - **Tabellarische Daten** in Komponenten als CSS-Grid aus `div`s mit Tabellen-Rollen (`role="table|row|columnheader|rowheader|cell"`, Name per `aria-label`). Breite Tabellen seitlich scrollbar, erste Spalte bei Bedarf fixiert.
 
