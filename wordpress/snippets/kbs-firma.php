@@ -275,3 +275,23 @@ add_filter(
 // Firmendaten erscheinen auf allen Seiten: nach dem Speichern den Seitencache leeren (LiteSpeed Cache; ohne Plugin wirkungslos)
 add_action( 'update_option_firmendaten', fn() => do_action( 'litespeed_purge_all' ) );
 add_action( 'add_option_firmendaten', fn() => do_action( 'litespeed_purge_all' ) );
+
+/*
+ * Website-Icon (Favicon, Apple-Touch-Icon, Android): ohne eigenes Icon unter Einstellungen › Allgemein › Website-Icon
+ * das mitgelieferte Icon (wordpress/medien/kbs-favicon-*.png). Über den Core-Filter, damit WordPress die Links im
+ * <head> (auch Backend und Anmeldung) und die Weiterleitung von /favicon.ico selbst ausgibt.
+ */
+add_filter(
+	'get_site_icon_url',
+	function ( $url, $size ) {
+		// Eigenes Website-Icon geht vor. Ohne Icon kommt $url leer oder als Core-Standard (/favicon.ico: WordPress-Logo) – beides ersetzen.
+		if ( get_option( 'site_icon' ) ) {
+			return $url;
+		}
+		$size  = (int) $size;
+		$datei = $size <= 32 ? 32 : ( 180 === $size ? 180 : ( $size <= 192 ? 192 : 512 ) );
+		return content_url( 'kbs/medien/kbs-favicon-' . $datei . '.png' );
+	},
+	10,
+	2
+);

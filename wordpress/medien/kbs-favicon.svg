@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" role="img" aria-label="Kotthaus Business Service GmbH">
+  <!-- Favicon/Website-Icon: Initialen aus dem Logo (K, S grau; B rot) auf weißem Quadrat.
+       Quelle für kbs-favicon-32/192/512.png (abgerundet) und kbs-favicon-180.png (Apple, eckig), erzeugt mit sharp. -->
+  <rect width="512" height="512" rx="96" fill="#ffffff"/>
+  <text x="256" y="338" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-weight="700" font-size="232" letter-spacing="-12">
+    <tspan fill="#5e5e5e">K</tspan><tspan fill="#d22430">B</tspan><tspan fill="#5e5e5e">S</tspan>
+  </text>
+</svg>

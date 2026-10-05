@@ -9,6 +9,7 @@ Modern, hell und vertrauenswürdig: IT-Service und Websites für kleine Unterneh
 ## Bausteine
 
 - **Schriften:** Fließtext **Manrope** Variable, Überschriften **Sora** Variable (technisch-geometrisch, passend zum IT-Thema). Beide aus Google Fonts, selbst gehostet über den Etch Font Manager (`wp-content/fonts/manrope-variable-latin.woff2`, `sora-variable-latin.woff2`; Sora vorgeladen), Lizenzen `wordpress/lizenzen/manrope-OFL.txt` und `sora-OFL.txt`. Welche Schrift wofür, Überschriften-Stärke (700) und Laufweite (-0.03em) stehen in den ACSS-Einstellungen: `wordpress/etch/acss-schrift.mjs`, übertragen mit `kbs/acss-colors` (`aus_datei: true`). Große Titel (Hero, Seitenkopf) mit 700 und Laufweite -0.035em bzw. -0.03em in `main.css`.
+- **Website-Icon (Favicon):** Initialen „KBS“ aus dem Logo (K und S Grau `#5E5E5E`, B Rot `#D22430`, Arial fett) auf weißem, abgerundetem Quadrat; Apple-Touch-Icon eckig. Quelle `wordpress/medien/kbs-favicon.svg`.
 - **Header:** schwebende, abgerundete Leiste (Pille) mit Unschärfe-Hintergrund; mobil klappt das Menü als Panel darunter auf.
 - **Hero und Seitenkopf:** hell, mit Raster und weichem Rot-Glühen oben rechts. Sie folgen Hell/Dunkel. Seitenkopf mit Brotkrumen als Pille und Logo-Wasserzeichen (im dunklen Schema die helle Logo-Variante).
 - **Dunkle „Ink“-Flächen** (`--kbs-ink`: Graphit mit Rot-Glühen) nur als Akzent: Notfall-Karte im Hero, Erstgespräch-Karte bei den Leistungen, Aufruf-Panel (CtaBand) und Footer. Sie bleiben in beiden Schemata gleich (`immerHell` in `acss-farben.mjs`).
