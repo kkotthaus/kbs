@@ -15,7 +15,7 @@ Modern, hell und vertrauenswürdig: IT-Service und Websites für kleine Unterneh
 - **Dunkle „Ink“-Flächen** (`--kbs-ink`: Graphit mit Rot-Glühen) nur als Akzent: Notfall-Karte im Hero, Erstgespräch-Karte bei den Leistungen, Aufruf-Panel (CtaBand) und Footer. Sie bleiben in beiden Schemata gleich (`immerHell` in `acss-farben.mjs`).
 - **3D-Optik (kräftig):** Tiefe ohne Bilder, nur per CSS. Schatten in Schichten (`--kbs-shadow-s/m/l`: Kontakt, Nähe, Ferne), Lichtkante oben an allen erhabenen Flächen (`--kbs-kante` auf hellen, `--kbs-kante-dunkel` auf Ink- und Markenflächen), plastische Symbole (Verlauf, Licht oben, Schatten unten), Punkte als Kugeln. Alles hat Tiefe:
   - **Erhaben** (Lichtkante + Schichtschatten): Karten, Panels, Header-Leiste und -Schaltflächen, Pillen (Eyebrow, Brotkrumen, Zielgruppen), Akkordeon, Menü-Panels, Meldungen, KI-Plakette.
-  - **Buttons** (ACSS hat keine Schatten-Einstellung, deshalb in `main.css`): gefüllt mit Licht oben, Kante unten und farbigem Schlagschatten, umrandet als erhabene Pille; heben sich beim Überfahren, drücken sich beim Klicken ein.
+  - **Buttons als Tasten** wie die Karten (ACSS hat keine Schatten-Einstellung, deshalb in `main.css`): fester Sockel unten (`--kbs-hub` 4px) in abgedunkelter Rahmenfarbe des Buttons, gefüllt mit Licht oben. Beim Überfahren halb, beim Klicken ganz eingedrückt mit Schatten innen; Übergang 0.15s über die ACSS-Variable `--btn-transition`.
   - **Vertieft:** Formularfelder, aktiver Menüpunkt, Adresszeile der Website-Illustration, getönte Abschnitte (Innenschatten oben/unten).
   - **Karten als Tasten** (Leistungs-, Notfall-, Fernwartungs-, Vorteils- und Schritt-Karten, Seitenkästen, Aufruf-Panel, Akkordeon): fester Sockel unten (`--kbs-hub` 6px, Akkordeon 4px; hell `--base-light` mit Text gemischt, auf Ink-Flächen fester Dunkelton). Beim Überfahren sinkt die Karte um 60 % des Sockels ein und der Schatten wird kleiner, beim Klicken ganz mit Schatten innen – wie ein gedrückter Knopf. Keine Drehung, die Karte bleibt plan. Übergang 0.15s. Die Website-Illustration steht statisch schräg im Raum (8° / -16°).
   - **Große Titel** (Hero, Seitenkopf) mit weichem Textschatten; Footer mit Schatten nach oben als Stufe.
@@ -35,4 +35,4 @@ Modern, hell und vertrauenswürdig: IT-Service und Websites für kleine Unterneh
 | `--kbs-header-h` | 5rem | Sprungziel-Abstand unter dem Header |
 | `--kbs-kante` | Weiß 100 % (dunkel 10 %) innen oben, Schattenlinie innen unten | Lichtkante heller Flächen |
 | `--kbs-kante-dunkel` | Weiß 14 % innen oben, Schwarz 30 % innen unten | Lichtkante auf Ink- und Markenflächen |
-| `--kbs-hub`, `--kbs-druck` | 6px (Akkordeon 4px) bzw. 0 → 60 % → 100 % | Sockelhöhe der Karten, Eindrücken beim Überfahren/Klicken |
+| `--kbs-hub`, `--kbs-druck` | 6px (Akkordeon und Buttons 4px) bzw. 0 → 60 % → 100 % | Sockelhöhe der Karten, Eindrücken beim Überfahren/Klicken |

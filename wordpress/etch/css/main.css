@@ -87,17 +87,25 @@ address { font-style: normal; }
    auf hellem Grund unter 3:1 (WCAG 1.4.11). Höhere Spezifität als .btn--primary, deshalb unabhängig von der Ladereihenfolge. */
 body [class*="btn--"] { --focus-color: var(--primary-dark); }
 :is(.hero-card, .service-card--cta, .cta-band, .site-footer) [class*="btn--"] { --focus-color: var(--primary-light); }
-/* 3D-Optik der Buttons: ACSS hat keine Einstellung für Button-Schatten, deshalb hier.
-   Gefüllt: Licht oben, Kante unten, farbiger Schlagschatten; heben beim Überfahren, drücken beim Klicken.
-   Animiert über die ACSS-Transition (--btn-transition bzw. --transition, gilt für alle Eigenschaften). */
-body [class*="btn--"] { box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), inset 0 -3px 0 rgb(10 15 20 / 0.22), 0 2px 3px -1px color-mix(in oklch, var(--btn-background, var(--primary)) 50%, transparent), 0 6px 10px -6px color-mix(in oklch, var(--btn-background, var(--primary)) 65%, transparent); }
-body [class*="btn--"]:hover { transform: translateY(-3px); box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.35), inset 0 -3px 0 rgb(10 15 20 / 0.22), 0 4px 6px -2px color-mix(in oklch, var(--btn-background, var(--primary)) 45%, transparent), 0 10px 14px -8px color-mix(in oklch, var(--btn-background, var(--primary)) 70%, transparent); }
-body [class*="btn--"]:active { transform: translateY(1px); box-shadow: inset 0 3px 6px rgb(10 15 20 / 0.28), 0 1px 2px color-mix(in oklch, var(--btn-background, var(--primary)) 30%, transparent); }
-/* Umrandet: erhabene Pille mit Lichtkante statt Farbschatten */
-body [class*="btn--"].btn--outline { box-shadow: var(--kbs-kante), var(--kbs-shadow-s); }
-body [class*="btn--"].btn--outline:hover { box-shadow: var(--kbs-kante), var(--kbs-shadow-m); }
-body [class*="btn--"].btn--outline:active { box-shadow: inset 0 2px 4px rgb(10 15 20 / 0.12); }
-:is(.hero-card, .service-card--cta, .cta-band, .site-footer) [class*="btn--"].btn--outline { box-shadow: var(--kbs-kante-dunkel), 0 8px 18px -10px rgb(0 0 0 / 0.6); }
+/* 3D-Optik der Buttons wie die Karten: Tasten mit festem Sockel (ACSS hat keine Einstellung für Button-Schatten, deshalb hier).
+   Sockel in abgedunkelter Rahmenfarbe des Buttons; beim Überfahren halb, beim Klicken ganz eingedrückt.
+   --btn-transition ist die ACSS-Variable für den Übergang (kürzer, damit es sich wie ein Knopf anfühlt). */
+body [class*="btn--"] {
+  --kbs-hub: 4px;
+  --kbs-druck: 0px;
+  --kbs-sockel: color-mix(in oklch, var(--btn-border-color, var(--primary)) 60%, rgb(10 15 20));
+  --kbs-btn-licht: inset 0 1px 0 rgb(255 255 255 / 0.3);
+  --kbs-btn-schatten: 0 calc(var(--kbs-hub) + 4px - var(--kbs-druck)) 8px -4px rgb(10 15 20 / 0.3);
+  --kbs-btn-innen: 0 0 transparent;
+  --btn-transition: 0.15s ease-out;
+  transform: translateY(var(--kbs-druck));
+  box-shadow: var(--kbs-btn-licht), var(--kbs-btn-innen), 0 calc(var(--kbs-hub) - var(--kbs-druck)) 0 var(--kbs-sockel), var(--kbs-btn-schatten);
+}
+body [class*="btn--"]:hover { --kbs-druck: calc(var(--kbs-hub) * 0.5); }
+body [class*="btn--"]:active { --kbs-druck: var(--kbs-hub); --kbs-btn-schatten: 0 0 transparent; --kbs-btn-innen: inset 0 2px 5px rgb(10 15 20 / 0.3); }
+/* Umrandet: ohne Licht innen (Fläche ist durchsichtig), Sockel in der Rahmenfarbe */
+body [class*="btn--"].btn--outline { --kbs-btn-licht: 0 0 transparent; }
+body [class*="btn--"].btn--outline:active { --kbs-btn-innen: inset 0 2px 5px rgb(10 15 20 / 0.2); }
 
 /* ---------- Abschnitte und Layout ---------- */
 .section { padding-block: var(--section-space-l); }
