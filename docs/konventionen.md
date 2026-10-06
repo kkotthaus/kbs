@@ -18,9 +18,14 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
 - Jede Komponente hat eine aussagekräftige `description`: Zweck und „Daten: …“ (woher die Daten kommen). Sie erscheint im Etch-Editor und eignet sich als Quelle für ein generiertes Komponenten-Handbuch.
 - Eigenschaften (`properties`) immer mit sinnvollem Standardwert.
 - **Einbinden eigener Komponenten:** Die WordPress-ID ist beim Bauen unbekannt. Das Markup enthält den Platzhalter `"__REF_<Key>__"`, den der Sync durch die echte ID ersetzt. Das funktioniert auch in Komponenten; die Ersetzung läuft der Reihe nach, deshalb stehen eingebundene Komponenten in der Liste **vor** den Komponenten, die sie nutzen.
-- **OhMyEtch zuerst für interaktive Bausteine.** Accordion, Tabs, Dialog, Drawer, Lightbox, Carousel, Breadcrumbs, Table of Contents und Facets (Filter, Suche, Pagination) von OhMyEtch verwenden statt eigener Lösungen mit eigenem JavaScript – sie bringen Tastaturbedienung, ARIA und Animation mit. Eigene Komponenten liefern nur das Aussehen (BEM-Klassen bzw. die `ome-*`-Klassen im globalen Stylesheet). **Ausnahme: Navigation und Menüs** – die OhMyEtch-Elemente Navigation Menu und Navigation Menu Mobile werden nicht genutzt; Navigation per EMMP oder eigener Komponente.
+- **OhMyEtch zuerst für interaktive Bausteine.** Accordion, Tabs, Dialog, Drawer, Lightbox, Breadcrumbs, Table of Contents und Facets (Filter, Suche, Pagination) von OhMyEtch verwenden statt eigener Lösungen mit eigenem JavaScript – sie bringen Tastaturbedienung, ARIA und Animation mit. Eigene Komponenten liefern nur das Aussehen (BEM-Klassen bzw. die `ome-*`-Klassen im globalen Stylesheet). **Ausnahme: Navigation und Menüs** – die OhMyEtch-Elemente Navigation Menu und Navigation Menu Mobile werden nicht genutzt; Navigation per EMMP oder eigener Komponente.
 - **OhMyEtch einbinden per Key statt ID:** Platzhalter `"__REF_<Key>__"` mit dem Komponenten-Key (z. B. `OmeAccordion`, `OmeAccordionItem`, `OmeAccordionHeader`, `OmeAccordionTrigger`, `OmeAccordionContent`, `OmeBreadcrumbs`, `OmeTableOfContents`); der Sync löst ihn über `etch_component_html_key` zur ID der Installation auf. Gruppen-Eigenschaften als `{{…}}`-JSON (z. B. `settings: '{{"type":"multiple"}}'`), nur die geänderten Werte. Beim Accordion-Trigger kommt `content.label` nicht an – Frage als Slot-Inhalt des Triggers übergeben.
-- **Weitere Fremdkomponenten** (EMMP, EtchSliderPro) werden per WordPress-ID eingebunden, mit Slots über `etch/slot-content`. Nie löschen und neu anlegen, sonst stimmt die ID nicht mehr. Nach einer Migration die IDs prüfen (Duplicator erhält sie). Die verwendeten IDs im Projekt dokumentieren.
+- **Slider und Karussells: Slider Pro for Etch** (Plugin `dwc-slider-pro-etch` mit den Komponenten DWC Slider Wrapper, DWC Slider, DWC Slide, DWC Slider Nav Button, Pagination, Progress, Play-Pause) – Standard für alle Slider, auch für Karten-Reihen (z. B. Personen, Bewertungen). Nicht das OhMyEtch-Carousel und kein eigenes JavaScript.
+  - Aufbau: `DwcSliderWrapper` (Slot `Sliders_and_Controls`) → `DwcSlider` (Slots `Top__Controls`, `Slides`, `Bottom__Controls`) → je Eintrag `DwcSlide` (Slot `Content`); für dynamische Inhalte ein `etch/loop` im Slot `Slides` um den `DwcSlide`.
+  - Einbinden per Key wie OhMyEtch (`"__REF_DwcSlider__"` usw., der Sync löst über `etch_component_html_key` auf).
+  - Responsive Werte als Kurzform `"BASIS lg:X md:Y sm:Z"` (max-width), z. B. `layout.slidesPerPage: "4 lg:3 md:2 sm:1"`; die Grenzen je Slider über `breakpoints.laptopLg / tabletMd / phoneSm` (px), sonst 1120/1024/640.
+  - Barrierefreiheit: `ariaLabel` setzen; Autoplay nur, wenn das Design es verlangt, dann mit Pause-Knopf (`autoplay.playPauseButton`).
+- **Weitere Fremdkomponenten** (EMMP) werden per WordPress-ID eingebunden, mit Slots über `etch/slot-content`. Nie löschen und neu anlegen, sonst stimmt die ID nicht mehr. Nach einer Migration die IDs prüfen (Duplicator erhält sie). Die verwendeten IDs im Projekt dokumentieren.
 
 ## Block-Markup
 
@@ -56,10 +61,22 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
   `section:where([class])` hat Spezifität 0,0,1: schlägt `:where()`, verliert gegen jede BEM-Klasse.
 - ACSS setzt Überschriften- und Absatzabstände auf 0 – Abstände in Komponenten ausdrücklich setzen.
 - ACSS steuert die Buttonbreite über `--btn-width` und lädt nach dem eigenen Stylesheet: `--btn-width: 100%` statt `width: 100%`.
-- Eigene Tokens nur für das, was ACSS nicht kennt (z. B. Schriften, Schatten) – vorher in den ACSS-Variablen nachsehen. Abstände, Schriftgrößen, Radius und Container kommen aus ACSS. Welche Werte gelten (Farben, Schriften, Schatten, ACSS-Einstellungen), legt das Design des Projekts fest.
+- Eigene Tokens nur für das, was ACSS nicht kennt (z. B. Schatten) – vorher in den ACSS-Variablen nachsehen. Schriften kommen aus dem Font Manager (siehe [Schriften](#schriften)). Abstände, Schriftgrößen, Radius und Container kommen aus ACSS. Welche Werte gelten (Farben, Schriften, Schatten, ACSS-Einstellungen), legt das Design des Projekts fest.
 - **EMMP anpassen** über seine Variablen (`--menu-item-clr`, `--menu-cta-bg`, `--dropdown-content-bg` …), gesetzt mit doppelter Klasse (`.dwc-top-level-items-vars.dwc-top-level-items-vars`), damit sie unabhängig von der Ladereihenfolge gewinnen. Werte nach dem Design des Projekts.
 - EMMP markiert den aktiven Menüpunkt selbst mit `aria-current="page"`, aber nur bei exakt gleicher URL (Elternbereiche auf Unterseiten nicht).
 - **Tabellarische Daten** in Komponenten als CSS-Grid aus `div`s mit Tabellen-Rollen (`role="table|row|columnheader|rowheader|cell"`, Name per `aria-label`). Breite Tabellen seitlich scrollbar, erste Spalte bei Bedarf fixiert.
+
+## Schriften
+
+**Standard für jede Website:** Schriften werden über den **Etch Font Manager** verwaltet. Welche Schriften ein Projekt nutzt, legt sein Design fest.
+
+- **Einbinden nur über den Font Manager**: Google Fonts über dessen Google-Fonts-Suche installieren (die Dateien werden heruntergeladen und selbst gehostet), eigene Schriften als WOFF2 hochladen. Kein eigenes `@font-face` im Projekt-CSS, keine Schriftdateien im Projekt-Medienordner, keine externen Schriftdienste (Google Fonts, Adobe Fonts, Bunny Fonts) – Besucher laden nichts von fremden Servern (Datenschutz).
+- Möglichst **variable** Schriften und nur die nötigen **Subsets** (für Deutsch reicht `latin`: Umlaute und ß sind enthalten); so bleibt es meist bei einer Datei je Familie.
+- **Preload** für die Schrift des größten sichtbaren Elements beim ersten Anzeigen (meist der Hero-Titel); `font-display: swap`; **Fallback** auf Systemschriften (z. B. `ui-sans-serif, system-ui, "Segoe UI", Roboto, Arial, sans-serif`).
+- **Zuordnung (Text, Überschriften) nur in den ACSS-Einstellungen** (`text-font-family`, `heading-font-family`, dazu Stärke und Laufweite), per Datei im Repo und MCP-Funktion übertragen. Im Font Manager **keine Rolle** (Heading/Body) setzen – sonst setzen Font Manager und ACSS dieselben Variablen und überschreiben sich je nach Ladereihenfolge.
+- **Lizenz** jeder Schrift als Datei im Repo ablegen (z. B. `lizenzen/<schrift>-OFL.txt`); nur Schriften mit freier Lizenz für gewerbliche Nutzung (z. B. SIL Open Font License) oder gekaufte Lizenzen.
+- **Einrichtung je Umgebung** (lokal, Staging, live) gleich: Familie installieren, Preload und Fallback setzen – in der Oberfläche oder per WP-CLI über die REST-Routen des Font Managers (`/etch-font-manager/v1/google/install`, `/etch-font-manager/v1/families`). Die Schritte stehen in der Projekt-Doku. Danach ACSS-Einstellungen übertragen und den Seitencache leeren.
+- Schriftwechsel im Frontend prüfen: Stärken und Laufweiten der großen Titel an die neue Schrift anpassen, Kontraste unverändert.
 
 ## Hell/Dunkel
 
@@ -130,6 +147,12 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
 - **Einstellungsseiten** so anlegen, wie es der Meta-Box-Builder tut, damit sie im Builder bearbeitbar bleiben.
 - Ein Teil des Datenmodells steht nur in der Datenbank (Builder). Beitragstypen, Taxonomien, Feldgruppen und Einstellungsseiten deshalb per Export-Skript (WP-CLI `wp eval-file`, nur lesend, im Backend-Kontext) als JSON ins Repo holen und nach jeder Änderung neu exportieren.
 - Import-Dateien beim Import nur gezielt übernehmen (Feldliste), sonst überschreibt ein Import, was im Backend gepflegt wurde.
+
+## Backend
+
+- **Block „Individuelle Felder“ immer ausblenden** – in allen Beitragstypen, im Block-Editor und im klassischen Editor. Er zeigt die rohen Metadaten (auch die von Meta Box und internen Funktionen, z. B. Serialisiertes) und lässt sie ohne Prüfung ändern oder löschen. Eigene Felder kommen immer über Meta Box.
+- Technik im Snippet `<prefix>-backend.php`: den Kasten `postcustom` mit `remove_meta_box()` im Hook `add_meta_boxes` (späte Priorität) für alle Beitragstypen entfernen und im Filter `block_editor_settings_all` den Schlüssel `enableCustomFields` entfernen – dann verschwindet auch der Schalter „Individuelle Felder“ in den Voreinstellungen des Block-Editors.
+- **Nicht** `remove_post_type_support( …, 'custom-fields' )` verwenden: Ohne diese Unterstützung liefert die REST-API registrierte Metadaten (`register_post_meta` mit `show_in_rest`) nicht mehr aus.
 
 ## Barrierefreiheit
 
