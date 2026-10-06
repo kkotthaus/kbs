@@ -18,6 +18,22 @@ if ( ! in_array( wp_get_environment_type(), array( 'local', 'development' ), tru
 	return;
 }
 
+// Lokal nutzt Local ein selbstsigniertes Zertifikat. Plugins, die die eigene Seite aufrufen (z. B. SEOPress: technisches Audit,
+// Inhaltsanalyse), scheitern daran. Nur lokal und nur für Aufrufe an die eigene Adresse die Zertifikatsprüfung abschalten.
+if ( 'local' === wp_get_environment_type() ) {
+	add_filter(
+		'http_request_args',
+		function ( $args, $url ) {
+			if ( wp_parse_url( (string) $url, PHP_URL_HOST ) === wp_parse_url( home_url(), PHP_URL_HOST ) ) {
+				$args['sslverify'] = false;
+			}
+			return $args;
+		},
+		10,
+		2
+	);
+}
+
 if ( ! class_exists( 'WP_Ability' ) ) {
 	return;
 }
