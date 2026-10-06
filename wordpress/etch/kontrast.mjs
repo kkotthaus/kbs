@@ -58,15 +58,16 @@ const paare = [
   ['primary', SEITE, 3, 'Icons, Fokusrahmen (Grafik)'], ['primary', KARTE, 3, 'Icons auf Karten (Grafik)'], ['white', 'primary', 3, 'Symbol auf Markenfläche (Leistungskarten)'], ['primary-dark', KARTE, 4.5, 'Eyebrow-Pille, Brotkrumen'],
   ['base-semi-dark', KARTE, 3, 'Rahmen Eingabefeld'],
   ['primary-dark', SEITE, 3, 'Fokusring Buttons'], ['primary-dark', KARTE, 3, 'Fokusring Buttons auf Karten'], ['primary', KARTE, 3, 'Fokusring Links'],
+  ['primary', FLAECHE, 3, 'Telefon-Symbol Notfall-Karte (Grafik)'], ['primary-hover', FLAECHE, 4.5, 'Link-Hover Notfall-Karte'],
   ['success', 'success-ultra-light', 4.5, 'Meldung gesendet'], ['danger', 'danger-ultra-light', 4.5, 'Fehlermeldung Formular'], ['danger', KARTE, 4.5, 'Fehlertext am Feld'],
 ];
-// Dunkle Akzentflächen, die immer hell gerechnet werden (Notfall-Karte, Erstgespräch-Karte, Aufruf-Panel, Footer)
+// Dunkle Akzentflächen, die immer hell gerechnet werden (Erstgespräch-Karte, Aufruf-Panel, Footer)
 const immerHell = [
   ['white', 'secondary-ultra-dark', 4.5, 'Titel/Text auf dunkler Fläche'], ['secondary-light', 'secondary-ultra-dark', 4.5, 'Nebentext auf dunkler Fläche'],
   ['primary-light', 'secondary-ultra-dark', 4.5, 'Eyebrow, Links, Footer-Hover auf dunkler Fläche'],
   ['white', 'primary', 4.5, 'btn--primary auf dunkler Fläche'], ['white', 'primary-hover', 4.5, 'btn--primary Hover auf dunkler Fläche'],
   ['primary-light', 'secondary-ultra-dark', 4.5, 'btn--primary-light btn--outline (Aufruf-Panel)'], ['primary-dark', 'primary-light', 4.5, 'btn--primary-light btn--outline Hover'],
-  ['primary-light', 'secondary-ultra-dark', 3, 'Fokusring auf dunklen Flächen'], ['base', 'white', 4.5, 'KI-Plakette hell'], ['primary-dark', 'white', 3, 'KI-Symbol hell (Grafik)'], ['primary', 'secondary-ultra-dark', 3, 'Telefon-Symbol (Grafik)'],
+  ['primary-light', 'secondary-ultra-dark', 3, 'Fokusring auf dunklen Flächen'], ['base', 'white', 4.5, 'KI-Plakette hell'], ['primary-dark', 'white', 3, 'KI-Symbol hell (Grafik)'],
 ];
 
 let fehler = 0;

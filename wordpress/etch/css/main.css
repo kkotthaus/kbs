@@ -26,6 +26,17 @@ html:root { --base-semi-dark: color-mix(in oklch, var(--base) 78%, var(--seconda
   /* Lichtkante oben an hellen Flächen (fester Weißton wie die Schatten; light-dark(), weil --white im dunklen Schema schwarz wird) */
   --kbs-kante: inset 0 1px 0 light-dark(rgb(255 255 255 / 1), rgb(255 255 255 / 0.1)), inset 0 -1px 0 light-dark(rgb(10 15 20 / 0.04), rgb(0 0 0 / 0.3));
   /* Lichtkante auf Ink- und Markenflächen (in beiden Schemata gleich) */
+  /* Sockel der Tasten (Karten, Buttons, Header): hell abgedunkelter Rahmen, dunkel fast schwarz (sonst heller als die Fläche) */
+  --kbs-sockel-farbe: light-dark(color-mix(in oklch, var(--base-light) 65%, var(--base)), rgb(0 0 0 / 0.75));
+  /* Eingelassene Fläche (Mulde): Navigation, Untermenü, mobiles Menü – Grund, Rand und Schatten */
+  --kbs-mulde-grund: color-mix(in oklch, var(--base-ultra-light) 88%, transparent);
+  --kbs-mulde-verlauf: linear-gradient(to bottom, light-dark(rgb(10 15 20 / 0.05), rgb(0 0 0 / 0.35)), transparent 60%);
+  --kbs-mulde-rand: light-dark(color-mix(in oklch, var(--base-light) 90%, var(--base)), rgb(0 0 0 / 0.6));
+  --kbs-mulde:
+    inset 0 3px 6px light-dark(rgb(10 15 20 / 0.14), rgb(0 0 0 / 0.55)),
+    inset 0 10px 18px -10px light-dark(rgb(10 15 20 / 0.12), rgb(0 0 0 / 0.5)),
+    inset 0 -1px 0 light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.08)),
+    0 1px 0 light-dark(rgb(255 255 255 / 1), rgb(255 255 255 / 0.08));
   --kbs-kante-dunkel: inset 0 1px 0 rgb(255 255 255 / 0.14), inset 0 -1px 0 rgb(0 0 0 / 0.3);
   /* Raster-Motiv (Netzwerk, Technik); Linienfarbe je Fläche überschreibbar */
   --kbs-grid-line: color-mix(in oklch, var(--base) 9%, transparent);
@@ -35,6 +46,8 @@ html:root { --base-semi-dark: color-mix(in oklch, var(--base) 78%, var(--seconda
     radial-gradient(30rem 20rem at 0% 100%, color-mix(in oklch, var(--secondary) 60%, transparent), transparent 70%),
     var(--secondary-ultra-dark);
   --kbs-header-h: 5rem;
+  /* Platz, den die Kopfzeile oben belegt (Abstand oben + Leiste); um so viel rückt der Hero darunter */
+  --kbs-header-flaeche: calc(0.75rem + 4rem);
 }
 
 *, *::before, *::after { box-sizing: border-box; }
@@ -54,7 +67,7 @@ a { color: var(--primary-dark); text-decoration-thickness: 1px; text-underline-o
 a:hover { color: var(--primary-hover); }
 :focus-visible { outline: 2px solid var(--primary); outline-offset: 3px; }
 /* Fokus auf dunklen Flächen sichtbar halten (WCAG 2.4.7, Kontrast ≥ 3:1) */
-:is(.hero-card, .service-card--cta, .cta-band, .site-footer) :focus-visible { outline-color: var(--primary-light); }
+:is(.service-card--cta, .cta-band, .site-footer) :focus-visible { outline-color: var(--primary-light); }
 /* Links im Fließtext nicht nur über die Farbe erkennbar (WCAG 1.4.1) */
 :is(p, li, label, dd) a:not([class]) { text-decoration: underline; }
 /* Schriftart, -stärke und Laufweite der Überschriften kommen aus den ACSS-Einstellungen (acss-schrift.mjs) */
@@ -86,7 +99,7 @@ address { font-style: normal; }
 /* Fokusring der ACSS-Buttons (Variable --focus-color von ACSS): btn--primary setzt --primary-light,
    auf hellem Grund unter 3:1 (WCAG 1.4.11). Höhere Spezifität als .btn--primary, deshalb unabhängig von der Ladereihenfolge. */
 body [class*="btn--"] { --focus-color: var(--primary-dark); }
-:is(.hero-card, .service-card--cta, .cta-band, .site-footer) [class*="btn--"] { --focus-color: var(--primary-light); }
+:is(.service-card--cta, .cta-band, .site-footer) [class*="btn--"] { --focus-color: var(--primary-light); }
 /* 3D-Optik der Buttons wie die Karten: Tasten mit festem Sockel (ACSS hat keine Einstellung für Button-Schatten, deshalb hier).
    Sockel in abgedunkelter Rahmenfarbe des Buttons; beim Überfahren halb, beim Klicken ganz eingedrückt.
    --btn-transition ist die ACSS-Variable für den Übergang (kürzer, damit es sich wie ein Knopf anfühlt). */
@@ -173,14 +186,18 @@ html.scheme--dark .scheme-bild--dunkel { display: block; }
 .site-header__inner.container {
   display: flex; align-items: center; gap: var(--space-xs);
   max-width: calc(var(--content-width) + 2 * var(--space-m)); min-height: 4rem; padding-inline: var(--space-m) 0.5rem;
-  background: color-mix(in oklch, var(--white) 82%, transparent);
+  /* 3D: in die Fläche eingelassen (Mulde) – Grund etwas dunkler als die Seite, oben im Schatten, unten vom Licht getroffen */
+  background: var(--kbs-mulde-grund); background-image: var(--kbs-mulde-verlauf);
   -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
-  border: 1px solid color-mix(in oklch, var(--base-light) 75%, transparent); border-radius: 999px; box-shadow: var(--kbs-kante), var(--kbs-shadow-s);
+  border: 1px solid var(--kbs-mulde-rand); border-radius: 999px;
+  /* Schatten der Oberkante innen, Licht am unteren Innenrand, Lichtkante unter der Mulde */
+  box-shadow: var(--kbs-mulde);
 }
 
 .site-logo { display: inline-flex; align-items: center; gap: 0.65rem; text-decoration: none; color: var(--base); flex: none; margin-right: var(--space-m); }
 .site-logo:hover { color: var(--base); }
 .site-logo__bild { display: block; height: 2.9rem; width: auto; max-width: 14rem; object-fit: contain; }
+.site-header .site-logo__bild { filter: drop-shadow(0 1px 0 light-dark(rgb(255 255 255 / 0.9), rgb(0 0 0 / 0.5))) drop-shadow(0 2px 3px rgb(10 15 20 / 0.15)); }
 .site-footer .site-logo__bild { height: 4.5rem; }
 .site-logo__mark { display: grid; place-items: center; width: 2.6rem; height: 2.6rem; flex: none; border-radius: 0.8rem; background: var(--primary); color: var(--white); font-weight: 800; font-size: 1.05rem; letter-spacing: -0.04em; }
 .site-logo__text { display: flex; flex-direction: column; line-height: 1.1; min-width: 0; }
@@ -193,9 +210,17 @@ html.scheme--dark .scheme-bild--dunkel { display: block; }
 .main-nav__toggle { display: none; }
 
 /* Umschalter Hell/Dunkel: Mond im hellen, Sonne im dunklen Schema; ohne JavaScript ausgeblendet */
-.scheme-toggle { display: inline-grid; place-items: center; flex: none; width: 2.6rem; height: 2.6rem; padding: 0; border: 1px solid var(--base-light); border-radius: 50%; background: var(--white); color: var(--base); cursor: pointer; box-shadow: var(--kbs-kante), var(--kbs-shadow-s); transition: color var(--transition), background-color var(--transition), border-color var(--transition), box-shadow var(--transition), transform var(--transition); }
-.scheme-toggle:hover { color: var(--primary-dark); background: var(--primary-ultra-light); border-color: color-mix(in oklch, var(--primary) 30%, var(--base-light)); transform: translateY(-1px); box-shadow: var(--kbs-kante), var(--kbs-shadow-m); }
-.scheme-toggle:active { transform: translateY(1px); box-shadow: inset 0 2px 4px rgb(10 15 20 / 0.12); }
+.scheme-toggle {
+  display: inline-grid; place-items: center; flex: none; width: 2.6rem; height: 2.6rem; padding: 0; border: 1px solid var(--base-light); border-radius: 50%; background: var(--white); color: var(--base); cursor: pointer;
+  /* 3D: Taste mit Sockel wie die Buttons; beim Überfahren halb, beim Klicken ganz eingedrückt */
+  --kbs-hub: 3px; --kbs-druck: 0px; --kbs-sockel: var(--kbs-sockel-farbe); --kbs-taste-innen: 0 0 transparent;
+  background-image: linear-gradient(to bottom, light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.08)), transparent);
+  transform: translateY(var(--kbs-druck));
+  box-shadow: var(--kbs-kante), var(--kbs-taste-innen), 0 calc(var(--kbs-hub) - var(--kbs-druck)) 0 var(--kbs-sockel), 0 calc(var(--kbs-hub) + 3px - var(--kbs-druck)) 6px -3px rgb(10 15 20 / 0.25);
+  transition: color var(--transition), background-color var(--transition), border-color var(--transition), box-shadow 0.15s ease-out, transform 0.15s ease-out;
+}
+.scheme-toggle:hover { color: var(--primary-dark); background-color: var(--primary-ultra-light); border-color: color-mix(in oklch, var(--primary) 30%, var(--base-light)); --kbs-druck: calc(var(--kbs-hub) * 0.5); --kbs-sockel: color-mix(in oklch, var(--primary) 35%, var(--base-light)); }
+.scheme-toggle:active { --kbs-druck: var(--kbs-hub); --kbs-taste-innen: inset 0 2px 4px rgb(10 15 20 / 0.15); }
 .scheme-toggle .icon { width: 1.2rem; height: 1.2rem; }
 .scheme-toggle__sun, .scheme-toggle[aria-pressed="true"] .scheme-toggle__moon { display: none; }
 .scheme-toggle[aria-pressed="true"] .scheme-toggle__sun { display: inline-block; }
@@ -203,24 +228,29 @@ html:not(.js) .scheme-toggle { display: none; }
 .main-nav__list { list-style: none; margin: 0; padding: 0; display: flex; align-items: center; gap: 0.15rem; }
 .main-nav__item { position: relative; }
 .main-nav__link, .main-nav__phone { display: inline-flex; align-items: center; gap: 0.4em; padding: 0.55em 0.95em; border-radius: 999px; color: var(--base); font-weight: 650; font-size: var(--text-s); text-decoration: none; white-space: nowrap; }
-.main-nav__link:hover, .main-nav__phone:hover { color: var(--primary-dark); background: var(--primary-ultra-light); }
-.main-nav__link[aria-current="page"], .main-nav__link--active { color: var(--primary-dark); background: var(--primary-ultra-light); box-shadow: inset 0 1px 3px color-mix(in oklch, var(--primary) 22%, transparent); }
+.main-nav__link, .main-nav__phone { transition: color var(--transition), background-color var(--transition), box-shadow var(--transition); }
+/* 3D: Menüpunkte als Mulden in der Leiste (Schatten innen oben, Licht unten) */
+.main-nav__link:hover, .main-nav__phone:hover { color: var(--primary-dark); background: var(--primary-ultra-light); box-shadow: inset 0 1px 3px color-mix(in oklch, var(--primary) 18%, transparent), inset 0 -1px 0 light-dark(rgb(255 255 255 / 0.8), rgb(255 255 255 / 0.06)); }
+.main-nav__link[aria-current="page"], .main-nav__link--active { color: var(--primary-dark); background: var(--primary-ultra-light); box-shadow: inset 0 2px 5px color-mix(in oklch, var(--primary) 30%, transparent), inset 0 -1px 0 light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.08)); }
 .main-nav__phone .icon { color: var(--primary); }
 .main-nav__item--cta { margin-left: var(--space-xs); }
 .main-nav__item--has-sub { display: flex; align-items: center; }
 .main-nav__sub-toggle { display: inline-grid; place-items: center; width: 1.9rem; height: 1.9rem; margin-left: -0.5rem; padding: 0; border: 0; border-radius: 999px; background: none; color: var(--base-semi-dark); cursor: pointer; }
-.main-nav__sub-toggle:hover { color: var(--primary-dark); background: var(--primary-ultra-light); }
+.main-nav__sub-toggle:hover { color: var(--primary-dark); background: var(--primary-ultra-light); box-shadow: inset 0 1px 3px color-mix(in oklch, var(--primary) 18%, transparent); }
 .main-nav__sub-toggle .icon { transition: transform var(--transition); }
 .main-nav__sub-toggle[aria-expanded="true"] .icon { transform: rotate(180deg); }
 .main-nav__sub { list-style: none; margin: 0; padding: var(--space-xs); }
 .main-nav__sub-link { display: block; padding: 0.6em 0.9em; border-radius: var(--radius); color: var(--base); text-decoration: none; font-size: var(--text-s); font-weight: 550; }
-.main-nav__sub-link:hover { background: var(--primary-ultra-light); color: var(--primary-dark); }
+.main-nav__sub-link:hover { background: var(--primary-ultra-light); color: var(--primary-dark); box-shadow: inset 0 1px 3px color-mix(in oklch, var(--primary) 18%, transparent); }
 .main-nav__sub-link[aria-current="page"] { color: var(--primary-dark); font-weight: 700; }
 
 @media (min-width: 64em) {
   .main-nav__sub {
     position: absolute; top: calc(100% + 0.9rem); left: 0; min-width: 16rem;
-    background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-l); box-shadow: var(--kbs-kante), var(--kbs-shadow-m);
+    /* eingelassen wie die Leiste */
+    background: var(--kbs-mulde-grund); background-image: var(--kbs-mulde-verlauf);
+    -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
+    border: 1px solid var(--kbs-mulde-rand); border-radius: var(--kbs-radius-l); box-shadow: var(--kbs-mulde);
     opacity: 0; visibility: hidden; transform: translateY(-4px); transition: opacity var(--transition), transform var(--transition), visibility var(--transition);
   }
   /* Brücke, damit das Untermenü beim Wechsel mit der Maus nicht schließt */
@@ -232,7 +262,10 @@ html:not(.js) .scheme-toggle { display: none; }
 }
 
 @media (max-width: 63.99em) {
-  .main-nav__toggle { display: inline-flex; align-items: center; gap: 0.45em; padding: 0.6em 1em; border: 1px solid var(--base-light); border-radius: 999px; background: var(--white); color: var(--base); font: 650 var(--text-s)/1 var(--text-font-family, inherit); cursor: pointer; box-shadow: var(--kbs-kante), var(--kbs-shadow-s); }
+  .main-nav__toggle { display: inline-flex; align-items: center; gap: 0.45em; padding: 0.6em 1em; border: 1px solid var(--base-light); border-radius: 999px; background: var(--white); color: var(--base); font: 650 var(--text-s)/1 var(--text-font-family, inherit); cursor: pointer;
+    --kbs-druck: 0px; transform: translateY(var(--kbs-druck)); box-shadow: var(--kbs-kante), 0 calc(3px - var(--kbs-druck)) 0 var(--kbs-sockel-farbe), 0 calc(6px - var(--kbs-druck)) 6px -3px rgb(10 15 20 / 0.25); transition: transform 0.15s ease-out, box-shadow 0.15s ease-out; }
+  .main-nav__toggle:hover { --kbs-druck: 1.5px; }
+  .main-nav__toggle:active, .main-nav--open .main-nav__toggle { --kbs-druck: 3px; box-shadow: inset 0 2px 4px rgb(10 15 20 / 0.15); }
   .main-nav__toggle .icon { width: 1.3em; height: 1.3em; }
   /* Ohne JavaScript bleibt das Menü sichtbar (Klasse js setzt snippets/kbs-navigation.php im <head>) */
   .js .main-nav__list { display: none; }
@@ -242,7 +275,10 @@ html:not(.js) .scheme-toggle { display: none; }
     flex-direction: column; align-items: stretch; gap: 0;
     max-height: calc(100dvh - var(--kbs-header-h) - 1rem); overflow-y: auto;
     padding: var(--space-xs) var(--space-m) var(--space-m);
-    background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-l); box-shadow: var(--kbs-kante), var(--kbs-shadow-m);
+    /* eingelassen wie die Leiste */
+    background: var(--kbs-mulde-grund); background-image: var(--kbs-mulde-verlauf);
+    -webkit-backdrop-filter: saturate(1.6) blur(16px); backdrop-filter: saturate(1.6) blur(16px);
+    border: 1px solid var(--kbs-mulde-rand); border-radius: var(--kbs-radius-l); box-shadow: var(--kbs-mulde);
   }
   .js .main-nav--open .main-nav__list { display: flex; }
   .main-nav__item { border-bottom: 1px solid var(--base-light); }
@@ -259,6 +295,9 @@ html:not(.js) .scheme-toggle { display: none; }
 @media (min-width: 64em) and (max-width: 79.99em) { .main-nav__item--phone { display: none; } }
 
 /* ---------- Helle Köpfe mit Raster-Motiv (folgen Hell/Dunkel) ---------- */
+/* Hero liegt hinter der Navigation: Kopfzeile ohne eigenen Platz im Fluss, der Hero bekommt den Platz oben dazu.
+   Nur wenn die Seite mit einem Hero beginnt (sonst bleibt die Kopfzeile normal über dem Inhalt). */
+.site-header:has(+ .site-main > :is(.home-hero, .page-hero):first-child) { margin-bottom: calc(-1 * var(--kbs-header-flaeche)); }
 .home-hero, .page-hero { position: relative; isolation: isolate; overflow: hidden; }
 .home-hero::before, .page-hero::before {
   content: ""; position: absolute; inset: 0; z-index: -1; pointer-events: none;
@@ -273,6 +312,7 @@ html:not(.js) .scheme-toggle { display: none; }
 
 /* Startseiten-Hero */
 .home-hero { padding-block: var(--section-space-l); }
+.site-main > .home-hero:first-child { padding-top: calc(var(--section-space-l) + var(--kbs-header-flaeche)); }
 /* Hintergrundbild rechts (Netzwerk), läuft nach links und unten in die Seitenfarbe aus; Raster liegt darüber. Je Schema eine Variante (scheme-bild--…). */
 .home-hero__bild { position: absolute; inset: 0; z-index: -2; pointer-events: none; }
 .home-hero__bild img { display: block; width: 100%; height: 100%; object-fit: cover; object-position: right center;
@@ -290,24 +330,37 @@ html:not(.js) .scheme-toggle { display: none; }
 .home-hero__lead { font-size: var(--text-l); max-width: 38rem; color: var(--base-semi-dark); }
 .home-hero__actions { display: flex; flex-wrap: wrap; gap: var(--space-s); margin-top: var(--space-l); }
 
-/* Notfall-Karte: dunkle Akzentfläche (ACSS „Force light selectors“, in beiden Schemata gleich) */
-.hero-card { position: relative; background: var(--kbs-ink); color: var(--secondary-light); border-radius: var(--kbs-radius-xl); padding: var(--space-xl); border: 1px solid color-mix(in oklch, var(--white) 10%, transparent); }
+/* Notfall-Karte: hell, in den Hero eingelassen wie die Navigation (Mulde); folgt Hell/Dunkel */
+.hero-card {
+  position: relative; color: var(--base); border-radius: var(--kbs-radius-xl); padding: var(--space-xl);
+  background: var(--kbs-mulde-grund); background-image: var(--kbs-mulde-verlauf);
+  -webkit-backdrop-filter: saturate(1.4) blur(14px); backdrop-filter: saturate(1.4) blur(14px);
+  border: 1px solid var(--kbs-mulde-rand);
+  /* wie --kbs-mulde, für die große Fläche mit tieferem Schatten von oben */
+  box-shadow:
+    inset 0 4px 10px light-dark(rgb(10 15 20 / 0.16), rgb(0 0 0 / 0.6)),
+    inset 0 28px 36px -28px light-dark(rgb(10 15 20 / 0.18), rgb(0 0 0 / 0.6)),
+    inset 0 -1px 0 light-dark(rgb(255 255 255 / 0.9), rgb(255 255 255 / 0.08)),
+    0 1px 0 light-dark(rgb(255 255 255 / 1), rgb(255 255 255 / 0.08));
+}
+/* Raster wie im Hero, läuft nach unten aus */
 .hero-card::before {
-  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none; --kbs-grid-line: color-mix(in oklch, var(--white) 7%, transparent);
+  content: ""; position: absolute; inset: 0; border-radius: inherit; pointer-events: none;
   background-image: linear-gradient(to right, var(--kbs-grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--kbs-grid-line) 1px, transparent 1px); background-size: 2rem 2rem;
   -webkit-mask-image: linear-gradient(to bottom, #000, transparent 70%); mask-image: linear-gradient(to bottom, #000, transparent 70%);
 }
 .hero-card > * { position: relative; }
-.hero-card__eyebrow { margin: 0; font-size: var(--text-s); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary-light); }
-.home-hero .hero-card__title { color: var(--white); font-size: var(--h3); margin: var(--space-xs) 0 var(--space-m); }
-.hero-card__phone { display: inline-flex; align-items: center; gap: 0.5em; font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem); font-weight: 800; letter-spacing: -0.03em; color: var(--white); text-decoration: none; }
-.hero-card__phone:hover { color: var(--primary-light); }
+.hero-card__eyebrow { margin: 0; font-size: var(--text-s); font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; color: var(--primary-dark); }
+.home-hero .hero-card__title { color: var(--base); font-size: var(--h3); margin: var(--space-xs) 0 var(--space-m); }
+.hero-card__phone { display: inline-flex; align-items: center; gap: 0.5em; font-size: clamp(1.6rem, 1.2rem + 1.4vw, 2.2rem); font-weight: 800; letter-spacing: -0.03em; color: var(--base); text-decoration: none; }
+.hero-card__phone:hover { color: var(--primary-dark); }
 .hero-card__phone .icon { width: 1.5em; height: 1.5em; padding: 0.3em; border-radius: 0.45em; background: linear-gradient(145deg, var(--primary), var(--primary-hover)); color: var(--white); box-shadow: var(--kbs-kante-dunkel), inset 0 -2px 0 rgb(10 15 20 / 0.18), 0 4px 6px -3px color-mix(in oklch, var(--primary) 70%, transparent); }
-.hero-card__text { margin: var(--space-m) 0; color: var(--secondary-light); font-size: var(--text-s); }
-.hero-card .link-arrow { color: var(--primary-light); }
-.hero-card .link-arrow:hover { color: var(--white); }
+.hero-card__text { margin: var(--space-m) 0; color: var(--base-semi-dark); font-size: var(--text-s); }
+.hero-card .link-arrow { color: var(--primary-dark); }
+.hero-card .link-arrow:hover { color: var(--primary-hover); }
 
 /* Seitenkopf */
+.site-main > .page-hero:first-child { padding-top: calc(var(--section-space-m) + var(--kbs-header-flaeche)); }
 .page-hero { padding-block: var(--section-space-m) var(--section-space-l); border-bottom: 1px solid color-mix(in oklch, var(--base-light) 60%, transparent); }
 .page-hero__inner { position: relative; z-index: 1; max-width: calc(var(--content-width) + 2 * var(--gutter)); }
 /* Wasserzeichen (Firmenlogo bzw. PC-Visit-Signet auf der Fernwartungsseite): groß, rechts, schimmert durch */
@@ -498,10 +551,10 @@ a.contact-list__value:hover { text-decoration: underline; }
    Fester Sockel unten (--kbs-hub), beim Überfahren sinkt die Karte ein Stück ein, beim Klicken ganz;
    der Schatten wird dabei kleiner. Keine Drehung, die Karte bleibt plan.
    Kürzere Übergangszeit als --transition, damit es sich wie ein Knopf anfühlt. */
-:is(.service-card, .hero-card, .remote-card, .benefit, .steps__item, .side-card, .cta-band__inner, .ome-accordion-item) {
+:is(.service-card, .remote-card, .benefit, .steps__item, .side-card, .cta-band__inner, .ome-accordion-item) {
   --kbs-hub: 6px;
   --kbs-druck: 0px;
-  --kbs-sockel: color-mix(in oklch, var(--base-light) 65%, var(--base));
+  --kbs-sockel: var(--kbs-sockel-farbe);
   --kbs-taste-kante: var(--kbs-kante);
   --kbs-taste-schatten: var(--kbs-shadow-m);
   --kbs-taste-innen: 0 0 transparent;
@@ -513,19 +566,19 @@ a.contact-list__value:hover { text-decoration: underline; }
 /* Akkordeon: flachere Taste */
 .ome-accordion-item { --kbs-hub: 4px; --kbs-taste-schatten: var(--kbs-shadow-s); }
 /* Dunkle Ink-Flächen: Sockel in festem Dunkelton */
-:is(.hero-card, .service-card--cta, .cta-band__inner) { --kbs-sockel: rgb(4 6 10); --kbs-taste-kante: var(--kbs-kante-dunkel); --kbs-taste-schatten: var(--kbs-shadow-l); }
+:is(.service-card--cta, .cta-band__inner) { --kbs-sockel: rgb(4 6 10); --kbs-taste-kante: var(--kbs-kante-dunkel); --kbs-taste-schatten: var(--kbs-shadow-l); }
 /* Überfahren: halb eingedrückt */
-:is(.service-card, .hero-card, .remote-card, .benefit, .steps__item, .side-card, .cta-band__inner, .ome-accordion-item):hover {
+:is(.service-card, .remote-card, .benefit, .steps__item, .side-card, .cta-band__inner, .ome-accordion-item):hover {
   --kbs-druck: calc(var(--kbs-hub) * 0.6);
   --kbs-taste-schatten: var(--kbs-shadow-s);
 }
 /* Klicken: ganz eingedrückt, Schatten innen */
-:is(.service-card, .hero-card, .remote-card, .benefit, .steps__item, .side-card, .cta-band__inner, .ome-accordion-item):active {
+:is(.service-card, .remote-card, .benefit, .steps__item, .side-card, .cta-band__inner, .ome-accordion-item):active {
   --kbs-druck: var(--kbs-hub);
   --kbs-taste-schatten: 0 1px 2px rgb(10 15 20 / 0.12);
   --kbs-taste-innen: inset 0 3px 8px rgb(10 15 20 / 0.1);
 }
-:is(.hero-card, .service-card--cta, .cta-band__inner):active { --kbs-taste-innen: inset 0 3px 10px rgb(0 0 0 / 0.4); }
+:is(.service-card--cta, .cta-band__inner):active { --kbs-taste-innen: inset 0 3px 10px rgb(0 0 0 / 0.4); }
 
 /* ---------- Footer: dunkle Fläche (ACSS „Force light selectors“) ---------- */
 .site-footer { padding-top: var(--section-space-l); font-size: var(--text-s); background: var(--kbs-ink); color: var(--secondary-light); box-shadow: var(--kbs-kante-dunkel), 0 -12px 30px -16px rgb(10 15 20 / 0.35); }

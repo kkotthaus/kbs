@@ -27,7 +27,7 @@ export const palette = {
 
 // Farbschema: folgt der Einstellung des Betrachters (prefers-color-scheme), ACSS „light dark“.
 // Diese Bereiche bleiben in beiden Schemata gleich (dunkle Akzentflächen mit heller Schrift). Hero und Seitenkopf sind hell und folgen dem Schema.
-export const immerHell = ['.hero-card', '.service-card--cta', '.cta-band', '.site-footer', '.ki-plakette'];
+export const immerHell = ['.service-card--cta', '.cta-band', '.site-footer', '.ki-plakette'];
 
 // sRGB-Hex → OKLCH (Björn Ottosson)
 export function hexToOklch(hex) {
