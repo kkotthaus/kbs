@@ -6,7 +6,7 @@ Palette zentral in `wordpress/etch/acss-farben.mjs`, übernehmen per MCP `kbs/ac
 - **Secondary** `#2F3A45` (Graphit): dunkle Akzentflächen über `--secondary-ultra-dark` (`--kbs-ink` in main.css), Seitenhintergrund `--secondary-ultra-light`.
 - **Base**: Text `--base`, Nebentext `--base-semi-dark` (in `main.css` als Mischung aus Text- und Seitenfarbe überschrieben, damit es in beiden Schemata reicht), Rahmen `--base-light`, getönte Abschnitte `--base-ultra-light`, Karten `--white`.
 - **Danger** bewusst orange (`#A6400B`), damit Fehlermeldungen nicht wie Markenflächen wirken.
-- Nur ACSS-Farbvariablen, keine Hex-Werte im CSS (Ausnahme: Schatten mit festem Dunkelton).
+- Nur ACSS-Farbvariablen, keine Hex-Werte im CSS (Ausnahme: Schatten mit festem Dunkelton und Lichtkanten mit festem Weißton, `--kbs-kante` per `light-dark()`).
 
 ## Hell/Dunkel
 

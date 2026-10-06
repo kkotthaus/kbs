@@ -13,11 +13,17 @@ Modern, hell und vertrauenswürdig: IT-Service und Websites für kleine Unterneh
 - **Header:** schwebende, abgerundete Leiste (Pille) mit Unschärfe-Hintergrund; mobil klappt das Menü als Panel darunter auf.
 - **Hero und Seitenkopf:** hell, mit Raster und weichem Rot-Glühen oben rechts. Sie folgen Hell/Dunkel. Seitenkopf mit Brotkrumen als Pille und Logo-Wasserzeichen (im dunklen Schema die helle Logo-Variante).
 - **Dunkle „Ink“-Flächen** (`--kbs-ink`: Graphit mit Rot-Glühen) nur als Akzent: Notfall-Karte im Hero, Erstgespräch-Karte bei den Leistungen, Aufruf-Panel (CtaBand) und Footer. Sie bleiben in beiden Schemata gleich (`immerHell` in `acss-farben.mjs`).
-- **Karten:** weiß, Rundung `--kbs-radius-xl` (2rem), weiche Schatten (`--kbs-shadow-s/m/l`). Leistungskarten mit rotem Symbol-Quadrat und Glühen beim Überfahren; Seitenkästen mit auslaufender roter Linie oben.
+- **3D-Optik (kräftig):** Tiefe ohne Bilder, nur per CSS. Schatten in Schichten (`--kbs-shadow-s/m/l`: Kontakt, Nähe, Ferne), Lichtkante oben an allen erhabenen Flächen (`--kbs-kante` auf hellen, `--kbs-kante-dunkel` auf Ink- und Markenflächen), plastische Symbole (Verlauf, Licht oben, Schatten unten), Punkte als Kugeln. Alles hat Tiefe:
+  - **Erhaben** (Lichtkante + Schichtschatten): Karten, Panels, Header-Leiste und -Schaltflächen, Pillen (Eyebrow, Brotkrumen, Zielgruppen), Akkordeon, Menü-Panels, Meldungen, KI-Plakette.
+  - **Buttons** (ACSS hat keine Schatten-Einstellung, deshalb in `main.css`): gefüllt mit Licht oben, Kante unten und farbigem Schlagschatten, umrandet als erhabene Pille; heben sich beim Überfahren, drücken sich beim Klicken ein.
+  - **Vertieft:** Formularfelder, aktiver Menüpunkt, Adresszeile der Website-Illustration, getönte Abschnitte (Innenschatten oben/unten).
+  - **Karten als Tasten** (Leistungs-, Notfall-, Fernwartungs-, Vorteils- und Schritt-Karten, Seitenkästen, Aufruf-Panel, Akkordeon): fester Sockel unten (`--kbs-hub` 6px, Akkordeon 4px; hell `--base-light` mit Text gemischt, auf Ink-Flächen fester Dunkelton). Beim Überfahren sinkt die Karte um 60 % des Sockels ein und der Schatten wird kleiner, beim Klicken ganz mit Schatten innen – wie ein gedrückter Knopf. Keine Drehung, die Karte bleibt plan. Übergang 0.15s. Die Website-Illustration steht statisch schräg im Raum (8° / -16°).
+  - **Große Titel** (Hero, Seitenkopf) mit weichem Textschatten; Footer mit Schatten nach oben als Stufe.
+- **Karten:** weiß, Rundung `--kbs-radius-xl` (2rem), Schichtschatten mit Lichtkante. Leistungskarten mit rotem Symbol-Quadrat und Glühen beim Überfahren; Seitenkästen mit auslaufender roter Linie oben.
 - **Abschnittsköpfe:** Eyebrow in Versalien mit kurzer roter Linie (zentriert beidseitig).
 - **Buttons:** ACSS, Pillenform (`acss-buttons.mjs`). Auf hellen Flächen `btn--primary` / `btn--primary btn--outline`, auf dunklen Flächen `btn--primary` / `btn--primary-light btn--outline`.
 - **KI-Kennzeichnung** (Standard aus etch-nodes, `snippets/kbs-ki.php`): Pille mit Funken-Symbol und „KI“ am Bild, aufgeklappt „generiert · Vollständig mit KI erzeugt (Werkzeug)“. Stile dunkel (Ink, Standard), hell, Markenrot; Größe normal/klein; Position je Einstellung oder je Bild. Deckend und in beiden Farbschemata gleich. Eigenes Symbol (z. B. EU-Symbol) unter Firmendaten › Firma & Kontakt. Texte in `KBS_KI_ARTEN`: KI-unterstützt, KI-generiert, KI-bearbeitet.
-- **Bewegung:** dezent (Karten heben sich, Pfeile rücken, pulsierender Punkt im Hero-Eyebrow); bei „Bewegung reduzieren“ abgeschaltet.
+- **Bewegung:** dezent (Karten drücken sich ein wie Tasten, Pfeile rücken, pulsierender Punkt im Hero-Eyebrow); bei „Bewegung reduzieren“ abgeschaltet.
 
 ## Werte
 
@@ -27,3 +33,6 @@ Modern, hell und vertrauenswürdig: IT-Service und Websites für kleine Unterneh
 | `--kbs-radius-xl` | 2rem | Karten, Panels, Aufruf-Panel |
 | `--kbs-grid-line` | Text 9 % | Rasterlinien (auf dunklen Flächen Weiß 6–7 %) |
 | `--kbs-header-h` | 5rem | Sprungziel-Abstand unter dem Header |
+| `--kbs-kante` | Weiß 100 % (dunkel 10 %) innen oben, Schattenlinie innen unten | Lichtkante heller Flächen |
+| `--kbs-kante-dunkel` | Weiß 14 % innen oben, Schwarz 30 % innen unten | Lichtkante auf Ink- und Markenflächen |
+| `--kbs-hub`, `--kbs-druck` | 6px (Akkordeon 4px) bzw. 0 → 60 % → 100 % | Sockelhöhe der Karten, Eindrücken beim Überfahren/Klicken |
