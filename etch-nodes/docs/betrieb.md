@@ -39,6 +39,21 @@ Hinweis: Update Snippet auf eingeschaltete Snippets braucht zusätzlich die Frei
 - **Nur in der Entwicklung aktiv:** Funktionen nur registrieren, wenn `wp_get_environment_type()` `local` oder `development` meldet. Bewusste Nutzung live nur über eine Konstante in der `wp-config.php` (z. B. `<PREFIX>_MCP_LIVE`).
 - Lesende und schreibende Funktionen trennen (readonly-Kennzeichnung). Schreibende Imports wiederholbar machen (anlegen oder per Schlüsselfeld aktualisieren, nichts löschen).
 - Typischer Satz: Inhalte auflisten/lesen, Seite/Template/Komponente/Stylesheet speichern, Sync aus dem Build-Ordner (Reihenfolge: Loops → Komponenten → Templates und Seiten mit `__REF_<Key>__`-Ersetzung → Stylesheet), Import von Inhalten und Einstellungen aus JSON, ACSS-Einstellungen, Permalinks, Startseite, Snippet-Sync.
+- **Selbstsigniertes Zertifikat lokal:** `<prefix>-mcp.php` schaltet nur bei `wp_get_environment_type()` = `local` die Zertifikatsprüfung für Aufrufe an die eigene Adresse ab (Filter `http_request_args`, Host = Host von `home_url()`). Sonst scheitern Plugins, die die eigene Seite aufrufen (z. B. das SEOPress-Audit).
+
+## SEOPress-Funktionen (MCP)
+
+SEOPress (ab 10.3) registriert eigene Funktionen `seopress/*` in der Abilities API und bringt zusätzlich einen eigenen MCP-Server mit (`/wp-json/seopress/mcp/v1`, OAuth oder Anwendungspasswort).
+
+- **Einschalten:** SEO › Erweitert › Erweitert › Abilities API › „Expose abilities to AI agents and external tools“ (Option `seopress_advanced_option_name`, Schlüssel `seopress_advanced_abilities_api_rest`). Standard ist aus.
+- **In der Entwicklung an.** Die Funktionen erscheinen dann über den MCP Adapter im vorhandenen MCP-Server des Projekts (`mcp-adapter-discover-abilities`). Den eigenen SEOPress-Server lokal nicht einrichten.
+- **Live aus.** Wenn live doch gebraucht: nur über den eigenen SEOPress-Server mit OAuth und Zugang „nur lesen“, als eigener Server je Website im Projekt eingetragen (nicht mit `--scope user`, wie es das SEOPress-Backend vorschlägt).
+- **Nur lesen und prüfen**, nicht schreiben: Titel, Beschreibungen und strukturierte Daten kommen aus dem Repo (Generator → Build → Snippet oder Sync). Nützlich sind:
+  - `seopress/get-technical-audit` – Startseite: Titel, Canonical, Indexierbarkeit, robots.txt, Sitemap, Open Graph, Sicherheits-Header, llms.txt. Ergebnis wird zwischengespeichert (Transient `seopress_pro_homepage_audit`).
+  - `seopress/list-posts-noindexed`, `seopress/get-sitemap-settings`, `seopress/list-redirections` (auch erkannte 404).
+  - `seopress/list-posts-missing-metadata` zeigt nur, wo in SEOPress selbst nichts eingetragen ist. Kommen Titel und Beschreibung per Filter aus dem Repo, stehen dort alle Seiten – kein Fehler.
+  - `seopress/analyze-post-content` ruft die Seite selbst auf. Lokal über MCP scheitert das an der Zahl der PHP-Prozesse von Local; per WP-CLI (`wp_get_ability( … )->execute()`) geht es.
+- Die KI-Funktionen (`generate-*`) brauchen einen KI-Anbieter in SEOPress und werden nicht genutzt.
 
 ## Ablauf Build → WordPress
 
@@ -55,14 +70,14 @@ Die Live-Seite entsteht als Kopie der lokalen Seite (Dateien und Datenbank). WPC
 1. Build, Kopie nach `wp-content/<prefix>/`, Sync aller Inhalte und Snippets.
 2. In WPCodeBox prüfen, dass alle Projekt-Snippets `enabled` sind.
 3. Beispiel- und Testinhalte entfernen; Test- und Beispielseiten nicht veröffentlicht lassen (sonst in der Sitemap).
-4. SEOPress prüfen: Sitemap-Inhalte, noindex für Autoren-, Datums-, Kategorie- und Schlagwort-Archive und interne Beitragstypen.
+4. SEOPress prüfen: Sitemap-Inhalte, noindex für Autoren-, Datums-, Kategorie- und Schlagwort-Archive und interne Beitragstypen (per MCP: `seopress/get-sitemap-settings`, `seopress/list-posts-noindexed`, `seopress/get-technical-audit`).
 5. Paket erstellen; `wp-content/<prefix>` und `wp_wpcb_*` nicht ausschließen. Im Installer die neue Adresse mit `https://` angeben.
 6. Bei Ersatz einer bestehenden Seite: alte Seite vollständig sichern, zu übernehmende Inhalte klären, zuerst auf einer Test-Subdomain installieren, alte Adressen per 301 (SEOPress-Weiterleitungen) umleiten.
 
 **Nachher (live):**
 
 1. WPCodeBox-MCP-Endpunkt ausschalten bzw. schreibende Werkzeuge entziehen.
-2. MCP Adapter deaktivieren, wenn live keine KI-Werkzeuge gebraucht werden.
+2. MCP Adapter deaktivieren, wenn live keine KI-Werkzeuge gebraucht werden. SEOPress: Abilities API ausschalten (siehe [SEOPress-Funktionen](#seopress-funktionen-mcp)) und „Agent Readiness“ (Pro) prüfen – veröffentlicht sonst u. a. `/.well-known/mcp.json` und Agenten-Endpunkte.
 3. Prüfen, dass live **nicht** `WP_ENVIRONMENT_TYPE` = `local`/`development` gesetzt ist.
 4. Anwendungspasswörter für den MCP-Zugriff widerrufen; Benutzer und Admin-Passwörter prüfen (kommen aus der lokalen Seite mit).
 5. „Suchmaschinen davon abhalten …“ ausschalten.
@@ -72,6 +87,7 @@ Die Live-Seite entsteht als Kopie der lokalen Seite (Dateien und Datenbank). WPC
 9. Installer-Dateien von Duplicator löschen.
 10. Cron: `define( 'DISABLE_WP_CRON', true );` und beim Hoster einen Cronjob alle 5–15 Minuten auf `/wp-cron.php`.
 11. Sitemap in der Google Search Console einreichen, in den ersten Wochen das 404-Protokoll ansehen.
+12. SEOPress-Audit live laufen lassen (in der Oberfläche oder, falls freigegeben, per `seopress/get-technical-audit`): Startseite indexierbar, robots.txt erreichbar, Sicherheits-Header.
 
 **Nach dem Livegang nie wieder per Duplicator veröffentlichen** – das überschreibt die komplette Live-Datenbank mit allem, was live gepflegt wurde. Spätere Änderungen gezielt übertragen: PHP im WPCodeBox-Editor bzw. per WPCodeBox Cloud oder kurzzeitig freigeschaltetem Snippet-Sync; Etch-Inhalte per Sync oder im Editor.
 
