@@ -5,7 +5,7 @@
 | `/` | Hero mit Telefon-Karte, Leistungen, drei Schritte, Fernwartung (PC-Visit), Websites, Zielgruppen, FAQ, Aufruf Erstgespräch | `seiten.mjs` › startseite |
 | `/leistungen/` | Leistungskarten, Vorteile | |
 | `/leistungen/<slug>/` | IT-Betreuung, IT-Beratung, WordPress-Websites: Text, Ansprechpartner-Kasten, FAQ, weitere Leistungen | `daten.mjs` › leistungen, `seiten.mjs` › leistungInhalte |
-| `/fernwartung/` | PC-Visit Quick Support und Host, Ablauf, Sicherheit | Links aus Firmendaten › PC-Visit |
+| `/fernwartung/` | PC-Visit Quick Support und Host, Ablauf, Sicherheit, häufige Fragen (auch FAQ-Schema) | Links aus Firmendaten › PC-Visit |
 | `/ueber-uns/` | Wer wir sind, Geschäftsführung, Werte | |
 | `/kontakt/` | Kontaktformular, Kontaktdaten | `kbs-kontakt.php` |
 | `/impressum/`, `/datenschutz/` | Rechtstexte mit Angaben aus den Firmendaten | |

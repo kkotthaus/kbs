@@ -55,6 +55,7 @@ export const leistungen = [
     icon: 'monitor',
     titel: 'IT-Betreuung',
     kurz: 'Wir kümmern uns um PCs, Server, Netzwerk, Drucker und Updates – damit Sie sich um Ihr Geschäft kümmern können.',
+    beschreibung: 'IT-Betreuung für kleine Unternehmen in Burscheid und Umgebung: PCs, Server, Netzwerk, Updates und Datensicherung – mit festem Ansprechpartner und Fernwartung.',
     punkte: ['Arbeitsplätze, Server und Netzwerk', 'Updates, Virenschutz und Datensicherung', 'Schnelle Hilfe per Fernwartung oder vor Ort'],
   },
   {
@@ -62,6 +63,7 @@ export const leistungen = [
     icon: 'chat',
     titel: 'IT-Beratung',
     kurz: 'Neue Rechner, Cloud-Dienste oder ein sicheres Netzwerk? Wir beraten passend zu Ihrer Firmengröße und Ihrem Budget.',
+    beschreibung: 'IT-Beratung für kleine Unternehmen in Burscheid: neue Rechner, Server, Cloud und Datenschutz – verständlich erklärt und passend zu Firmengröße und Budget.',
     punkte: ['Bestandsaufnahme und Empfehlung', 'Beschaffung und Einrichtung', 'Sicherheit und Datenschutz im Blick'],
   },
   {
@@ -69,6 +71,7 @@ export const leistungen = [
     icon: 'browser',
     titel: 'WordPress-Websites',
     kurz: 'Moderne, schnelle Websites mit aktuellen Buildern wie Etch – die Sie danach selbst pflegen können.',
+    beschreibung: 'WordPress-Websites für kleine Unternehmen aus Burscheid und dem Bergischen Land: modern gebaut, schnell, für Smartphones optimiert und selbst pflegbar.',
     punkte: ['Design, das zu Ihrem Unternehmen passt', 'Für Smartphone und Suchmaschine optimiert', 'Inhalte selbst ändern, ohne Programmierkenntnisse'],
   },
 ];

@@ -255,7 +255,7 @@ const leistungInhalte = {
   },
   'wordpress-websites': {
     eyebrow: 'WordPress-Websites',
-    titel: 'Websites, die neue Kunden bringen',
+    titel: 'WordPress-Websites, die neue Kunden bringen',
     absaetze: [
       ['h2', 'Modern gebaut mit aktuellen Buildern'],
       'Wir entwickeln Websites mit WordPress und modernen Werkzeugen wie dem Builder Etch und dem Design-System Automatic.css. Das Ergebnis: sauberer Code, schnelle Ladezeiten und ein Design, das auf jedem Gerät gut aussieht.',
@@ -298,19 +298,27 @@ const leistungSeite = (l) => {
 // ---------- Weitere Seiten ----------
 
 const leistungenSeite = markup(
-  seitenkopf({ eyebrow: 'Leistungen', titel: 'IT und Web aus einer Hand', lead: 'Wir betreuen kleine Unternehmen, die keine eigene IT-Abteilung haben – von der Hardware bis zur Website.' }),
+  seitenkopf({ eyebrow: 'Leistungen', titel: 'IT-Service und Websites aus einer Hand', lead: 'Wir betreuen kleine Unternehmen, die keine eigene IT-Abteilung haben – von der Hardware bis zur Website.' }),
   abschnitt('', 'Leistungen', [t('h2', 'visually-hidden', 'Unsere Leistungen'), komponente('Leistungskarten')]),
   abschnitt('section--tint', 'Vorteile', [
     abschnittKopf('Ihre Vorteile', `Warum ${firma('kurzname')}?`, null, true),
     vorteile([
       ['user', 'Ein Ansprechpartner', 'Sie erklären Ihr Anliegen einmal – und nicht jedes Mal einer neuen Hotline.'],
       ['remote', 'Schnelle Hilfe', 'Per Fernwartung sind wir in Minuten an Ihrem Rechner, ohne Anfahrt.'],
-      ['pin', 'Aus der Region', `Wir sind in ${firma('ort')} zu Hause und kommen bei Bedarf vorbei.`],
+      ['pin', 'Aus der Region', `Wir sind in ${firma('ort')} zu Hause und kommen bei Bedarf vorbei. Unsere Einsatzorte: ${firma('einsatzorte')}.`],
       ['shield', 'Sicherheit im Blick', 'Updates, Virenschutz und Datensicherung sind bei uns Standard, nicht Extra.'],
     ]),
   ]),
   komponente('CtaBand', { titel: 'Welche Leistung passt zu Ihnen?' }),
 );
+
+// Häufige Fragen zur Fernwartung (auch für das FAQ-Schema und llms.txt) – nur Angaben, die auch sonst auf der Seite stehen
+const fernwartungFaq = [
+  ['Wie sicher ist die Fernwartung?', 'Eine Verbindung entsteht nur, wenn Sie PC-Visit selbst starten und uns die angezeigte Sitzungsnummer nennen. Sie sehen auf Ihrem Bildschirm alles mit und können die Sitzung mit einem Klick beenden.'],
+  ['Was ist der Unterschied zwischen Quick Support und Host?', 'Quick Support ist für die spontane Hilfe: herunterladen, starten, Sitzungsnummer nennen. Nach der Sitzung bleibt kein Zugang bestehen. Den Host installieren wir gemeinsam mit Ihnen auf Geräten, die wir regelmäßig betreuen.'],
+  ['Helfen Sie auch, wenn ich noch kein Kunde bin?', 'Ja. Auch ohne Betreuungsvertrag helfen wir Ihnen per Fernwartung. Rufen Sie uns an – wir besprechen vorher den Aufwand.'],
+  ['Wann kommen Sie doch vor Ort?', `Wenn sich ein Problem nicht aus der Ferne lösen lässt, etwa bei defekter Hardware oder Netzwerkproblemen, kommen wir vorbei – in ${firma('ort')} und Umgebung.`],
+];
 
 const fernwartungSeite = markup(
   seitenkopf({ eyebrow: 'Fernwartung mit PC-Visit', titel: 'Schnelle Hilfe per Fernwartung', lead: 'Wir schauen uns Ihren Rechner direkt aus der Ferne an – sicher, schnell und ohne Anfahrtskosten.', aktionen: [btnTelefon('btn--primary')], wasserzeichen: 'pcvisit' }),
@@ -343,10 +351,11 @@ const fernwartungSeite = markup(
       ]),
     ]),
   ]),
+  abschnitt('section--tint', 'Häufige Fragen', [el('div', 'split', [abschnittKopf('Häufige Fragen', 'Fragen zur Fernwartung', null), faq(fernwartungFaq)])]),
 );
 
 const ueberUnsSeite = markup(
-  seitenkopf({ eyebrow: 'Über uns', titel: 'Persönlich. Verständlich. Verlässlich.', lead: `${firma('name')} – Ihr IT-Partner aus ${firma('ort')}.` }),
+  seitenkopf({ eyebrow: 'Über uns', titel: `Persönlicher IT-Service aus ${firma('ort')}`, lead: `Persönlich, verständlich, verlässlich: ${firma('name')} ist Ihr IT-Partner in der Region ${firma('region')}.` }),
   abschnitt('', 'Wer wir sind', [
     el('div', 'split split--wide-left', [
       prosa([
@@ -497,14 +506,14 @@ const datenschutzSeite = markup(
 const marke = ` | ${firma('kurzname')}`;
 export const pages = [
   { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, IT-Beratung und moderne WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
-    seo: { titel: `IT-Service und Websites in ${firma('ort')}${marke}`, faq: startFaq } },
-  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung und WordPress-Websites für kleine Unternehmen ohne eigene IT-Abteilung.', content: leistungenSeite,
+    seo: { titel: `IT-Service & Websites in ${firma('ort')}${marke}`, faq: startFaq } },
+  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung und WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung – alles aus einer Hand, mit festem Ansprechpartner.', content: leistungenSeite,
     seo: { titel: `IT-Leistungen in ${firma('ort')}${marke}`, llms: 'Seiten' } },
-  ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.kurz, content: leistungSeite(l),
+  ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.beschreibung ?? l.kurz, content: leistungSeite(l),
     seo: { titel: `${l.titel} in ${firma('ort')}${marke}`, faq: leistungInhalte[l.slug]?.faq, leistung: true, llms: 'Leistungen' } })),
   { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite,
-    seo: { titel: `Fernwartung mit PC-Visit${marke}`, llms: 'Seiten' } },
-  { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen.', content: ueberUnsSeite,
+    seo: { titel: `Fernwartung mit PC-Visit${marke}`, faq: fernwartungFaq, llms: 'Seiten' } },
+  { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen, Selbstständige und Vereine.', content: ueberUnsSeite,
     seo: { titel: `Über uns – IT aus ${firma('ort')}${marke}`, llms: 'Seiten' } },
   { slug: 'kontakt', title: 'Kontakt', order: 40, excerpt: 'Kontakt zu Kotthaus Business Service in Burscheid: Anfrage senden, anrufen oder kostenloses Erstgespräch vereinbaren.', content: kontaktSeite,
     seo: { titel: `Kontakt und Erstgespräch${marke}`, llms: 'Seiten' } },
