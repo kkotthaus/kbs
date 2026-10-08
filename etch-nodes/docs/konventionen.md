@@ -129,6 +129,7 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
   ```
   `html` vor der Klasse, damit die Regel gegen BEM-Klassen mit eigenem `display` gewinnt.
 - Kontraste in **beiden** Schemata prüfen (WCAG 2.1 AA), auch die festgelegten Flächen.
+- **Prüfseite für ACSS:** Der freie [ACSS Styleguide](https://etch.manuelwill.com/acss-styleguide/) (Manuel Will, für ACSS 4) zeigt alle ACSS-Werte der Installation mit ihren berechneten Werten auf einer Seite, mit Umschalter für Hell/Dunkel, wenn das Farbschema `light dark` ist. Gut zum Prüfen von Farben, Abstufungen, Kontrasten, Schrift- und Abstandswerten nach Änderungen an den ACSS-Einstellungen. Einrichtung je Projekt in der Entwicklung (lokal, ggf. Staging): neue Seite in Etch anlegen, das JSON von dort einfügen, speichern, im Frontend ansehen (am besten abgemeldet). Die Seite ist eine **Ausnahme vom Repo-Grundsatz**: fremder Inhalt, nur im Editor, nicht im Repo und nicht im Sync. Nie veröffentlichen – vor dem Livegang auf Entwurf setzen bzw. entfernen (siehe [Betrieb](betrieb.md#veröffentlichen-mit-duplicator-pro), Test- und Beispielseiten).
 
 **Optional: Umschalter** (je Projekt entscheiden):
 
@@ -234,11 +235,81 @@ add_action( 'etch/canvas/enqueue_assets', function () {
 } );
 ```
 
+**Abgelaufene Anmeldung im Etch-Editor:** Läuft die Anmeldung ab (oder wird die Nonce ungültig, etwa nach einer neuen Anmeldung in einem anderen Tab), antwortet die REST-API beim Speichern mit `403 rest_cookie_invalid_nonce`, und Etch speichert nicht. Ein kleines Skript im Snippet `<prefix>-backend.php` zeigt dann das Anmeldefenster von WordPress (`interim-login`) über dem Editor, holt danach eine neue Nonce und setzt sie in `window.etchGlobal.nonce`, von wo Etch sie liest. Die Arbeit bleibt im Editor; danach noch einmal speichern. Zusätzlich übernimmt es die Nonce, die WordPress bei jeder erfolgreichen REST-Antwort im Header `X-WP-Nonce` mitschickt. Greift nur im Builder (`?etch=magic`) für Administratoren, deshalb in allen Umgebungen unschädlich:
+
+```php
+add_action( 'wp_enqueue_scripts', function () {
+	if ( ! isset( $_GET['etch'] ) || 'magic' !== $_GET['etch'] || ! current_user_can( 'manage_options' ) ) {
+		return;
+	}
+	$daten = array(
+		'login' => add_query_arg( 'interim-login', '1', wp_login_url() ),
+		'nonce' => add_query_arg( 'action', '<prefix>_rest_nonce', admin_url( 'admin-ajax.php' ) ),
+	);
+	wp_register_script( '<prefix>-etch-sitzung', false, array(), null, false );
+	wp_enqueue_script( '<prefix>-etch-sitzung' );
+	wp_add_inline_script( '<prefix>-etch-sitzung', 'window.<prefix>EtchSitzung = ' . wp_json_encode( $daten ) . ";\n" . <<<'JS'
+( function () {
+	var c = window.<prefix>EtchSitzung, offen = null, original = window.fetch;
+	function nonceSetzen( n ) {
+		if ( ! n ) { return; }
+		if ( window.etchGlobal ) { window.etchGlobal.nonce = n; }
+		if ( window.wpApiSettings ) { window.wpApiSettings.nonce = n; }
+	}
+	function anmelden() {
+		if ( offen ) { return; }
+		offen = document.createElement( 'dialog' );
+		offen.setAttribute( 'aria-label', 'Anmeldung abgelaufen' );
+		offen.style.cssText = 'padding:0;border:0;inline-size:min(420px,95vw);block-size:min(600px,90vh)';
+		var rahmen = document.createElement( 'iframe' );
+		rahmen.title = 'Anmelden';
+		rahmen.src = c.login;
+		rahmen.style.cssText = 'inline-size:100%;block-size:100%;border:0';
+		rahmen.addEventListener( 'load', function () {
+			try {
+				if ( ! rahmen.contentDocument.body.classList.contains( 'interim-login-success' ) ) { return; }
+			} catch ( e ) { return; }
+			original( c.nonce, { credentials: 'same-origin' } )
+				.then( function ( r ) { return r.json(); } )
+				.then( function ( j ) { nonceSetzen( j.nonce ); offen.close(); offen.remove(); offen = null; } );
+		} );
+		offen.appendChild( rahmen );
+		document.body.appendChild( offen );
+		offen.showModal();
+	}
+	window.fetch = function () {
+		return original.apply( this, arguments ).then( function ( r ) {
+			nonceSetzen( r.headers.get( 'X-WP-Nonce' ) );
+			if ( 403 !== r.status ) { return r; }
+			return r.clone().text().then( function ( t ) {
+				if ( -1 !== t.indexOf( 'rest_cookie_invalid_nonce' ) ) { anmelden(); }
+				return r;
+			} );
+		} );
+	};
+} )();
+JS
+	);
+} );
+add_action( 'wp_ajax_<prefix>_rest_nonce', function () {
+	wp_send_json( array( 'nonce' => wp_create_nonce( 'wp_rest' ) ) );
+} );
+```
+
+Die Texte im Dialog (`aria-label`, `title`) legt das Projekt fest. Hängt an Etch-Interna (`?etch=magic`, `window.etchGlobal.nonce`) – nach einem Etch-Update einmal prüfen: im Builder in einem zweiten Tab abmelden, dann speichern.
+
 Das globale Stylesheet des Projekts kommt per Sync in Etch und braucht keinen dieser Hooks. Pfade über `content_url()` bzw. die Projekt-Konstante, nie über `get_stylesheet_directory_uri()` oder `__DIR__` (siehe [Betrieb](betrieb.md#php-als-wpcodebox-snippets)).
 
 ## Barrierefreiheit
 
 - Ziel ist WCAG 2.1 AA. Farbkontraste regelt das Projekt, geprüft in beiden Farbschemata (siehe [Hell/Dunkel](#helldunkel)).
+- **Link „Zum Inhalt springen“ (Skip-Link) auf jeder Seite** (WCAG 2.4.1):
+  - erstes fokussierbares Element der Seite, vor der Navigation; Text legt das Projekt fest
+  - Ziel ist das Hauptelement `<main id="main">` – genau ein `<main>` je Seite, im Seitenrahmen der Templates
+  - **mit EMMP** dessen eingebauten Skip-Link nutzen (Header-Komponente, Gruppe `accessibilty`: `skipLink: 'true'`, `customSkipLinkParameter: 'main | <Text>'`, Format `Ziel | Text`); **ohne EMMP** eigener Link `<a class="skip-link" href="#main">…</a>` am Anfang des Headers
+  - visuell verborgen, aber **sichtbar, sobald er den Fokus hat** (nicht mit `display: none` oder `visibility: hidden`, sonst ist er per Tastatur nicht erreichbar), mit sichtbarem Fokusrahmen; Farben und Abstände aus ACSS-Variablen
+  - es gibt nur einen Skip-Link: nicht zusätzlich zu dem von EMMP oder einem Plugin
+  - Test: Seite laden, einmal Tab → Link erscheint; Enter → der nächste Tab landet im Inhalt, nicht in der Navigation
 - Ausgeblendete Elemente (z. B. inaktive Slides, geschlossene Menüs) dürfen per Tab nicht erreichbar sein.
 - Der zugängliche Name von Schaltflächen entspricht dem sichtbaren Text (WCAG 2.5.3); kein abweichendes `aria-label`.
 - Tabellarische Daten mit Tabellen-Rollen (siehe [CSS](#css)), Screenreader-Ansagen bei dynamischen Wechseln (z. B. „Element 3 von 18“).
