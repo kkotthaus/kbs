@@ -307,7 +307,7 @@ Das globale Stylesheet des Projekts kommt per Sync in Etch und braucht keinen di
   - erstes fokussierbares Element der Seite, vor der Navigation; Text legt das Projekt fest
   - Ziel ist das Hauptelement `<main id="main">` – genau ein `<main>` je Seite, im Seitenrahmen der Templates
   - **mit EMMP** dessen eingebauten Skip-Link nutzen (Header-Komponente, Gruppe `accessibilty`: `skipLink: 'true'`, `customSkipLinkParameter: 'main | <Text>'`, Format `Ziel | Text`); **ohne EMMP** eigener Link `<a class="skip-link" href="#main">…</a>` am Anfang des Headers
-  - visuell verborgen, aber **sichtbar, sobald er den Fokus hat** (nicht mit `display: none` oder `visibility: hidden`, sonst ist er per Tastatur nicht erreichbar), mit sichtbarem Fokusrahmen; Farben und Abstände aus ACSS-Variablen
+  - visuell verborgen, aber **sichtbar, sobald er den Fokus hat** (nicht mit `display: none` oder `visibility: hidden`, sonst ist er per Tastatur nicht erreichbar), mit sichtbarem Fokusrahmen. **ACSS 4 bringt die Klasse `.skip-link` mit** (Button-Stil, per `transform` verborgen, sichtbar bei `:focus-visible`) – nur die Klasse setzen, kein eigenes CSS dafür
   - es gibt nur einen Skip-Link: nicht zusätzlich zu dem von EMMP oder einem Plugin
   - Test: Seite laden, einmal Tab → Link erscheint; Enter → der nächste Tab landet im Inhalt, nicht in der Navigation
 - Ausgeblendete Elemente (z. B. inaktive Slides, geschlossene Menüs) dürfen per Tab nicht erreichbar sein.
