@@ -4,6 +4,7 @@
 
 - Eigene PHP-Erweiterungen laufen als Snippets in WPCodeBox (ein Ordner je Projekt, eine Datei im Repo = ein Snippet). Ausführung „Always“, Einfügepunkt **Root**.
 - **Snippets werden immer in WPCodeBox angelegt** – in jeder Umgebung und von Anfang an, auch lokal in der Entwicklung. Keine Lader, kein mu-plugin und kein `require` der Repo-Dateien, auch nicht übergangsweise (doppelte Funktionen, und ein Fehler legt sonst die ganze Seite lahm statt nur das Snippet).
+- **Einzige Ausnahme: ein Umgebungs-mu-plugin aus dem Server-Werkzeug** (nicht aus dem Projekt). Es regelt nur, was je Umgebung (`WP_ENVIRONMENT_TYPE`) anders ist – z. B. Hinweis auf die Umgebung, noindex, Mails abfangen, Cache und Tracking außerhalb von live, keine automatischen Updates –, enthält keinen Projekt-Code und lädt keine Repo-Dateien. Installiert und aktualisiert wird es vom Werkzeug, nie von Hand.
 - **Einrichtung eines Projekts:** In der Entwicklung die WPCodeBox-MCP-Werkzeuge freigeben (List/Get, Create Folder, Create/Update/Enable/Disable Snippet). Das Snippet mit den eigenen MCP-Funktionen (`<prefix>-mcp.php`, enthält den Snippet-Sync) einmal direkt anlegen – per `wpcodebox/create-snippet` oder in der WPCodeBox-Oberfläche – und einschalten; alle weiteren Snippets legt dann der Snippet-Sync an. Neue Datei im Repo = neues Snippet per Sync, nie von Hand ins Dateisystem.
 - Das Repository ist die Quelle. Abgleich per MCP-Funktion, die über die WPCodeBox-Abilities (`wpcodebox/*`) arbeitet, damit deren Freigaben, Rechte und Protokoll greifen. Erkennung des Snippets z. B. über Schlagwörter (Projekt-Kürzel + Dateiname), Titel aus „Plugin Name“ im Dateikopf.
 - WPCodeBox führt den Code per **`eval()` in einem try-Block** aus. Daraus folgt:
@@ -25,7 +26,7 @@ Vor dem ersten Snippet und bei der ersten Sitzung in einem Projekt prüfen, und 
 | Lesende Werkzeuge: List Snippets, Get Snippet, List Folders, List Tags, Get Revisions, List Errored Snippets, Search Snippets | frei | – |
 | Schreibende Werkzeuge: Create Folder, Create Snippet, Update Snippet, Enable Snippet, Disable Snippet | frei | entzogen (nur kurzzeitig für eine Übertragung) |
 | **Delete Snippet, Run Snippet** | **nicht frei** | nicht frei |
-| Lader/mu-plugin, das Repo-Dateien lädt | keiner | keiner |
+| Lader/mu-plugin, das Repo-Dateien lädt | keiner (erlaubt nur das Umgebungs-mu-plugin des Server-Werkzeugs) | keiner (ebenso) |
 | Projekt-Snippets | im Ordner des Projekts, alle `enabled`, `list-errored-snippets` leer | ebenso |
 
 So geht die Prüfung per MCP: `mcp-adapter-discover-abilities` listet nur freigegebene Werkzeuge. Erwartet sind genau `wpcodebox/list-snippets`, `get-snippet`, `list-folders`, `list-tags`, `get-revisions`, `list-errored-snippets`, `search-snippets`, `create-folder`, `create-snippet`, `update-snippet`, `enable-snippet`, `disable-snippet` – `wpcodebox/delete-snippet` und `wpcodebox/run-snippet` dürfen nicht auftauchen. Danach `wpcodebox/list-folders`, `list-snippets` und `list-errored-snippets` sowie `wp-content/mu-plugins/` (kein Lader) ansehen.

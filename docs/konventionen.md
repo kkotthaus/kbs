@@ -41,6 +41,38 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
 - Beitrag: `{this.title}`, Meta-Box-Felder `{this.metabox.<feld_id>}`, WYSIWYG-Felder über `etch/raw-html`.
 - Einstellungsseite (Meta Box): `{options.metabox.<seiten_id>.<feld>}`. Stammdaten (Telefon, Adresse …) nie als Text ins Markup schreiben, immer aus der Einstellungsseite lesen. Modifier sind möglich, z. B. für `tel:`-Links `{….telefon.replaceAll(' ', '')}`.
 - **Loops:** gespeicherte Presets (Option `etch_loops`, `loopId`) für WP-Queries, `target` für Listen aus dynamischen Daten. Verschachtelt `target: '<itemId>.liste'`. Im Loop `{item.metabox.<feld>}`, `{item.permalink.relative}`.
+- **Loop-Parameter:** Werte in `args` dürfen Parameter enthalten, auch in verschachtelten Listen: `'$id'`, mit Standardwert `'$limit ?? 3'`. Beim Einbinden setzt das Block-Attribut `loopParams` die Werte, z. B. `loopParams: { '$id': 'this.metabox.<feld>', '$limit': 6 }` – als Ausdruck (`this.…`, `item.…`), als Zahl oder als Text in Anführungszeichen (`'"title"'`). Ergibt ein Ausdruck nichts oder einen leeren Text, lässt Etch den Parameter weg und der Standardwert gilt. Der Generator-Baustein für `etch/loop` reicht `loopParams` als Attribut durch.
+- **Allgemeine Loops** statt eigener Loops für jede kleine Abfrage. Je Beitragstyp bei Bedarf (Typ immer fest, kein `any` und kein Parameter – der Sync lässt nur freigegebene Beitragstypen zu):
+
+  | Loop-ID | `args` (zusätzlich `post_type`, `post_status: 'publish'`) | Zweck |
+  | --- | --- | --- |
+  | `<prefix>-<typ>-id` | `p: '$id'`, `posts_per_page: 1` | ein Beitrag per ID (z. B. aus einem Post-Feld) |
+  | `<prefix>-<typ>-ids` | `post__in: '$ids'`, `orderby: 'post__in'`, `posts_per_page: -1` | mehrere Beiträge in der Reihenfolge der IDs |
+  | `<prefix>-<typ>-kinder` | `post_parent: '$parent'`, `orderby: 'menu_order'`, `order: 'ASC'`, `posts_per_page: -1` | Unterseiten bzw. Kind-Beiträge |
+  | `<prefix>-<typ>-verwandt` | `post__not_in: ['$post_id']`, `posts_per_page: '$limit ?? 3'`, `orderby: 'date'`, `order: 'DESC'` | neueste andere Beiträge desselben Typs |
+  | `<prefix>-<typ>-verwandt-<tax>` | wie `-verwandt`, dazu `tax_query: [{ taxonomy: '<tax>', field: 'term_id', terms: '$terms' }]` | andere Beiträge mit gemeinsamem Begriff; die Term-IDs als Liste über `etch/dynamic_data/post` bereitstellen |
+
+  Achtung: Ein leeres `post__in` ignoriert WordPress und liefert **alle** Beiträge. Loops mit `$id`/`$ids` deshalb immer in eine Bedingung auf das Feld setzen. Bei `-verwandt` immer `$post_id: 'this.id'` übergeben.
+- **Vorheriger/nächster Beitrag** als dynamische Daten, nicht als Shortcode. Nur für den angezeigten Beitrag rechnen (der Filter läuft auch für jeden Loop-Eintrag), und den Beitrag aus `$post_id` nehmen, nicht den globalen:
+  ```php
+  add_filter( 'etch/dynamic_data/post', function ( $data, $post_id ) {
+  	if ( ! is_singular() || (int) $post_id !== get_queried_object_id() ) {
+  		return $data;
+  	}
+  	$nachbar = function ( $vorher ) use ( $post_id ) {
+  		global $post;
+  		$alt  = $post;
+  		$post = get_post( $post_id ); // get_adjacent_post() arbeitet mit dem globalen Beitrag
+  		$n    = get_adjacent_post( false, '', $vorher );
+  		$post = $alt;
+  		return $n ? array( 'titel' => get_the_title( $n ), 'link' => wp_make_link_relative( get_permalink( $n ) ) ) : null;
+  	};
+  	$data['<prefix>']['vorher']  = $nachbar( true );
+  	$data['<prefix>']['nachher'] = $nachbar( false );
+  	return $data;
+  }, 10, 2 );
+  ```
+  In der Komponente je Richtung eine Bedingung auf `this.<prefix>.vorher` bzw. `….nachher`; Markup als `<nav aria-label="…">` mit dem Titel als Linktext. Sollen Bilder mit, auch deren KI-Daten mitgeben (siehe [KI-Kennzeichnung](#ki-kennzeichnung)).
 - **Bedingungen:** ohne Operator `isTruthy` (Abschnitt fehlt, wenn das Feld leer ist), Sonst-Zweig mit `isFalsy`, Vergleich z. B. `z.key === props.bereich`.
 - **Varianten über Klassen-Modifier als Datenfeld:** `class="status status--{x.mod}"` statt verschiedener Markup-Zweige.
 
@@ -153,6 +185,56 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
 - **Block „Individuelle Felder“ immer ausblenden** – in allen Beitragstypen, im Block-Editor und im klassischen Editor. Er zeigt die rohen Metadaten (auch die von Meta Box und internen Funktionen, z. B. Serialisiertes) und lässt sie ohne Prüfung ändern oder löschen. Eigene Felder kommen immer über Meta Box.
 - Technik im Snippet `<prefix>-backend.php`: den Kasten `postcustom` mit `remove_meta_box()` im Hook `add_meta_boxes` (späte Priorität) für alle Beitragstypen entfernen und im Filter `block_editor_settings_all` den Schlüssel `enableCustomFields` entfernen – dann verschwindet auch der Schalter „Individuelle Felder“ in den Voreinstellungen des Block-Editors.
 - **Nicht** `remove_post_type_support( …, 'custom-fields' )` verwenden: Ohne diese Unterstützung liefert die REST-API registrierte Metadaten (`register_post_meta` mit `show_in_rest`) nicht mehr aus.
+- **Seitenleiste bei Etch-Komponenten öffnen.** Etch-Komponenten lassen sich im Block-Editor nicht direkt im Inhalt bearbeiten, nur über die Seitenleiste. Ist sie zu, finden Redakteure die Felder nicht. Im selben Snippet `<prefix>-backend.php` öffnet ein kleines Skript die Block-Seitenleiste, sobald ein Block `etch/component` ausgewählt wird:
+  ```php
+  add_action( 'enqueue_block_editor_assets', function () {
+  	wp_add_inline_script( 'wp-edit-post', "( function () {
+  		var zuletzt = null;
+  		wp.data.subscribe( function () {
+  			var block = wp.data.select( 'core/block-editor' ).getSelectedBlock();
+  			var id = block ? block.clientId : null;
+  			if ( id === zuletzt ) { return; }
+  			zuletzt = id;
+  			var editor = wp.data.dispatch( 'core/edit-post' );
+  			if ( block && 'etch/component' === block.name && editor && editor.openGeneralSidebar ) {
+  				editor.openGeneralSidebar( 'edit-post/block' );
+  			}
+  		} );
+  	} )();" );
+  } );
+  ```
+  `wp-edit-post` gibt es nur im Beitrags-Editor, der Website-Editor bleibt unberührt.
+- **Etch-Felder im Block-Editor aufräumen** (ebenfalls in `<prefix>-backend.php`): unter den Eigenschaften der Komponenten den technischen Schlüssel ausblenden, bei Gruppen den zusätzlichen Innenabstand entfernen, bei Bild-Eigenschaften das ID-Feld ausblenden (die Schaltfläche für die Mediathek bleibt), und die Etch-Blöcke in der Block-Auswahl ausblenden. Die Blöcke nicht abmelden, sonst lassen sich vorhandene Etch-Inhalte nicht mehr duplizieren. Hilfetexte nur in Etch-Feldern ausblenden, die von Meta Box und WordPress bleiben:
+  ```php
+  add_action( 'enqueue_block_editor_assets', function () {
+  	wp_register_style( '<prefix>-block-editor', false );
+  	wp_enqueue_style( '<prefix>-block-editor' );
+  	wp_add_inline_style( '<prefix>-block-editor', '
+  		[data-etch-property-type] .components-base-control__help { display: none; }
+  		[data-etch-property-type="object:group"] .components-panel__body { padding-inline: 0; }
+  		[data-etch-property-type="string:wpMediaId"] .components-text-control__input,
+  		[data-etch-property-type="string:image"] .components-text-control__input { display: none; }
+  		.block-editor-inserter__panel-header:has(+ .block-editor-inserter__panel-content [class*="editor-block-list-item-etch-"]),
+  		.block-editor-inserter__panel-header:has(+ .block-editor-inserter__panel-content [class*="editor-block-list-item-etch-"]) + .block-editor-inserter__panel-content { display: none !important; }
+  	' );
+  } );
+  ```
+  Die Selektoren hängen an Etch-Interna (`data-etch-property-type`). Nach jedem Etch-Update im Block-Editor prüfen.
+
+## Etch-Editor (Canvas)
+
+Der Etch-Editor zeigt die Seite in einem eigenen Rahmen (Canvas) und lädt dort nicht alles, was das Frontend lädt. Fehlen Stile oder Skripte von Plugins oder aus `wp-content/<prefix>/`, sieht die Seite im Editor anders aus als im Frontend. Zwei Hooks laden sie **nur im Canvas** nach; für Frontend und Block-Editor weiter wie üblich `wp_enqueue_style()`/`wp_enqueue_script()`:
+
+- `etch/canvas/enqueue_assets` (Action): darin normal `wp_enqueue_style()`/`wp_enqueue_script()` aufrufen; Etch übernimmt, was dort in die Warteschlange kommt.
+- `etch/canvas/additional_stylesheets` (Filter): Liste von `array( 'id' => '…', 'url' => '…' )` ergänzen.
+
+```php
+add_action( 'etch/canvas/enqueue_assets', function () {
+	wp_enqueue_script( '<prefix>-canvas', content_url( '<prefix>/<datei>.js' ), array(), <PREFIX>_VERSION, true );
+} );
+```
+
+Das globale Stylesheet des Projekts kommt per Sync in Etch und braucht keinen dieser Hooks. Pfade über `content_url()` bzw. die Projekt-Konstante, nie über `get_stylesheet_directory_uri()` oder `__DIR__` (siehe [Betrieb](betrieb.md#php-als-wpcodebox-snippets)).
 
 ## Barrierefreiheit
 
