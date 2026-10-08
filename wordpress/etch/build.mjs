@@ -1,6 +1,7 @@
 // Baut alle Dateien für WordPress nach wordpress/etch/dist/:
 // component-<key>.html, page-<slug>.html, template-<slug>.html, manifest.json, kbs.css,
-// daten/acss-farben.json, daten/acss-buttons.json, daten/acss-schrift.json, daten/einstellungen-firmendaten.json, daten/weiterleitungen.json, daten/seo.json, snippets/*.php
+// daten/acss-farben.json, daten/acss-buttons.json, daten/acss-schrift.json, daten/einstellungen-firmendaten.json, daten/weiterleitungen.json, daten/seo.json,
+// technik.php (Backend-Doku aus docs/technik.md), snippets/*.php
 // Übertragen: dist nach wp-content/kbs/ kopieren, dann MCP kbs/sync-from-files (siehe wordpress/README.md).
 
 import { copyFileSync, mkdirSync, readdirSync, readFileSync, writeFileSync } from 'node:fs';
@@ -12,6 +13,7 @@ import { acssEinstellungen } from './acss-farben.mjs';
 import { acssButtons } from './acss-buttons.mjs';
 import { acssSchrift } from './acss-schrift.mjs';
 import { firma, weiterleitungen } from './daten.mjs';
+import { handbuchHtml } from './handbuch.mjs';
 
 const hier = dirname(fileURLToPath(import.meta.url));
 const dist = join(hier, 'dist');
@@ -68,6 +70,10 @@ schreibe(
     2,
   ) + '\n',
 );
+
+// Technik-Doku für die Backend-Seite „Technik“ (snippets/kbs-technik.php), Quelle docs/technik.md.
+// Als .php mit Schutzzeile: direkt aufgerufen liefert der Webserver nichts aus.
+schreibe('technik.php', "<?php defined( 'ABSPATH' ) || exit; ?>\n" + handbuchHtml(readFileSync(join(hier, '../../docs/technik.md'), 'utf8'), 'docs/technik.md'));
 
 // Medien (Quelle wordpress/medien/ samt Unterordnern wie bilder/), ausgeliefert unter /wp-content/kbs/medien/
 mkdirSync(join(dist, 'medien'), { recursive: true });
