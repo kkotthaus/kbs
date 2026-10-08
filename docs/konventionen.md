@@ -221,6 +221,11 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
   } );
   ```
   Die Selektoren hängen an Etch-Interna (`data-etch-property-type`). Nach jedem Etch-Update im Block-Editor prüfen.
+- **Technik-Doku im Backend für Administratoren** – auf jeder Website. Sie erklärt, wie die Website aufgebaut ist und wie Plugins, Snippets, CSS und Skripte zusammenarbeiten, und schützt so vor Änderungen an der falschen Stelle.
+  - Quelle `docs/technik.md` im Projekt; der Build erzeugt daraus `<prefix>/technik.php` (HTML, mit Schutzzeile `<?php defined( 'ABSPATH' ) || exit; ?>`, damit die Datei direkt aufgerufen nichts ausliefert). Ein kleiner Markdown-Umwandler im Generator genügt: Überschriften, Absätze, Listen, Tabellen, Hinweise, **fett**, `Code`, Links – keine Code-Blöcke.
+  - Snippet `<prefix>-technik.php`: Menüpunkt „Technik“ (bzw. Unterpunkt eines vorhandenen Handbuch-Menüs) und Hinweis im Dashboard, nur mit `manage_options`; Ausgabe über `wp_kses_post()`, Gestaltung mit den Farben des WordPress-Backends.
+  - Kapitel: Überblick (Schichten), Woher kommt was (Repository oder Backend), Plugins, Snippets, externe Daten und Zeitpläne (falls vorhanden), CSS (Ladereihenfolge, Stylesheets), JavaScript, Datenfluss an Beispielen, was man nicht tun sollte, was nach Updates zu prüfen ist.
+  - Bei jeder Änderung an Plugins, Snippets, CSS oder Skripten mitpflegen.
 
 ## Etch-Editor (Canvas)
 
