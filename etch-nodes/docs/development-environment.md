@@ -30,4 +30,4 @@ Versionen stehen hier bewusst nicht. Welche Version ein Projekt einsetzt, hält 
 ## Updates
 
 - Automatische Updates sind für alle Plugins aus. Updates werden von Hand eingespielt.
-- Nach einem Update von Etch, EMMP, EtchSliderPro oder OhMyEtch im Frontend prüfen: Header (auch mobil), Slider, Lightbox und die übrigen Fremdkomponenten.
+- Nach einem Update von Etch, EMMP, EtchSliderPro oder OhMyEtch im Frontend prüfen: Header (auch mobil), Slider, Lightbox und die übrigen Fremdkomponenten. Nach einem Etch-Update zusätzlich im Block-Editor: Seitenleiste und Felder der Komponenten (siehe [konventionen.md](konventionen.md#backend)).
