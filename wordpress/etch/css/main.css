@@ -81,8 +81,6 @@ address { font-style: normal; }
 
 .container { width: 100%; max-width: calc(var(--content-width) + 2 * var(--gutter)); margin-inline: auto; padding-inline: var(--gutter); }
 .visually-hidden { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
-.skip-link { position: absolute; left: var(--space-s); top: -4rem; z-index: 100; background: var(--primary); color: var(--white); padding: var(--space-xs) var(--space-s); border-radius: var(--radius); }
-.skip-link:focus { top: var(--space-s); color: var(--white); }
 .icon { display: inline-block; width: 1.15em; height: 1.15em; fill: currentColor; vertical-align: -0.2em; flex: none; }
 .lead { font-size: var(--text-l); color: var(--base-semi-dark); line-height: 1.55; }
 .more-link { margin-top: var(--space-m); }
