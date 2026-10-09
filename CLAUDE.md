@@ -9,7 +9,7 @@ Projektspezifisch (Prefix, Aufbau, Ablauf): @docs/development-environment.md
 Design dieser Website (nur lokal, nie in etch-nodes): @docs/design.md
 Farben und Farbregeln: @docs/farben.md
 
-Seiten und Inhalte: [docs/seitenstruktur.md](docs/seitenstruktur.md). Handbuch für die Redaktion (u. a. KI-Kennzeichnung): [docs/handbuch.md](docs/handbuch.md). Technik-Doku für Administratoren (im Backend unter „Technik“, bei Änderungen an Plugins, Snippets, CSS oder Skripten mitpflegen): [docs/technik.md](docs/technik.md). Ablauf Build → WordPress: [wordpress/README.md](wordpress/README.md). Umzug nach kotthaus-bs.de und Übertragen von Änderungen nach dem Livegang: [docs/umzug-live.md](docs/umzug-live.md) – live gepflegte Inhalte nie ohne Rückfrage überschreiben.
+Seiten und Inhalte: [docs/seitenstruktur.md](docs/seitenstruktur.md). Handbuch für die Redaktion (u. a. KI-Kennzeichnung): [docs/handbuch.md](docs/handbuch.md). Technik-Doku für Administratoren (im Backend unter „Technik“, bei Änderungen an Plugins, Snippets, CSS oder Skripten mitpflegen): [docs/technik.md](docs/technik.md). Ablauf Build → WordPress: [wordpress/README.md](wordpress/README.md). Umzug nach kotthaus-bs.de und Übertragen von Änderungen nach dem Livegang: [docs/umzug-live.md](docs/umzug-live.md) – live gepflegte Inhalte nie ohne Rückfrage überschreiben. Vorlage für Website-Angebote an Kunden (Fragebogen, Angebotstext, Kalkulation): [docs/angebot-vorlage.md](docs/angebot-vorlage.md).
 
 ## Arbeitsweise
 - Firmenangaben (Name, Adresse, Telefon, Rechtliches, PC-Visit-Links, Angebot) nie ins Markup schreiben: immer `firma('<feld>')` bzw. `{options.kbs.firma.…}` / `{options.kbs.pcvisit.…}`. Gepflegt wird im Backend unter „Firmendaten“.
