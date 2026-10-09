@@ -65,7 +65,7 @@ Grundsatz: Pakete zum Festpreis statt Stundenzettel. Der Zeitgewinn durch Vorlag
 
 ## Teil B: Angebotstext
 
-> Kopieren, Platzhalter `[…]` ersetzen, nicht passende Positionen und Pakete streichen. Firmenangaben (Anschrift, Bank, Register) aus dem Briefbogen bzw. „Firmendaten“ übernehmen.
+> Kopieren, Platzhalter `[…]` ersetzen, nicht passende Positionen und Pakete streichen. Die Firmenangaben für Briefkopf und Fußzeile stehen am Ende des Angebotstexts. Fertiges Beispiel als PDF mit Briefkopf: `paas/docs/angebot-pdf/` (HTML + Skript).
 
 ---
 
@@ -177,6 +177,12 @@ Wir freuen uns auf die Zusammenarbeit. Für Fragen stehe ich Ihnen gern zur Verf
 Mit freundlichen Grüßen
 [Name]
 Kotthaus Business Service GmbH
+
+**Fußzeile (jede Seite):**
+
+| Firma | Kontakt | Register und Steuer | Bankverbindung |
+|---|---|---|---|
+| Kotthaus Business Service GmbH<br>Am Schlagbaum 12<br>51399 Burscheid | Telefon 02174 666 47 17<br>Fax 02174 666 47 15<br>info@kotthaus-bs.de<br>kotthaus-bs.de | Geschäftsführer: Klaus Kotthaus<br>Amtsgericht Köln, HRB 96787<br>USt-IdNr. DE322384610<br>Steuer-Nr. 230/5710/2001 | Kreissparkasse Köln<br>IBAN DE55 3705 0299 0381 5621 15<br>BIC COKSDE33XXX |
 
 ---
 
