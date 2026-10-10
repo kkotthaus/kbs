@@ -46,11 +46,12 @@ const checkListe = (punkte, mod = '') => el('ul', `check-list${mod ? ' check-lis
 const btnKontakt = (label = 'Erstgespräch vereinbaren', klasse = 'btn--primary') => t('a', klasse, label, { attrs: { href: '/kontakt/' } });
 const btnTelefon = (klasse = 'btn--primary btn--outline') => el('a', klasse, [icon('phone'), text(firma('telefon'))], { attrs: { href: firma('telefon_href') } });
 
-// Fließtext mit Zwischenüberschriften: [['h2', 'Titel'], 'Absatz', ['ul', [...]]]
+// Fließtext mit Zwischenüberschriften: [['h2', 'Titel'], 'Absatz' (interne Links als „[Text](/pfad/)“), ['ul', [...]], ['link', 'Text', '/ziel/']]
 const prosa = (teile) =>
   el('div', 'prose', teile.map((x) => {
-    if (typeof x === 'string') return t('p', '', x);
+    if (typeof x === 'string') return el('p', '', mitLinks(x));
     if (x[0] === 'ul') return checkListe(x[1]);
+    if (x[0] === 'link') return el('p', 'more-link', [el('a', 'link-arrow', [text(x[1]), icon('arrow')], { attrs: { href: x[2] } })]);
     return t(x[0], '', x[1]);
   }));
 
@@ -69,6 +70,11 @@ const schritte = (liste) =>
     el('li', 'steps__item', [t('span', 'steps__number', String(i + 1).padStart(2, '0')), t('h3', 'steps__title', titel), t('p', 'steps__text', inhalt)]),
   ));
 
+// Interne Links in Antworten: „[Text](/pfad/)“. Auf der Seite ein Link, im FAQ-Schema und in llms.txt nur der Text (ohneLinks).
+const LINK = /\[([^\]]+)\]\((\/[^)]*)\)/g;
+const mitLinks = (s) => s.split(LINK).map((teil, i, alle) => (i % 3 === 0 ? teil && text(teil) : i % 3 === 1 ? t('a', '', teil, { attrs: { href: alle[i + 1] } }) : null));
+const ohneLinks = (liste) => liste?.map(([frage, antwort]) => [frage, antwort.replace(LINK, '$1')]);
+
 // Häufige Fragen: Accordion von OhMyEtch (Tastatur, ARIA, Animation). Kopf mit H3, mehrere Antworten gleichzeitig offen.
 const faq = (liste) =>
   ome('OmeAccordion', { settings: { type: 'multiple' } }, {
@@ -77,7 +83,7 @@ const faq = (liste) =>
         default: [
           // Frage als Slot-Inhalt des Triggers (die Eigenschaft content.label kommt bei Etch nicht an)
           ome('OmeAccordionHeader', { structure: { level: '3' } }, { default: [ome('OmeAccordionTrigger', {}, { default: [t('span', 'faq__question', frage), icon('chevron', 'faq__chevron')] })] }),
-          ome('OmeAccordionContent', {}, { default: [t('p', '', antwort)] }),
+          ome('OmeAccordionContent', {}, { default: [el('p', '', mitLinks(antwort))] }),
         ],
       }),
     ),
@@ -107,9 +113,10 @@ const heroBild = (variante) =>
 
 // Häufige Fragen der Startseite (auch für das FAQ-Schema und llms.txt, siehe seo unten)
 const startFaq = [
-  ['Was kostet die IT-Betreuung?', 'Das hängt von der Zahl der Arbeitsplätze und Ihren Anforderungen ab. Nach dem kostenlosen Erstgespräch erhalten Sie ein klares Angebot – Sie wissen vorher, womit Sie rechnen können.'],
-  ['Wie sicher ist die Fernwartung?', 'Eine Verbindung entsteht nur, wenn Sie das Programm selbst starten und uns die Sitzungsnummer nennen. Sie sehen alles mit und können die Sitzung jederzeit beenden.'],
-  ['Kann ich meine Website später selbst ändern?', 'Ja. Wir richten die Website so ein, dass Sie Texte, Bilder, Preise und Angebote ohne Programmierkenntnisse selbst pflegen können – auf Wunsch mit kurzer Einweisung.'],
+  ['Was kostet die IT-Betreuung?', 'Die Kosten der [IT-Betreuung](/leistungen/it-betreuung/) hängen von der Zahl der Arbeitsplätze und Ihren Anforderungen ab. Nach dem kostenlosen Erstgespräch erhalten Sie ein klares Angebot – Sie wissen vorher, womit Sie rechnen können.'],
+  ['Wie sicher ist die Fernwartung?', 'Eine Verbindung entsteht nur, wenn Sie das Programm selbst starten und uns die Sitzungsnummer nennen. Sie sehen alles mit und können die Sitzung jederzeit beenden. Mehr dazu unter [Fernwartung](/fernwartung/).'],
+  ['Kann ich meine Website später selbst ändern?', 'Ja. Wir richten die Website so ein, dass Sie Texte, Bilder, Preise und Angebote ohne Programmierkenntnisse selbst pflegen können – auf Wunsch mit kurzer Einweisung. Mehr dazu unter [Webdesign](/leistungen/wordpress-websites/).'],
+  ['Kümmern Sie sich auch um Updates und Sicherheit meiner Website?', 'Ja. Mit der [Website-Wartung](/leistungen/website-wartung/) halten wir WordPress und alle Erweiterungen aktuell, sichern Ihre Website regelmäßig und behalten die Sicherheit im Blick – auch bei Websites, die wir nicht gebaut haben.'],
   ['Übernehmen Sie auch bestehende Systeme und Websites?', 'Ja. Wir verschaffen uns zuerst einen Überblick und sagen Ihnen offen, was bleiben kann und wo Handlungsbedarf besteht.'],
 ];
 
@@ -120,7 +127,7 @@ const startseite = markup(
       el('div', 'home-hero__content', [
         t('p', 'home-hero__eyebrow', `IT-Service und Webdesign aus ${firma('ort')}`),
         t('h1', 'home-hero__title', 'Ihre IT-Abteilung – ohne eigene IT-Abteilung.'),
-        t('p', 'home-hero__lead', `Wir betreuen kleine Unternehmen in der Region ${firma('region')}: Computer, Netzwerk und Server ebenso wie moderne WordPress-Websites. Persönlich vor Ort und schnell per Fernwartung.`),
+        t('p', 'home-hero__lead', `Wir betreuen kleine Unternehmen in der Region ${firma('region')}: Wir kümmern uns um Computer, Netzwerk und Server – und wir bauen und warten moderne WordPress-Websites. Persönlich vor Ort und schnell per Fernwartung.`),
         el('div', 'home-hero__actions', [btnKontakt(firma('angebot_titel')), t('a', 'btn--primary btn--outline', 'Fernwartung starten', { attrs: { href: '/fernwartung/' } })]),
         checkListe(['Fester Ansprechpartner', 'Hilfe per Fernwartung ohne Anfahrtskosten', `Vor Ort in ${firma('ort')} und Umgebung`], 'hero'),
       ]),
@@ -135,29 +142,8 @@ const startseite = markup(
   ], { name: 'Hero' }),
 
   abschnitt('', 'Leistungen', [
-    abschnittKopf('Leistungen', 'Alles aus einer Hand', 'Von der Einrichtung neuer Arbeitsplätze bis zur Website, die neue Kunden bringt. Sie haben einen Ansprechpartner für alles, was mit IT zu tun hat.', true),
+    abschnittKopf('Leistungen', 'Alles aus einer Hand', 'Von der Einrichtung neuer Arbeitsplätze bis zur Website, die neue Kunden bringt. Sie haben einen Ansprechpartner für Ihre IT und Ihre Website.', true),
     komponente('Leistungskarten'),
-  ]),
-
-  abschnitt('section--tint', 'So arbeiten wir', [
-    abschnittKopf('So arbeiten wir', 'In drei Schritten zu IT, die einfach läuft', null, true),
-    schritte([
-      ['Kennenlernen', 'Im kostenlosen Erstgespräch hören wir zu: Was läuft gut, was nervt, was ist geplant? Gerne direkt bei Ihnen vor Ort.'],
-      ['Klarer Vorschlag', 'Sie bekommen eine verständliche Empfehlung mit transparenten Kosten – ohne Fachchinesisch und ohne Kleingedrucktes.'],
-      ['Umsetzung und Betreuung', 'Wir richten alles ein und bleiben Ihr fester Ansprechpartner. Bei Fragen genügt ein Anruf.'],
-    ]),
-  ]),
-
-  abschnitt('', 'Fernwartung', [
-    el('div', 'split split--center', [
-      el('div', '', [
-        abschnittKopf('Fernwartung', 'Hilfe in Minuten – ohne Anfahrt', null),
-        t('p', 'lead', 'Drucker streikt, E-Mail geht nicht, Programm hängt? Mit PC-Visit sehen wir Ihren Bildschirm, sobald Sie es erlauben, und lösen das Problem direkt.'),
-        checkListe(['Verbindung nur, wenn Sie sie selbst starten', 'Sie sehen jederzeit, was wir tun', 'Keine Fahrtkosten, kein Warten auf einen Termin']),
-        el('p', 'more-link', [el('a', 'link-arrow', [text('Mehr zur Fernwartung'), icon('arrow')], { attrs: { href: '/fernwartung/' } })]),
-      ]),
-      komponente('PcVisit'),
-    ]),
   ]),
 
   abschnitt('section--tint', 'Websites', [
@@ -173,16 +159,41 @@ const startseite = markup(
         ], { attrs: { 'aria-hidden': 'true' } }),
       ], { name: 'Website-Illustration' }),
       el('div', '', [
-        abschnittKopf('WordPress-Websites', 'Eine Website, die für Sie arbeitet', null),
-        t('p', 'lead', 'Wir bauen Websites mit WordPress und aktuellen Buildern wie Etch: schnell, modern und so aufgebaut, dass Interessenten zu Anfragen werden.'),
+        abschnittKopf('Webdesign und Wartung', 'Eine Website, die für Sie arbeitet', null),
+        t('p', 'lead', 'Wir bauen Websites mit WordPress und aktuellen Buildern wie Etch: schnell, modern und so aufgebaut, dass Interessenten zu Anfragen werden. Danach halten wir sie auf Wunsch aktuell und sicher.'),
         checkListe([
           'Passt sich automatisch an Smartphone, Tablet und PC an',
-          'Hell- oder Dunkelmodus nach Wunsch des Besuchers',
           'Schnelle Ladezeiten und saubere Grundlage für Google',
           'Texte, Preise und Angebote pflegen Sie selbst',
+          'Wartung mit Updates, Backups und Sicherheitsprüfung',
         ]),
-        el('div', 'button-row', [t('a', 'btn--primary btn--s', 'Website-Projekt besprechen', { attrs: { href: '/kontakt/' } }), el('a', 'link-arrow', [text('Mehr zu WordPress-Websites'), icon('arrow')], { attrs: { href: '/leistungen/wordpress-websites/' } })]),
+        el('div', 'button-row', [
+          t('a', 'btn--primary btn--s', 'Website-Projekt besprechen', { attrs: { href: '/kontakt/' } }),
+          el('a', 'link-arrow', [text('Mehr zum Webdesign'), icon('arrow')], { attrs: { href: '/leistungen/wordpress-websites/' } }),
+          el('a', 'link-arrow', [text('Zur Website-Wartung'), icon('arrow')], { attrs: { href: '/leistungen/website-wartung/' } }),
+        ]),
       ]),
+    ]),
+  ]),
+
+  abschnitt('', 'So arbeiten wir', [
+    abschnittKopf('So arbeiten wir', 'In drei Schritten zu IT, die einfach läuft', null, true),
+    schritte([
+      ['Kennenlernen', 'Im kostenlosen Erstgespräch hören wir zu: Was läuft gut, was nervt, was ist geplant? Gerne direkt bei Ihnen vor Ort.'],
+      ['Klarer Vorschlag', 'Sie bekommen eine verständliche Empfehlung mit transparenten Kosten – ohne Fachchinesisch und ohne Kleingedrucktes.'],
+      ['Umsetzung und Betreuung', 'Wir richten alles ein und bleiben Ihr fester Ansprechpartner. Bei Fragen genügt ein Anruf.'],
+    ]),
+  ]),
+
+  abschnitt('section--tint', 'Fernwartung', [
+    el('div', 'split split--center', [
+      el('div', '', [
+        abschnittKopf('Fernwartung', 'Hilfe in Minuten – ohne Anfahrt', null),
+        t('p', 'lead', 'Drucker streikt, E-Mail geht nicht, Programm hängt? Mit PC-Visit sehen wir Ihren Bildschirm, sobald Sie es erlauben, und lösen das Problem direkt.'),
+        checkListe(['Verbindung nur, wenn Sie sie selbst starten', 'Sie sehen jederzeit, was wir tun', 'Keine Fahrtkosten, kein Warten auf einen Termin']),
+        el('p', 'more-link', [el('a', 'link-arrow', [text('Mehr zur Fernwartung'), icon('arrow')], { attrs: { href: '/fernwartung/' } })]),
+      ]),
+      komponente('PcVisit'),
     ]),
   ]),
 
@@ -198,7 +209,7 @@ const startseite = markup(
     ]),
   ]),
 
-  komponente('CtaBand', { titel: 'Lassen Sie uns über Ihre IT sprechen.' }),
+  komponente('CtaBand', { titel: 'Lassen Sie uns über Ihre IT oder Ihre Website sprechen.' }),
 );
 
 // ---------- Leistungsseiten ----------
@@ -227,7 +238,7 @@ const leistungInhalte = {
     faqTitel: 'Fragen zur IT-Betreuung',
     faq: [
       ['Für wie viele Arbeitsplätze lohnt sich das?', 'Schon ab einem Arbeitsplatz. Gerade Selbstständige und kleine Teams profitieren davon, einen festen Ansprechpartner zu haben.'],
-      ['Wie schnell helfen Sie bei Störungen?', 'Viele Störungen lösen wir noch am selben Tag per Fernwartung. Wenn ein Termin vor Ort nötig ist, stimmen wir ihn kurzfristig mit Ihnen ab.'],
+      ['Wie schnell helfen Sie bei Störungen?', 'Viele Störungen lösen wir noch am selben Tag per [Fernwartung](/fernwartung/). Wenn ein Termin vor Ort nötig ist, stimmen wir ihn kurzfristig mit Ihnen ab.'],
     ],
   },
   'it-beratung': {
@@ -244,6 +255,7 @@ const leistungInhalte = {
         'Beschaffung, Einrichtung und Umzug der Daten',
         'Einweisung Ihrer Mitarbeiterinnen und Mitarbeiter',
       ]],
+      'Nach der Einrichtung lassen wir Sie nicht allein: Auf Wunsch übernehmen wir die laufende [IT-Betreuung](/leistungen/it-betreuung/).',
       ['h2', 'Sicherheit von Anfang an'],
       'Ob Passwörter, Zugriffsrechte oder Datensicherung: Wir achten bei jeder Empfehlung darauf, dass Ihre Daten geschützt sind und die Lösung auch in ein paar Jahren noch zu Ihnen passt.',
     ],
@@ -254,8 +266,19 @@ const leistungInhalte = {
     ],
   },
   'wordpress-websites': {
-    eyebrow: 'WordPress-Websites',
+    eyebrow: 'Webdesign',
     titel: 'WordPress-Websites, die neue Kunden bringen',
+    kasten: 'Ihr Website-Projekt',
+    cta: 'Lassen Sie uns über Ihre Website sprechen.',
+    ablauf: {
+      titel: 'In vier Schritten zur neuen Website',
+      schritte: [
+        ['Gespräch', 'Wir klären, was Ihre Website leisten soll: Wen wollen Sie erreichen, was gibt es schon, was fehlt? Kostenlos und unverbindlich.'],
+        ['Konzept und Angebot', 'Sie erhalten einen Vorschlag für Aufbau und Umfang – und ein klares Angebot, bevor wir anfangen.'],
+        ['Gestaltung und Umsetzung', 'Wir bauen Ihre Website auf einer Testadresse. Sie sehen den Stand und sagen uns, was noch nicht passt.'],
+        ['Start und Einweisung', 'Wir stellen die Website online, leiten alte Adressen um und zeigen Ihnen, wie Sie Inhalte selbst ändern.'],
+      ],
+    },
     absaetze: [
       ['h2', 'Modern gebaut mit aktuellen Buildern'],
       'Wir entwickeln Websites mit WordPress und modernen Werkzeugen wie dem Builder Etch und dem Design-System Automatic.css. Das Ergebnis: sauberer Code, schnelle Ladezeiten und ein Design, das auf jedem Gerät gut aussieht.',
@@ -272,14 +295,61 @@ const leistungInhalte = {
         'Kontaktformular, Impressum und Datenschutzerklärung',
         'Grundlagen für Suchmaschinen (SEO)',
         'Einweisung, damit Sie Inhalte selbst ändern können',
-        'Auf Wunsch Updates und Backups',
+        'Umzug von der alten Website mit Weiterleitung der alten Adressen',
       ]],
+      ['h2', 'Nach dem Start gut betreut'],
+      'Eine Website ist nach dem Start nicht fertig: WordPress und seine Erweiterungen brauchen regelmäßig Updates, und eine aktuelle Sicherung sollte immer bereitliegen. Das übernehmen wir auf Wunsch mit unserer Website-Wartung.',
+      ['link', 'Zur Website-Wartung', '/leistungen/website-wartung/'],
     ],
-    faqTitel: 'Fragen zu WordPress-Websites',
+    faqTitel: 'Fragen zum Webdesign',
     faq: [
+      ['Was kostet eine neue Website?', 'Das hängt von Umfang und Funktionen ab. Nach dem kostenlosen Erstgespräch erhalten Sie ein klares Angebot – Sie wissen vorher, womit Sie rechnen können.'],
       ['Wie lange dauert eine neue Website?', 'Das hängt vom Umfang ab. Eine typische Firmen-Website mit wenigen Seiten ist oft in wenigen Wochen fertig – vorausgesetzt, Texte und Bilder liegen vor. Den Zeitplan legen wir gemeinsam fest.'],
+      ['Was muss ich selbst beisteuern?', 'Ihr Wissen über Ihr Unternehmen und Ihre Kunden, dazu Logo und Bilder, soweit vorhanden. Aufbau und Texte erarbeiten wir gemeinsam mit Ihnen.'],
       ['Können Sie meine bestehende Website modernisieren?', 'Ja. Wir prüfen Ihre bestehende Seite und empfehlen, ob sich eine Überarbeitung lohnt oder ein Neuaufbau sinnvoller ist.'],
-      ['Wer kümmert sich um Updates?', 'Auf Wunsch wir: Wir halten WordPress und alle Erweiterungen aktuell und sichern Ihre Website regelmäßig.'],
+      ['Was passiert mit meiner alten Website und meiner Domain?', 'Ihre Domain bleibt. Die alten Adressen leiten wir auf die neuen Seiten um, damit Besucher und Suchmaschinen nicht ins Leere laufen.'],
+      ['Wer kümmert sich nach dem Start um Updates?', 'Auf Wunsch wir: Mit der [Website-Wartung](/leistungen/website-wartung/) halten wir WordPress und alle Erweiterungen aktuell und sichern Ihre Website regelmäßig.'],
+    ],
+  },
+  'website-wartung': {
+    eyebrow: 'Website-Wartung',
+    titel: 'Website-Wartung: aktuell, sicher, erreichbar',
+    kasten: 'Website in guten Händen',
+    cta: 'Sollen wir uns um Ihre Website kümmern?',
+    absaetze: [
+      ['h2', 'Warum eine Website Wartung braucht'],
+      'Für WordPress und seine Erweiterungen erscheinen laufend Updates. Viele davon schließen Sicherheitslücken. Bleiben sie liegen, wird die Website angreifbar, Funktionen fallen aus oder die Seite wird langsam – oft unbemerkt, bis ein Kunde darauf hinweist.',
+      'Mit der Website-Wartung nehmen wir Ihnen das ab: Wir halten Ihre Website aktuell, sichern sie regelmäßig und prüfen, ob alles läuft.',
+      ['h2', 'Das übernehmen wir regelmäßig'],
+      ['ul', [
+        'Updates für WordPress, Erweiterungen und Theme',
+        'Kontrolle nach jedem Update, ob die Website fehlerfrei läuft',
+        'Regelmäßige Sicherung von Dateien und Datenbank',
+        'Wiederherstellung aus der Sicherung im Notfall',
+        'Sicherheitsprüfung und Schutz vor Angriffen',
+        'Überwachung, ob Ihre Website erreichbar ist',
+        'Prüfung von Kontaktformular und wichtigen Funktionen',
+      ]],
+      ['h2', 'Änderungen und Erweiterungen'],
+      'Neue Seite, neues Teammitglied, geänderte Öffnungszeiten oder ein zusätzliches Formular: Sie rufen an oder schreiben uns, wir setzen es um. Was Sie selbst pflegen möchten, pflegen Sie weiter selbst.',
+      ['h2', 'Auch für Websites, die wir nicht gebaut haben'],
+      'Wir übernehmen auch bestehende WordPress-Websites. Zuerst verschaffen wir uns einen Überblick über Zustand, Erweiterungen und Sicherungen und sagen Ihnen offen, was bleiben kann und wo Handlungsbedarf besteht. Ist die Website in die Jahre gekommen, zeigen wir Ihnen, was ein Neuaufbau bringt – mehr dazu unter [Webdesign](/leistungen/wordpress-websites/).',
+    ],
+    ablauf: {
+      titel: 'So starten wir',
+      schritte: [
+        ['Überblick', 'Wir sehen uns Ihre Website an: Stand der Updates, Erweiterungen, Sicherungen und Sicherheit.'],
+        ['Angebot', 'Sie erhalten ein klares Angebot für die laufende Wartung – passend zum Umfang Ihrer Website.'],
+        ['Einrichtung', 'Wir richten Sicherung und Überwachung ein und bringen die Website auf den aktuellen Stand.'],
+        ['Laufende Wartung', 'Ab dann kümmern wir uns regelmäßig – und Sie haben einen festen Ansprechpartner.'],
+      ],
+    },
+    faqTitel: 'Fragen zur Website-Wartung',
+    faq: [
+      ['Was kostet die Website-Wartung?', 'Das hängt von der Größe Ihrer Website und den eingesetzten Erweiterungen ab. Nach einer kurzen Bestandsaufnahme erhalten Sie ein klares Angebot.'],
+      ['Betreuen Sie auch Websites, die Sie nicht gebaut haben?', 'Ja. Wir übernehmen bestehende WordPress-Websites nach einer Bestandsaufnahme und sagen Ihnen offen, wenn ein [Neuaufbau](/leistungen/wordpress-websites/) sinnvoller ist.'],
+      ['Was passiert, wenn nach einem Update etwas nicht mehr funktioniert?', 'Vor Updates liegt eine aktuelle Sicherung vor. Tritt ein Fehler auf, stellen wir den vorherigen Stand wieder her und klären die Ursache.'],
+      ['Kann ich Inhalte trotzdem selbst ändern?', 'Ja. Die Wartung betrifft die Technik. Texte, Bilder und Angebote pflegen Sie weiterhin selbst – oder Sie geben uns Bescheid.'],
     ],
   },
 };
@@ -288,10 +358,14 @@ const leistungSeite = (l) => {
   const inhalt = leistungInhalte[l.slug];
   return markup(
     seitenkopf({ eyebrow: inhalt.eyebrow, titel: inhalt.titel, lead: l.kurz, aktionen: [btnKontakt(firma('angebot_titel'), 'btn--primary')] }),
-    abschnitt('', 'Inhalt', [el('div', 'split split--wide-left', [prosa(inhalt.absaetze), ansprechKasten()])]),
-    abschnitt('section--tint', 'Häufige Fragen', [el('div', 'split', [abschnittKopf('Häufige Fragen', inhalt.faqTitel, null), faq(inhalt.faq)])]),
-    abschnitt('', 'Weitere Leistungen', [abschnittKopf('Weitere Leistungen', 'Das könnte Sie auch interessieren', null), komponente('Leistungskarten')]),
-    komponente('CtaBand', { titel: 'Klingt passend? Lassen Sie uns sprechen.' }),
+    abschnitt('', 'Inhalt', [el('div', 'split split--wide-left', [prosa(inhalt.absaetze), ansprechKasten(inhalt.kasten)])]),
+    // Abschnitte abwechselnd getönt, auch wenn der Ablauf fehlt
+    ...[
+      inhalt.ablauf && ['Ablauf', [abschnittKopf('Ablauf', inhalt.ablauf.titel, null, true), schritte(inhalt.ablauf.schritte)]],
+      ['Häufige Fragen', [el('div', 'split', [abschnittKopf('Häufige Fragen', inhalt.faqTitel, null), faq(inhalt.faq)])]],
+      ['Weitere Leistungen', [abschnittKopf('Weitere Leistungen', 'Das könnte Sie auch interessieren', null), komponente('Leistungskarten')]],
+    ].filter(Boolean).map(([name, kinder], i) => abschnitt(i % 2 ? '' : 'section--tint', name, kinder)),
+    komponente('CtaBand', { titel: inhalt.cta ?? 'Klingt passend? Lassen Sie uns sprechen.' }),
   );
 };
 
@@ -315,7 +389,7 @@ const leistungenSeite = markup(
 // Häufige Fragen zur Fernwartung (auch für das FAQ-Schema und llms.txt) – nur Angaben, die auch sonst auf der Seite stehen
 const fernwartungFaq = [
   ['Wie sicher ist die Fernwartung?', 'Eine Verbindung entsteht nur, wenn Sie PC-Visit selbst starten und uns die angezeigte Sitzungsnummer nennen. Sie sehen auf Ihrem Bildschirm alles mit und können die Sitzung mit einem Klick beenden.'],
-  ['Was ist der Unterschied zwischen Quick Support und Host?', 'Quick Support ist für die spontane Hilfe: herunterladen, starten, Sitzungsnummer nennen. Nach der Sitzung bleibt kein Zugang bestehen. Den Host installieren wir gemeinsam mit Ihnen auf Geräten, die wir regelmäßig betreuen.'],
+  ['Was ist der Unterschied zwischen Quick Support und Host?', 'Quick Support ist für die spontane Hilfe: herunterladen, starten, Sitzungsnummer nennen. Nach der Sitzung bleibt kein Zugang bestehen. Den Host installieren wir gemeinsam mit Ihnen auf Geräten, die wir in der [IT-Betreuung](/leistungen/it-betreuung/) regelmäßig betreuen.'],
   ['Helfen Sie auch, wenn ich noch kein Kunde bin?', 'Ja. Auch ohne Betreuungsvertrag helfen wir Ihnen per Fernwartung. Rufen Sie uns an – wir besprechen vorher den Aufwand.'],
   ['Wann kommen Sie doch vor Ort?', `Wenn sich ein Problem nicht aus der Ferne lösen lässt, etwa bei defekter Hardware oder Netzwerkproblemen, kommen wir vorbei – in ${firma('ort')} und Umgebung.`],
 ];
@@ -346,7 +420,7 @@ const fernwartungSeite = markup(
       el('aside', 'side-card', [
         el('span', 'side-card__icon', [icon('remote')]),
         t('h2', 'side-card__title', 'Noch nicht Kunde?'),
-        t('p', 'side-card__text', 'Auch ohne Betreuungsvertrag helfen wir Ihnen gern per Fernwartung. Rufen Sie uns an, wir besprechen vorher den Aufwand.'),
+        el('p', 'side-card__text', mitLinks('Auch ohne laufende [IT-Betreuung](/leistungen/it-betreuung/) helfen wir Ihnen gern per Fernwartung. Rufen Sie uns an, wir besprechen vorher den Aufwand.')),
         btnTelefon('btn--primary btn--s'),
       ]),
     ]),
@@ -360,10 +434,10 @@ const ueberUnsSeite = markup(
     el('div', 'split split--wide-left', [
       prosa([
         ['h2', 'IT-Service für Unternehmen ohne IT-Abteilung'],
-        'Wir betreuen vor allem kleine Firmen, Selbstständige und Vereine, die keine eigene IT-Abteilung haben – und auch keine brauchen sollen. Wir kümmern uns um Computer, Netzwerk und Server und bauen moderne WordPress-Websites.',
+        'Wir betreuen vor allem kleine Firmen, Selbstständige und Vereine, die keine eigene IT-Abteilung haben – und auch keine brauchen sollen. Wir kümmern uns um [Computer, Netzwerk und Server](/leistungen/it-betreuung/), bauen moderne [WordPress-Websites](/leistungen/wordpress-websites/) und halten sie mit unserer [Website-Wartung](/leistungen/website-wartung/) aktuell und sicher.',
         'Unser Anspruch: Technik so zu erklären, dass Sie sie verstehen, und Lösungen zu finden, die zu Ihrem Unternehmen passen – nicht die teuerste, sondern die richtige.',
         ['h2', 'Aus der Region, für die Region'],
-        `Unser Sitz ist in ${firma('ort')}. Wir betreuen Kunden in der Region ${firma('region')} – vor Ort, wenn es nötig ist, und per Fernwartung, wenn es schneller geht.`,
+        `Unser Sitz ist in ${firma('ort')}. Wir betreuen Kunden in der Region ${firma('region')} – vor Ort, wenn es nötig ist, und per [Fernwartung](/fernwartung/), wenn es schneller geht.`,
         `Zu unseren Kunden gehören Unternehmen in ${firma('einsatzorte')}.`,
       ]),
       el('aside', 'side-card', [
@@ -505,14 +579,14 @@ const datenschutzSeite = markup(
 // leistung → Service-Schema, llms → Abschnitt in /llms.txt (ohne: nicht aufgeführt). Firmenangaben über firma('<feld>').
 const marke = ` | ${firma('kurzname')}`;
 export const pages = [
-  { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, IT-Beratung und moderne WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
-    seo: { titel: `IT-Service & Websites in ${firma('ort')}${marke}`, faq: startFaq } },
-  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung und WordPress-Websites für kleine Unternehmen in Burscheid und Umgebung – alles aus einer Hand, mit festem Ansprechpartner.', content: leistungenSeite,
-    seo: { titel: `IT-Leistungen in ${firma('ort')}${marke}`, llms: 'Seiten' } },
+  { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
+    seo: { titel: `IT-Service & Websites in ${firma('ort')}${marke}`, faq: ohneLinks(startFaq) } },
+  { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung – alles aus einer Hand, mit festem Ansprechpartner.', content: leistungenSeite,
+    seo: { titel: `IT & Webdesign in ${firma('ort')}${marke}`, llms: 'Seiten' } },
   ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.beschreibung ?? l.kurz, content: leistungSeite(l),
-    seo: { titel: `${l.titel} in ${firma('ort')}${marke}`, faq: leistungInhalte[l.slug]?.faq, leistung: true, llms: 'Leistungen' } })),
+    seo: { titel: `${l.titel} in ${firma('ort')}${marke}`, faq: ohneLinks(leistungInhalte[l.slug]?.faq), leistung: true, llms: 'Leistungen' } })),
   { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite,
-    seo: { titel: `Fernwartung mit PC-Visit${marke}`, faq: fernwartungFaq, llms: 'Seiten' } },
+    seo: { titel: `Fernwartung mit PC-Visit${marke}`, faq: ohneLinks(fernwartungFaq), llms: 'Seiten' } },
   { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen, Selbstständige und Vereine.', content: ueberUnsSeite,
     seo: { titel: `Über uns – IT aus ${firma('ort')}${marke}`, llms: 'Seiten' } },
   { slug: 'kontakt', title: 'Kontakt', order: 40, excerpt: 'Kontakt zu Kotthaus Business Service in Burscheid: Anfrage senden, anrufen oder kostenloses Erstgespräch vereinbaren.', content: kontaktSeite,

@@ -291,6 +291,8 @@ html:not(.js) .scheme-toggle { display: none; }
   .main-nav__item--cta [class*="btn--"] { --btn-width: 100%; }
 }
 @media (min-width: 64em) and (max-width: 79.99em) { .main-nav__item--phone { display: none; } }
+/* Schmale Desktop-Breite: fünf Menüpunkte passen nur mit engerem Abstand in die Leiste */
+@media (min-width: 64em) and (max-width: 71.99em) { .main-nav__link { padding-inline: 0.6em; } .site-logo { margin-right: var(--space-xs); } }
 
 /* ---------- Helle Köpfe mit Raster-Motiv (folgen Hell/Dunkel) ---------- */
 /* Hero liegt hinter der Navigation: Kopfzeile ohne eigenen Platz im Fluss, der Hero bekommt den Platz oben dazu.
@@ -386,7 +388,10 @@ html:not(.js) .scheme-toggle { display: none; }
 .browser-mock { transform: perspective(60rem) rotateX(8deg) rotateY(-16deg) rotateZ(1deg); box-shadow: var(--kbs-kante), 24px 30px 60px -20px rgb(10 15 20 / 0.35), 6px 8px 16px -6px rgb(10 15 20 / 0.15); }
 
 /* ---------- Leistungskarten ---------- */
-.service-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); }
+/* Feste Spalten (1, 2, 4) statt auto-fit: Die Erstgespräch-Karte läuft über die ganze Breite und hielte sonst leere Spalten offen */
+.service-grid { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: 1fr; }
+@media (min-width: 40em) { .service-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (min-width: 75em) { .service-grid { grid-template-columns: repeat(4, 1fr); } }
 .service-card {
   position: relative; display: flex; flex-direction: column; gap: var(--space-xs);
   padding: var(--space-l); background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-xl);
@@ -409,7 +414,8 @@ html:not(.js) .scheme-toggle { display: none; }
 .service-card:hover .service-card__more .icon { transform: translateX(3px); }
 .service-card__more .icon { transition: transform var(--transition); }
 /* Erstgespräch-Karte: dunkle Akzentfläche (ACSS „Force light selectors“) */
-.service-card--cta { justify-content: center; background: var(--kbs-ink); color: var(--secondary-light); border-color: transparent; }
+/* über die ganze Breite: bei vier Leistungen stünde sie sonst allein in der zweiten Reihe */
+.service-card--cta { grid-column: 1 / -1; justify-content: center; background: var(--kbs-ink); color: var(--secondary-light); border-color: transparent; }
 .service-card--cta:hover { border-color: transparent; }
 .service-card--cta .service-card__title { color: var(--white); }
 .service-card--cta .service-card__text { color: var(--secondary-light); }
@@ -420,7 +426,7 @@ html:not(.js) .scheme-toggle { display: none; }
 .steps { list-style: none; margin: 0; padding: 0; display: grid; gap: var(--space-m); grid-template-columns: repeat(auto-fit, minmax(min(100%, 15rem), 1fr)); counter-reset: none; }
 .steps__item { position: relative; padding: var(--space-l); background: var(--white); border: 1px solid var(--base-light); border-radius: var(--kbs-radius-xl); }
 .steps__number { display: inline-grid; place-items: center; min-width: 3rem; height: 3rem; padding-inline: 0.6rem; margin-bottom: var(--space-m); border-radius: 999px; background: var(--primary-ultra-light); color: var(--primary-dark); box-shadow: inset 0 0 0 1px color-mix(in oklch, var(--primary) 18%, transparent), var(--kbs-kante), 0 3px 5px -3px color-mix(in oklch, var(--primary) 35%, transparent); font-size: var(--text-m); font-weight: 800; letter-spacing: -0.02em; font-variant-numeric: tabular-nums; }
-.steps__title { margin: 0 0 var(--space-xs); }
+.steps__title { margin: 0 0 var(--space-xs); hyphens: auto; }
 .steps__text { margin: 0; color: var(--base-semi-dark); }
 
 /* ---------- Vorteile ---------- */

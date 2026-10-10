@@ -42,7 +42,7 @@ const navPunkt = (punkt, i) => {
 const headerKomponente = {
   key: 'SiteHeader',
   name: 'Header',
-  description: 'Kopfzeile mit Logo, Hauptnavigation (Untermenü Leistungen), Telefon, Button „Erstgespräch“ und Umschalter Hell/Dunkel. Mobil als ausklappbares Menü. Daten: Firmendaten (Logo, Telefon); Skript snippets/kbs-navigation.php.',
+  description: 'Kopfzeile mit Logo, Hauptnavigation (Untermenüs Leistungen und Websites), Telefon, Button „Erstgespräch“ und Umschalter Hell/Dunkel. Mobil als ausklappbares Menü. Daten: Firmendaten (Logo, Telefon); Skript snippets/kbs-navigation.php.',
   properties: [],
   content: el('header', 'site-header', [
     t('a', 'skip-link', 'Zum Inhalt springen', { attrs: { href: '#main' } }),
@@ -207,7 +207,7 @@ const feld = (id, label, attrs = {}, { tag = 'input', pflicht = false, kinder = 
     }),
   ]);
 
-const anliegen = ['IT-Betreuung', 'IT-Beratung', 'WordPress-Website', 'Fernwartung', 'Sonstiges'];
+const anliegen = ['IT-Betreuung', 'IT-Beratung', 'Neue Website', 'Website-Wartung', 'Fernwartung', 'Sonstiges'];
 
 const kontaktformularKomponente = {
   key: 'Kontaktformular',
@@ -270,7 +270,7 @@ const ctaKomponente = {
   key: 'CtaBand',
   name: 'Aufruf Erstgespräch',
   description: 'Dunkles Panel mit Aufruf zum kostenlosen Erstgespräch: Überschrift (Eigenschaft titel), Angebotstext, Buttons Kontakt und Telefon. Daten: Firmendaten (Angebot, Telefon).',
-  properties: [{ key: 'titel', name: 'Überschrift', type: { primitive: 'string' }, default: 'Lassen Sie uns über Ihre IT sprechen.' }],
+  properties: [{ key: 'titel', name: 'Überschrift', type: { primitive: 'string' }, default: 'Lassen Sie uns über Ihre IT oder Ihre Website sprechen.' }],
   content: el('section', 'cta-band', [
     el('div', 'cta-band__inner container', [
       el('div', 'cta-band__text', [

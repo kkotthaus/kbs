@@ -40,7 +40,14 @@ export const navigation = [
     kinder: [
       ['IT-Betreuung', '/leistungen/it-betreuung/'],
       ['IT-Beratung', '/leistungen/it-beratung/'],
-      ['WordPress-Websites', '/leistungen/wordpress-websites/'],
+    ],
+  },
+  {
+    text: 'Websites',
+    link: '/leistungen/wordpress-websites/',
+    kinder: [
+      ['Webdesign', '/leistungen/wordpress-websites/'],
+      ['Website-Wartung', '/leistungen/website-wartung/'],
     ],
   },
   { text: 'Fernwartung', link: '/fernwartung/' },
@@ -69,10 +76,18 @@ export const leistungen = [
   {
     slug: 'wordpress-websites',
     icon: 'browser',
-    titel: 'WordPress-Websites',
-    kurz: 'Moderne, schnelle Websites mit aktuellen Buildern wie Etch – die Sie danach selbst pflegen können.',
-    beschreibung: 'WordPress-Websites für kleine Unternehmen aus Burscheid und dem Bergischen Land: modern gebaut, schnell, für Smartphones optimiert und selbst pflegbar.',
+    titel: 'Webdesign',
+    kurz: 'Moderne, schnelle WordPress-Websites mit aktuellen Buildern wie Etch – die Sie danach selbst pflegen können.',
+    beschreibung: 'Webdesign für kleine Unternehmen aus Burscheid und dem Bergischen Land: WordPress-Websites, modern gebaut, schnell, für Smartphones optimiert und selbst pflegbar.',
     punkte: ['Design, das zu Ihrem Unternehmen passt', 'Für Smartphone und Suchmaschine optimiert', 'Inhalte selbst ändern, ohne Programmierkenntnisse'],
+  },
+  {
+    slug: 'website-wartung',
+    icon: 'shield',
+    titel: 'Website-Wartung',
+    kurz: 'Updates, Backups und Sicherheit für Ihre WordPress-Website – regelmäßig erledigt, mit festem Ansprechpartner.',
+    beschreibung: 'Website-Wartung für WordPress in Burscheid und dem Bergischen Land: Updates, Backups, Sicherheit und Überwachung – auch für Websites, die wir nicht gebaut haben.',
+    punkte: ['Updates für WordPress und Erweiterungen', 'Regelmäßige Backups und Sicherheitsprüfung', 'Fester Ansprechpartner für Änderungen'],
   },
 ];
 

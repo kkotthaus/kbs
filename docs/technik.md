@@ -123,8 +123,8 @@ Mediathek › Bild › „KI-Nutzung“ (`ki_art`) → Snippet „KBS – KI-Ken
 
 | Seite | Inhalt |
 | --- | --- |
-| `/` | Hero mit Telefon-Karte, Leistungen, Schritte, Fernwartung, Websites, Zielgruppen, Häufige Fragen, Erstgespräch |
-| `/leistungen/` und drei Unterseiten | IT-Betreuung, IT-Beratung, WordPress-Websites |
+| `/` | Hero mit Telefon-Karte, Leistungen, Websites, Schritte, Fernwartung, Zielgruppen, Häufige Fragen, Erstgespräch |
+| `/leistungen/` und vier Unterseiten | IT-Betreuung, IT-Beratung, Webdesign (`/leistungen/wordpress-websites/`), Website-Wartung (`/leistungen/website-wartung/`) |
 | `/fernwartung/` | PC-Visit-Downloads aus den Firmendaten |
 | `/ueber-uns/`, `/kontakt/` | |
 | `/impressum/`, `/datenschutz/` | Angaben aus den Firmendaten |
