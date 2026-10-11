@@ -50,7 +50,7 @@ Die Entwicklung läuft auf einer lokalen Kopie (kbs.local). Ablauf einer Änderu
 | **LiteSpeed Cache** | Seitencache (7 Tage) und Object-Cache | wird beim Speichern der Firmendaten und der KI-Darstellung automatisch komplett geleert, Seiten beim Speichern einzeln |
 | **Security Ninja** | Sicherheit (Firewall, Prüfungen) | darf den Zugang `/wp-json/mcp/` nicht sperren |
 | **MainWP Child** | Fernverwaltung über MainWP | |
-| **Matomo** | Statistik – derzeit **ohne Tracking** | vor dem Einschalten die Datenschutzerklärung anpassen (sie sagt: keine Analyse-Werkzeuge) |
+| **Matomo** | Statistik – Tracking ist an, **ohne Cookies** (Einstellung „Cookies deaktivieren“, seit 2026-10-11) | Cookies nicht wieder einschalten: Sie bräuchten eine Einwilligung (Cookie-Banner). Die Datenschutzerklärung muss Matomo nennen |
 | **Duplicator Pro** | Sicherung | nie ein Paket der lokalen Kopie hier einspielen – es überschriebe alles, was hier gepflegt wurde |
 | **MCP Adapter** | Zugang für KI-Werkzeuge (nur lesend) | **nicht auf 0.7.x aktualisieren** (inkompatibel) |
 | Uplink Media Bridge, Uplink Editorial Title, Uplink Unified Ops Center | Hilfen für Etch im Backend (Mediathek-Ordner, Titel, Übersicht) | nicht für die Darstellung der Website nötig |
@@ -147,7 +147,7 @@ Templates: „index“ (Header, Inhalt, Footer für alle Seiten) und „404“.
 - Das Etch-Stylesheet „DWC Mega Menu“ löschen.
 - Den MCP Adapter auf 0.7.x aktualisieren.
 - Ein Duplicator-Paket der lokalen Kopie hier installieren.
-- Matomo-Tracking einschalten, ohne die Datenschutzerklärung anzupassen.
+- Bei Matomo die Cookies wieder einschalten (bräuchte eine Einwilligung) oder das Tracking betreiben, ohne dass die Datenschutzerklärung Matomo nennt.
 - Felder im Block „Individuelle Felder“ oder per Datenbank ändern – Felder immer über ihre Seiten (Firmendaten, Mediathek).
 
 ## Nach Updates prüfen
