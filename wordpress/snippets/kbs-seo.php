@@ -77,6 +77,10 @@ function kbs_seo_id(): int {
 add_filter(
 	'seopress_titles_title',
 	function ( $titel ) {
+		// 404: SEOPress liefert sonst seinen englischen Standardtitel („404 - Page not found“)
+		if ( is_404() ) {
+			return esc_attr( kbs_seo_text( 'Seite nicht gefunden | {options.kbs.firma.kurzname}' ) );
+		}
 		$s = kbs_seo_seite();
 		if ( ! $s || empty( $s['titel'] ) || '' !== (string) get_post_meta( kbs_seo_id(), '_seopress_titles_title', true ) ) {
 			return $titel;

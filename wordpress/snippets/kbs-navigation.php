@@ -39,10 +39,21 @@ add_action(
 		if (!offen) sub.kbsZu = setTimeout(function () { sub.classList.remove('main-nav__sub--zu'); }, 400);
 	}
 	function schliesseSubs(ausser) { subs.forEach(function (b) { if (b !== ausser) setze(b, false); }); }
+	function menueOffen() { return !!toggle && toggle.getAttribute('aria-expanded') === 'true'; }
+	function schliesseMenue() { setze(toggle, false); nav.classList.remove('main-nav--open'); }
+	// Per Maus (:hover) geöffnetes Untermenü ausblenden, bis die Maus den Menüpunkt verlässt (WCAG 1.4.13: mit Escape schließbar)
+	function versteckeHover() {
+		var sub = nav.querySelector('.main-nav__item--has-sub:hover > .main-nav__sub');
+		if (!sub) return false;
+		clearTimeout(sub.kbsZu);
+		sub.classList.add('main-nav__sub--zu');
+		sub.parentNode.addEventListener('mouseleave', function () { sub.classList.remove('main-nav__sub--zu'); }, { once: true });
+		return true;
+	}
 
 	if (toggle) {
 		toggle.addEventListener('click', function () {
-			var offen = toggle.getAttribute('aria-expanded') !== 'true';
+			var offen = !menueOffen();
 			setze(toggle, offen);
 			nav.classList.toggle('main-nav--open', offen);
 		});
@@ -57,12 +68,16 @@ add_action(
 	document.addEventListener('keydown', function (e) {
 		if (e.key !== 'Escape') return;
 		var offenerSub = nav.querySelector('[data-nav-sub][aria-expanded="true"]');
-		if (offenerSub) { setze(offenerSub, false); offenerSub.focus(); return; }
-		if (toggle && toggle.getAttribute('aria-expanded') === 'true') { setze(toggle, false); nav.classList.remove('main-nav--open'); toggle.focus(); }
+		if (offenerSub) { setze(offenerSub, false); versteckeHover(); offenerSub.focus(); return; }
+		if (versteckeHover()) return;
+		if (menueOffen()) { schliesseMenue(); toggle.focus(); }
 	});
 	document.addEventListener('click', function (e) { if (!nav.contains(e.target)) schliesseSubs(null); });
 	nav.addEventListener('focusout', function (e) {
-		if (window.matchMedia('(min-width: 64em)').matches && !nav.contains(e.relatedTarget)) schliesseSubs(null);
+		if (nav.contains(e.relatedTarget)) return;
+		if (window.matchMedia('(min-width: 64em)').matches) { schliesseSubs(null); return; }
+		// Mobil: Menü schließen, wenn der Fokus weiterzieht – sonst läuft er hinter dem offenen Menü weiter (WCAG 2.4.7)
+		if (e.relatedTarget && menueOffen()) schliesseMenue();
 	});
 
 	// Aktuelle Seite markieren; auf Unterseiten zusätzlich den Elternpunkt

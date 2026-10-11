@@ -85,6 +85,9 @@ address { font-style: normal; }
 .lead { font-size: var(--text-l); color: var(--base-semi-dark); line-height: 1.55; }
 .more-link { margin-top: var(--space-m); }
 .link-arrow { display: inline-flex; align-items: center; gap: 0.4em; font-weight: 700; text-decoration: none; }
+/* Frei stehende Links und Knöpfe mindestens 24px hoch (WCAG 2.5.8) */
+.link-arrow, .site-footer__link, .contact-list__link, .ome-breadcrumbs__link, .ome-toc__mobile-button, .remote__note a { min-height: 1.5rem; }
+.contact-list__link, .ome-breadcrumbs__link, .remote__note a { display: inline-flex; align-items: center; }
 .link-arrow .icon { transition: transform var(--transition); }
 .link-arrow:hover .icon { transform: translateX(3px); }
 .button-row { display: flex; flex-wrap: wrap; align-items: center; gap: var(--space-s) var(--space-m); margin-top: var(--space-l); }
@@ -95,9 +98,10 @@ address { font-style: normal; }
 [class*="btn--"] { gap: 0.5em; }
 [class*="btn--"] .icon { width: 1.1em; height: 1.1em; }
 /* Fokusring der ACSS-Buttons (Variable --focus-color von ACSS): btn--primary setzt --primary-light,
-   auf hellem Grund unter 3:1 (WCAG 1.4.11). Höhere Spezifität als .btn--primary, deshalb unabhängig von der Ladereihenfolge. */
-body [class*="btn--"] { --focus-color: var(--primary-dark); }
-:is(.service-card--cta, .cta-band, .site-footer) [class*="btn--"] { --focus-color: var(--primary-light); }
+   auf hellem Grund unter 3:1 (WCAG 1.4.11). Gilt auch für den Skip-Link (ACSS-Klasse im Button-Stil).
+   [class] hebt die Spezifität über .btn--primary.btn--outline, deshalb unabhängig von der Ladereihenfolge. */
+body :is([class*="btn--"], .skip-link)[class] { --focus-color: var(--primary-dark); }
+:is(.service-card--cta, .cta-band, .site-footer) [class*="btn--"][class] { --focus-color: var(--primary-light); }
 /* 3D-Optik der Buttons wie die Karten: Tasten mit festem Sockel (ACSS hat keine Einstellung für Button-Schatten, deshalb hier).
    Sockel in abgedunkelter Rahmenfarbe des Buttons; beim Überfahren halb, beim Klicken ganz eingedrückt.
    --btn-transition ist die ACSS-Variable für den Übergang (kürzer, damit es sich wie ein Knopf anfühlt). */
@@ -519,7 +523,8 @@ a.contact-list__value:hover { text-decoration: underline; }
   box-shadow: inset 0 2px 4px rgb(10 15 20 / 0.07);
   transition: border-color var(--transition), box-shadow var(--transition);
 }
-.form-field__control:focus { outline: none; border-color: var(--primary); box-shadow: inset 0 2px 4px rgb(10 15 20 / 0.07), 0 0 0 4px color-mix(in oklch, var(--primary) 25%, transparent); }
+/* Fokus mit deckendem Rahmen (WCAG 2.4.7, Kontrast ≥ 3:1) statt blassem Schein */
+.form-field__control:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-color: var(--primary); }
 .form-field__control--area { resize: vertical; min-height: 9rem; }
 .form-check { display: flex; gap: 0.7em; align-items: flex-start; margin-top: var(--space-m); font-size: var(--text-s); }
 .form-check__input { width: 1.2rem; height: 1.2rem; margin-top: 0.2em; flex: none; accent-color: var(--primary); }
@@ -543,13 +548,15 @@ a.contact-list__value:hover { text-decoration: underline; }
   background-image: linear-gradient(to right, var(--kbs-grid-line) 1px, transparent 1px), linear-gradient(to bottom, var(--kbs-grid-line) 1px, transparent 1px); background-size: 2.5rem 2.5rem;
   -webkit-mask-image: radial-gradient(ellipse at 100% 0%, #000, transparent 70%); mask-image: radial-gradient(ellipse at 100% 0%, #000, transparent 70%);
 }
-.cta-band__inner > * { position: relative; }
+.cta-band__inner > * { position: relative; min-width: 0; }
 @media (min-width: 60em) { .cta-band__inner.container { grid-template-columns: minmax(0, 1.5fr) auto; } }
 @media (max-width: 47.99em) { .cta-band__inner.container { padding: var(--space-xl) var(--space-l); } }
 .cta-band__eyebrow { margin: 0 0 var(--space-xs); font-weight: 700; font-size: var(--text-s); letter-spacing: 0.1em; text-transform: uppercase; color: var(--primary-light); }
 .cta-band__title { margin: 0; color: var(--white); }
 .cta-band__lead { margin: var(--space-s) 0 0; max-width: 40rem; color: var(--secondary-light); font-size: var(--text-l); }
 .cta-band__actions { display: flex; flex-wrap: wrap; gap: var(--space-s); }
+/* Schmale Bildschirme mit vergrößerten Textabständen (WCAG 1.4.12): Button darf umbrechen statt überzustehen */
+.cta-band__actions [class*="btn--"] { max-width: 100%; white-space: normal; text-align: center; }
 
 /* ---------- 3D: Karten als Tasten ----------
    Fester Sockel unten (--kbs-hub), beim Überfahren sinkt die Karte ein Stück ein, beim Klicken ganz;
