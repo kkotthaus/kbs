@@ -2,13 +2,14 @@
 
 Stack, allgemeine Konventionen und Betrieb: [etch-nodes](../etch-nodes/CLAUDE.md). Projekt-Prefix (`<prefix>` in etch-nodes): `kbs`.
 
-## Plugins (Stand 2026-10-04)
+## Plugins (Stand 2026-10-11)
 
-WordPress 7.1.2 auf beiden Seiten. Spalten: **lokal** = kbs.local, **live** = kotthaus-bs.de (gelesen per `kbs-live`, `wp plugin list`). Automatische Updates sind überall aus.
+WordPress 7.1.3 auf beiden Seiten. Spalten: **lokal** = kbs.local, **live** = kotthaus-bs.de (gelesen per `kbs-live`, `wp plugin list`). Automatische Updates sind überall aus.
 
 | Baustein | Slug | Version | lokal | live | Anmerkung |
 | --- | --- | --- | --- | --- | --- |
-| Etch (+ Etch-Theme 0.0.7) | `etch` | 1.6.8 | aktiv | aktiv | |
+| Etch (+ Etch-Theme 0.0.7) | `etch` | lokal 1.7.0, live 1.6.8 | aktiv | aktiv | lokal schon aktualisiert, live noch nicht. Einstellungen „AI Connector“ und „Overwrite on Paste“ sind aus (nur für einen Test bzw. ein EMMP-Update kurz einschalten) |
+| EtchMegaMenuPro (Mega Menu Pro + Header Builder) | – (Etch-Komponenten) | lokal Komponenten 1.3.0, Stylesheet 1.2.3; live nicht geprüft (beim Umzug 1.2.3) | installiert, nicht eingebunden | installiert, nicht eingebunden | kein Plugin. Komponenten-IDs lokal: DWC Menu Item 67, DWC Dropdown 68, DWC Nav 69, DWC Mobile Toggle 70, DWC Header 71, seit dem Update-Test am 2026-10-11 dazu DWC Tabbed Nav 134 und DWC Tab 135. **Offen:** lokal das Stylesheet „DWC Mega Menu“ noch auf 1.3.0 bringen. Update-Ablauf: `etch-nodes/docs/development-environment.md` (Updates) |
 | Automatic.css | `automatic-css` | 4.0.1 | aktiv | aktiv | Farbschema „light dark“ (folgt dem Betrachter) |
 | OhMyEtch | `oh-my-etch` | 1.6.0 | aktiv | aktiv | Accordion, Breadcrumbs, Table of Contents |
 | Meta Box AIO | `meta-box-aio` | 3.12.0 | aktiv | aktiv | Einstellungsseite „Firmendaten“ (im Code registriert) |
@@ -17,7 +18,7 @@ WordPress 7.1.2 auf beiden Seiten. Spalten: **lokal** = kbs.local, **live** = ko
 | SEOPress + SEOPress Pro | `wp-seopress`, `wp-seopress-pro` | 10.3 | aktiv | aktiv | Meta-Ausgabe, Open Graph, Sitemap (`/sitemaps.xml`), Indexierung, Auslieferung von `/llms.txt`; Titel und Inhalte der `llms.txt` kommen aus `kbs-seo.php`; Sitemap nur mit Seiten (Beiträge und Kategorien abgewählt), Kategorie-Archive noindex; lokal Abilities API an (Funktionen `seopress/*` über `wp-kbs`), live aus |
 | Duplicator Pro | `duplicator-pro` | 5.0.5 | aktiv | aktiv | Umzug und Sicherung; nie mehr von lokal nach live |
 | Etch Font Manager | `etch-font-manager` | 1.0.16 | aktiv | aktiv | hostet beide Schriften selbst (Standard aus etch-nodes): **Manrope** (Fließtext) und **Sora** (Überschriften, vorgeladen) unter `wp-content/fonts/`, `efm-fonts.css`, Fallback Systemschriften, **keine Rolle** gesetzt (Zuordnung nur in `acss-schrift.mjs`). Einrichten je Umgebung: Google Fonts › Manrope und Sora, Subset latin, variabel; Preload nur für Sora – per WP-CLI `wp eval-file` mit den REST-Routen `google/install` und `families` |
-| Uplink Media Bridge for Etch | `media-bridge-for-etch` | 2.2.7 | aktiv | aktiv | |
+| Uplink Media Bridge for Etch | `media-bridge-for-etch` | 2.2.9 | aktiv | aktiv | |
 | Uplink Editorial Title | `uplink-editorial-title` | 1.1.3 | aktiv | aktiv | |
 | Uplink Unified Ops Center | `uplink-unified-ops-center` | 1.6.0 | aktiv | aktiv | |
 | **LiteSpeed Cache** | `litespeed-cache` | 7.9.1 | – | aktiv | Seitencache (Server ist LiteSpeed) und Object-Cache-Drop-in `wp-content/object-cache.php`. Seiten werden 7 Tage gecacht. Den ganzen Cache leeren automatisch: Speichern der Firmendaten (`kbs-firma.php`) und der KI-Darstellung (`kbs-ki.php`) sowie jeder Sync (`kbs-mcp.php`), jeweils über `do_action( 'litespeed_purge_all' )`; Seiten leert LiteSpeed beim Speichern selbst |
