@@ -50,7 +50,7 @@ Die Entwicklung läuft auf einer lokalen Kopie (kbs.local). Ablauf einer Änderu
 | **LiteSpeed Cache** | Seitencache (7 Tage) und Object-Cache | wird beim Speichern der Firmendaten und der KI-Darstellung automatisch komplett geleert, Seiten beim Speichern einzeln |
 | **Security Ninja** | Sicherheit (Firewall, Prüfungen) | darf den Zugang `/wp-json/mcp/` nicht sperren |
 | **MainWP Child** | Fernverwaltung über MainWP | |
-| **Matomo** | Statistik – Tracking ist an, **ohne Cookies** (Einstellung „Cookies deaktivieren“, seit 2026-10-11) | Cookies nicht wieder einschalten: Sie bräuchten eine Einwilligung (Cookie-Banner). Die Datenschutzerklärung muss Matomo nennen |
+| **Matomo** | Statistik – Tracking ist an, **ohne Cookies** (Einstellung „Cookies deaktivieren“, seit 2026-10-11) | Cookies nicht wieder einschalten: Sie bräuchten eine Einwilligung (Cookie-Banner). Die Datenschutzerklärung nennt Matomo (Abschnitt 5); bei Änderungen an den Matomo-Einstellungen dort mitpflegen |
 | **Duplicator Pro** | Sicherung | nie ein Paket der lokalen Kopie hier einspielen – es überschriebe alles, was hier gepflegt wurde |
 | **MCP Adapter** | Zugang für KI-Werkzeuge (nur lesend) | **nicht auf 0.7.x aktualisieren** (inkompatibel) |
 | Uplink Media Bridge, Uplink Editorial Title, Uplink Unified Ops Center | Hilfen für Etch im Backend (Mediathek-Ordner, Titel, Übersicht) | nicht für die Darstellung der Website nötig |
@@ -99,7 +99,7 @@ Regeln im Stylesheet „KBS“:
 | Mediathek: Plakette „KI“ auf den Kacheln | Snippet „KBS – KI-Kennzeichnung“ | nur im Backend |
 | Etch-Editor | Etch | nur für angemeldete Administratoren |
 
-Keine Analyse- oder Werbeskripte, keine externen Schriften, keine Cookies außer denen von WordPress für angemeldete Benutzer.
+Statistik: Matomo (Plugin, eigener Server, ohne Cookies) – in der Datenschutzerklärung beschrieben (Abschnitt 5). Sonst keine Analyse- oder Werbeskripte, keine externen Schriften, keine Cookies außer denen von WordPress für angemeldete Benutzer.
 
 ## Datenfluss an Beispielen
 
