@@ -8,9 +8,59 @@
 
 defined( 'ABSPATH' ) || exit;
 
+// Der Umschalter Hell/Dunkel lässt sich im Backend ein- und ausschalten: Firmendaten › Firma & Kontakt › „Umschalter Hell/Dunkel“
+// (Standard aus etch-nodes). Ausgeschaltet verschwindet die Schaltfläche, und eine gespeicherte Wahl wird nicht mehr
+// angewendet – die Seite folgt dann immer dem Gerät.
+add_filter(
+	'rwmb_meta_boxes',
+	function ( $boxen ) {
+		$feld = array(
+			'id'        => 'farbschema_umschalter',
+			'name'      => 'Umschalter Hell/Dunkel',
+			'type'      => 'switch',
+			'style'     => 'rounded',
+			'on_label'  => 'Ja',
+			'off_label' => 'Nein',
+			'std'       => 1,
+			'desc'      => 'Zeigt Besuchern die Schaltfläche für das helle und dunkle Design. Ausgeschaltet verschwindet sie, und die Website folgt immer der Einstellung des Geräts.',
+		);
+		foreach ( $boxen as $i => $b ) {
+			if ( 'firmendaten-firma' === ( $b['id'] ?? '' ) ) {
+				$boxen[ $i ]['fields'][] = $feld;
+				break;
+			}
+		}
+		return $boxen;
+	},
+	20
+);
+
+/** Ist der Umschalter eingeschaltet? Ohne gespeicherten Wert: ja. */
+function kbs_farbschema_an(): bool {
+	$daten = (array) get_option( 'firmendaten', array() );
+	return ! array_key_exists( 'farbschema_umschalter', $daten ) || ! empty( $daten['farbschema_umschalter'] );
+}
+
+// Solange noch nie ein Wert gespeichert wurde, den Schalter im Backend als eingeschaltet zeigen – so, wie er wirkt.
+// Sonst stünde er auf „Nein“, und das nächste Speichern der Seite würde den Umschalter unbemerkt abschalten.
+add_filter(
+	'rwmb_farbschema_umschalter_field_meta',
+	function ( $wert ) {
+		return array_key_exists( 'farbschema_umschalter', (array) get_option( 'firmendaten', array() ) ) ? $wert : 1;
+	}
+);
+
+// Nach dem Speichern der Einstellungsseite den Seitencache leeren, damit der Schalter sofort wirkt.
+add_action( 'update_option_firmendaten', fn() => do_action( 'litespeed_purge_all' ) );
+
 add_action(
 	'wp_head',
 	function () {
+		if ( ! kbs_farbschema_an() ) {
+			// Umschalter ausgeschaltet: Die Klasse „js“ braucht die Navigation weiterhin; keine Schema-Klasse, Schaltfläche ausblenden.
+			echo "<script>document.documentElement.classList.add('js')</script><style>[data-scheme-toggle]{display:none!important}</style>\n";
+			return;
+		}
 		// Gespeichertes Farbschema vor dem ersten Zeichnen setzen (kein Aufblitzen des anderen Schemas)
 		echo "<script>(function(d){d.classList.add('js');try{var s=localStorage.getItem('kbs-farbschema');if(s==='light'||s==='dark')d.classList.add('scheme--'+s);}catch(e){}})(document.documentElement)</script>\n";
 	},
@@ -89,6 +139,7 @@ add_action(
 	});
 })();
 
+<?php if ( kbs_farbschema_an() ) : ?>
 // Hell/Dunkel: ohne gespeicherte Wahl folgt die Seite dem Gerät (ACSS „light dark“).
 // Entspricht die neue Wahl der Geräteeinstellung, wird die gespeicherte Wahl gelöscht.
 (function () {
@@ -115,6 +166,7 @@ add_action(
 	if (mq.addEventListener) mq.addEventListener('change', zeige);
 	zeige();
 })();
+<?php endif; ?>
 </script>
 		<?php
 	},

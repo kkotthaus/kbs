@@ -10,6 +10,7 @@ Name, Adresse, Telefon, Erreichbarkeit, Rechtliches, PC-Visit-Links und das Ange
 - **Einsatzorte** – alle Orte mit Kunden, durch Komma getrennt. Sie stehen einmal sichtbar auf „Über uns“ („Zu unseren Kunden gehören Unternehmen in …“), dazu für Google und KI-Suchdienste in den strukturierten Daten und in `/llms.txt`. So wird die Website für diese Orte gefunden, ohne dass jede Seite alle Orte nennt. Keine eigenen Seiten je Ort anlegen – Google wertet fast gleiche Ortsseiten ab.
 - Dieselben Orte im **Google-Unternehmensprofil** als Einzugsgebiet eintragen; dort wirken sie für die Suche in der Nähe am stärksten.
 - **Kontaktformular** – anzeigen oder ausblenden. Ausgeblendet steht auf der Kontaktseite ein Hinweis mit Telefon und E-Mail.
+- **Umschalter Hell/Dunkel** – zeigt Besuchern im Kopf der Seite den Knopf für das helle und dunkle Design. Steht der Schalter auf „Nein“, verschwindet der Knopf, und die Website folgt immer der Einstellung des Geräts – auch bei Besuchern, die vorher von Hand umgeschaltet hatten. Das dunkle Design selbst bleibt.
 
 **Vorschaubild für Links** (Firmendaten › Firma & Kontakt): erscheint, wenn jemand einen Link zur Website teilt (WhatsApp, LinkedIn, Teams …), und bei Suchmaschinen und KI-Suche. Format 1200 × 630 px, JPEG oder PNG; wichtige Inhalte in die Mitte, manche Dienste schneiden quadratisch zu. Die Vorlage liegt unter `D:/Projekte-KI/medien/raw/KBS/kbs-vorschaubild.html` (im Browser öffnen, Text anpassen, als Bild speichern). Seiten mit eigenem Beitragsbild nutzen dieses.
 
