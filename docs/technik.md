@@ -45,6 +45,7 @@ Die Entwicklung läuft auf einer lokalen Kopie (kbs.local). Ablauf einer Änderu
 | **OhMyEtch** | Accordion (Häufige Fragen), Breadcrumbs, Table of Contents (Datenschutz) | bringt Verhalten und ARIA mit; das Aussehen kommt aus dem Stylesheet „KBS“ |
 | **Etch Font Manager** | Schriften Manrope (Text) und Sora (Überschriften), selbst gehostet in `wp-content/fonts/` | keine Schrift von fremden Servern. Welche Schrift wofür gilt, steht in den ACSS-Einstellungen, nicht im Font Manager |
 | **Meta Box AIO** | Felder der Einstellungsseiten „Firmendaten“ und „KI-Kennzeichnung“ und der Mediathek | die Felder sind im Code der Snippets registriert, nicht im Meta-Box-Builder |
+| **Bausteine Backend** | eigenes Plugin: blendet „Individuelle Felder“ aus, öffnet bei Etch-Komponenten die Seitenleiste, räumt deren Felder im Block-Editor auf, fängt eine abgelaufene Anmeldung im Etch-Editor ab | aktualisiert sich selbst vom eigenen Update-Server; ersetzt das frühere Snippet „Backend“ |
 | **WPCodeBox 2** | führt die eigenen PHP-Snippets aus (Ordner „KBS“) | Snippets mit Fehler schaltet WPCodeBox selbst ab |
 | **SEOPress + SEOPress Pro** | Titel, Meta-Beschreibung, Open Graph, Sitemap `/sitemaps.xml`, `/llms.txt` | Titel, strukturierte Daten und Inhalt der `llms.txt` liefert das Snippet „KBS – Suchmaschinen“ |
 | **LiteSpeed Cache** | Seitencache (7 Tage) und Object-Cache | wird beim Speichern der Firmendaten und der KI-Darstellung automatisch komplett geleert, Seiten beim Speichern einzeln |
