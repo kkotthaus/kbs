@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: KBS – Suchmaschinen
- * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten und Geschäftsführer, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt für KI-Suchdienste, 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
+ * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten und Geschäftsführer, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt (nach llmstxt.org, mit Seitencache) und /llms-full.txt mit den häufigen Fragen für KI-Suchdienste, 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-seo.php
  */
@@ -300,8 +300,12 @@ add_filter(
 	fn( $html ) => kbs_seo_vorschaubild() ? '<meta name="twitter:card" content="summary_large_image">' : $html
 );
 
-/** Inhalt von /llms.txt (Markdown nach llmstxt.org): Firma, Kontakt, Seiten mit Kurzbeschreibung, häufige Fragen. */
-function kbs_seo_llms(): string {
+/**
+ * Inhalt von /llms.txt bzw. /llms-full.txt (Markdown nach llmstxt.org).
+ * Kurz (llms.txt): Titel, Zusammenfassung, Kontakt, dann nur Abschnitte mit Linklisten; unter „Optional“ der Verweis auf die volle Fassung.
+ * Voll (llms-full.txt): dasselbe und dazu die häufigen Fragen mit Antworten je Seite.
+ */
+function kbs_seo_llms( bool $voll = false ): string {
 	$f = function_exists( 'kbs_firma_etch' ) ? kbs_firma_etch() : array();
 	$z = array( '# ' . ( $f['name'] ?? get_bloginfo( 'name' ) ), '' );
 	if ( ! empty( $f['claim'] ) ) {
@@ -344,29 +348,45 @@ function kbs_seo_llms(): string {
 			array_push( $z, '', '## ' . $titel, '', ...$abschnitte[ $titel ] );
 		}
 	}
+	if ( ! $voll ) {
+		if ( $fragen ) {
+			array_push( $z, '', '## Optional', '', '- [Häufige Fragen und Antworten](' . home_url( '/llms-full.txt' ) . '): alle Inhalte dieser Datei und dazu die häufigen Fragen zu IT-Betreuung, Beratung, Websites und Fernwartung mit Antworten' );
+		}
+		return implode( "\n", $z ) . "\n";
+	}
 	foreach ( $fragen as $bereich => $liste ) {
 		array_push( $z, '', '## Häufige Fragen: ' . $bereich, '', implode( "\n\n", $liste ) );
 	}
 	return implode( "\n", $z ) . "\n";
 }
 
-// SEOPress Pro liefert /llms.txt selbst aus (Modul „llms.txt“): Inhalt aus dem Repository statt der allgemeinen Vorlage.
+// Für die Anzeige im SEOPress-Modul „llms.txt“ (Vorschau, Prüfung): Inhalt aus dem Repository statt der allgemeinen Vorlage.
 add_filter( 'seopress_llms_txt_file', fn() => kbs_seo_llms(), 20 );
 
-// Ohne SEOPress-Modul: /llms.txt selbst ausliefern (vor dem Laden der Seite, ohne Datei im Webroot)
-add_action(
-	'parse_request',
-	function () {
-		$pfad = (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH );
-		if ( '/llms.txt' !== untrailingslashit( $pfad ) ) {
-			return;
+// /llms.txt und /llms-full.txt selbst ausliefern – vor SEOPress (Priorität 0) und bevor WordPress die Seite lädt.
+// Der Seitencache darf sie einen Tag halten: Ungecacht braucht der Server sonst bis zu 4 Sekunden, Prüfwerkzeuge brechen ab.
+// Jeder Sync und das Speichern der Firmendaten leeren den ganzen Cache, der Inhalt bleibt also aktuell.
+add_filter(
+	'do_parse_request',
+	function ( $weiter ) {
+		$pfad = untrailingslashit( (string) wp_parse_url( isset( $_SERVER['REQUEST_URI'] ) ? wp_unslash( $_SERVER['REQUEST_URI'] ) : '', PHP_URL_PATH ) );
+		if ( '/llms.txt' !== $pfad && '/llms-full.txt' !== $pfad ) {
+			return $weiter;
 		}
+		$text = kbs_seo_llms( '/llms-full.txt' === $pfad );
+		do_action( 'litespeed_control_set_cacheable', 'llms.txt' );
+		do_action( 'litespeed_control_set_ttl', DAY_IN_SECONDS );
+		do_action( 'litespeed_tag_add', 'kbs_llms' );
 		status_header( 200 );
 		header( 'Content-Type: text/plain; charset=utf-8' );
 		header( 'X-Robots-Tag: noindex' );
-		echo kbs_seo_llms(); // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- reiner Text
+		header( 'Cache-Control: public, max-age=3600' );
+		header( 'X-LiteSpeed-Cache-Control: public,max-age=' . DAY_IN_SECONDS );
+		header( 'X-LiteSpeed-Tag: kbs_llms' );
+		echo $text; // phpcs:ignore WordPress.Security.EscapeOutput.OutputNotEscaped -- reiner Text
 		exit;
-	}
+	},
+	-1
 );
 
 // 301 von den Adressen der alten Website
