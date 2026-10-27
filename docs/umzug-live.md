@@ -183,7 +183,7 @@ Nach dem Umzug ist kotthaus-bs.de für Claude unter dem Namen **kbs-live** errei
 7. **ACSS** (nur wenn Farben/Buttons/Schrift geändert): `kbs_mcp_acss_colors( [ 'aus_datei' => true ] )` per WP-CLI.
 8. **Live im Browser prüfen.**
 
-**Kontaktformular auf WS Form umstellen (einmalig, Stand 2026-10-27 noch offen):**
+**Kontaktformular auf WS Form umstellen (einmalig, live erledigt und eingeschaltet am 2026-10-27, Formular-ID live 1, Testanfrage angekommen):**
 1. WS Form (freie Version, `ws-form`, ZIP aus der Plugin-Ablage) installieren und aktivieren.
 2. Snippet „KBS – Kontaktformular“ übertragen (Schritt 5) – erst danach die Komponente, sonst zeigt die Seite kurz kein Formular.
 3. Formular anlegen: per WP-CLI `wp eval-file wordpress/tools/kontakt-formular.php neu --user=<admin>` (Skript vorher hochladen) oder in WS Form › Importieren `wordpress/formulare/kontakt-anfrage.json` einlesen und veröffentlichen – das Snippet findet es am Namen „Kontakt – Anfrage“.
