@@ -7,7 +7,7 @@
 | `/leistungen/<slug>/` | IT-Betreuung, IT-Beratung, Webdesign (`wordpress-websites`), Website-Wartung (`website-wartung`): Text, Ansprechpartner-Kasten, Ablauf in Schritten (optional, `ablauf`), FAQ, weitere Leistungen, Aufruf mit eigenem Titel (`cta`) | `daten.mjs` › leistungen, `seiten.mjs` › leistungInhalte |
 | `/fernwartung/` | PC-Visit Quick Support und Host, Ablauf, Sicherheit, häufige Fragen (auch FAQ-Schema) | Links aus Firmendaten › PC-Visit |
 | `/ueber-uns/` | Wer wir sind, Geschäftsführung, Werte | |
-| `/kontakt/` | Kontaktformular, Kontaktdaten | `kbs-kontakt.php` |
+| `/kontakt/` | Kontaktformular (WS Form „Kontakt – Anfrage“), Kontaktdaten | `kbs-kontakt.php` |
 | `/impressum/`, `/datenschutz/` | Rechtstexte mit Angaben aus den Firmendaten | |
 
 Templates: `index` (Header, Inhalt, Footer für alle Seiten), `404`.

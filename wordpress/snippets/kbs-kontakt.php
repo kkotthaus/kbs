@@ -1,127 +1,132 @@
 <?php
 /**
  * Plugin Name: KBS – Kontaktformular
- * Description: Verarbeitet das Kontaktformular (Etch-Komponente „Kontaktformular“) über admin-post.php: Prüfung der Pflichtfelder und der Datenschutz-Zustimmung, Spam-Schutz ohne Cookies (verstecktes Feld, Mindestzeit, Begrenzung je IP-Hash für eine Stunde), Versand per wp_mail an den Empfänger aus den Firmendaten. Speichert keine Anfragen. Abschaltbar unter Firmendaten › Kontaktformular (dann kein Formular und keine Annahme). Daten für Etch: {options.kbs.kontakt.…} (action, zeit, formular_aktiv, gesendet, hat_fehler, fehler).
+ * Description: Verbindet das WS-Form-Formular „Kontakt – Anfrage“ mit der Website: setzt die Formular-ID in die Komponente „Kontaktformular“ (Block wsf-block/form-add mit kbsFormular „kontakt“), schickt die Mail an den Empfänger aus den Firmendaten, baut den Betreff aus Anliegen und Name und nimmt nichts an, solange das Formular unter Firmendaten › Kontaktformular ausgeschaltet ist. Felder erkannt an der Klasse kbs-kf-<schlüssel>. Angelegt wird das Formular mit wordpress/tools/kontakt-formular.php. Daten für Etch: {options.kbs.kontakt.formular_aktiv}.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-kontakt.php
  */
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'KBS_KONTAKT_MIN_SEKUNDEN', 4 );
-define( 'KBS_KONTAKT_MAX_JE_STUNDE', 5 );
+define( 'KBS_KONTAKT_FORMULAR_NAME', 'Kontakt – Anfrage' );
+define( 'KBS_KONTAKT_FRIST_TAGE', 180 ); // gespeicherte Anfragen löscht WS Form nach dieser Frist (Datenschutzerklärung nennt sie)
 
 /** Formular eingeschaltet? Firmendaten › Kontaktformular (fehlt der Wert: an). */
 function kbs_kontakt_formular_aktiv(): bool {
 	return 'aus' !== ( ( (array) get_option( 'firmendaten', array() ) )['kontakt_formular'] ?? 'an' );
 }
 
-/** Fehlertexte zu den Codes in ?kontakt=<code> */
-function kbs_kontakt_fehlertexte(): array {
-	return array(
-		'aus'         => 'Das Kontaktformular ist derzeit nicht verfügbar. Bitte rufen Sie uns an oder schreiben Sie uns eine E-Mail.',
-		'pflicht'     => 'Bitte füllen Sie Name, E-Mail und Nachricht aus und stimmen Sie der Datenschutzerklärung zu.',
-		'email'       => 'Bitte prüfen Sie Ihre E-Mail-Adresse.',
-		'schnell'     => 'Das ging etwas zu schnell. Bitte senden Sie das Formular noch einmal ab.',
-		'limit'       => 'Sie haben in kurzer Zeit mehrere Nachrichten gesendet. Bitte versuchen Sie es später noch einmal oder rufen Sie uns an.',
-		'versand'     => 'Beim Versand ist ein Fehler aufgetreten. Bitte versuchen Sie es noch einmal oder schreiben Sie uns direkt eine E-Mail.',
-	);
+/** Empfänger der Anfragen: Firmendaten › Empfänger Kontaktformular, sonst E-Mail der Firma, sonst Admin-E-Mail. */
+function kbs_kontakt_empfaenger(): string {
+	$o = (array) get_option( 'firmendaten', array() );
+	return sanitize_email( (string) ( $o['kontakt_empfaenger'] ?? '' ) ) ?: sanitize_email( (string) ( $o['firma_email'] ?? '' ) ) ?: (string) get_option( 'admin_email' );
+}
+
+/** ID des Formulars in dieser Umgebung: Option kbs_kontakt_formular, sonst am Namen gefunden (z. B. nach einem JSON-Import). */
+function kbs_kontakt_formular_id(): int {
+	$id = (int) get_option( 'kbs_kontakt_formular', 0 );
+	if ( $id ) {
+		return $id;
+	}
+	global $wpdb;
+	$tabelle = $wpdb->prefix . 'wsf_form';
+	if ( $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $tabelle ) ) !== $tabelle ) {
+		return 0;
+	}
+	$id = (int) $wpdb->get_var( $wpdb->prepare( "SELECT id FROM {$tabelle} WHERE label = %s AND status = 'publish' ORDER BY id DESC LIMIT 1", KBS_KONTAKT_FORMULAR_NAME ) ); // phpcs:ignore WordPress.DB.PreparedSQL.InterpolatedNotPrepared
+	if ( $id ) {
+		update_option( 'kbs_kontakt_formular', $id, false );
+	}
+	return $id;
+}
+
+/** Ist das ein Formular-Objekt (bzw. eine ID) des Kontaktformulars? */
+function kbs_kontakt_ist_formular( $form ): bool {
+	$id = is_object( $form ) ? (int) ( $form->id ?? 0 ) : (int) $form;
+	return $id && kbs_kontakt_formular_id() === $id;
+}
+
+/** Feld-IDs nach Schlüssel (Klasse kbs-kf-<schlüssel> am Feld). */
+function kbs_kontakt_felder( $form ): array {
+	$felder = array();
+	foreach ( (array) ( $form->groups ?? array() ) as $g ) {
+		foreach ( (array) ( $g->sections ?? array() ) as $s ) {
+			foreach ( (array) ( $s->fields ?? array() ) as $f ) {
+				if ( preg_match( '/\bkbs-kf-([a-z]+)\b/', (string) ( $f->meta->class_field_wrapper ?? '' ), $m ) ) {
+					$felder[ $m[1] ] = (int) $f->id;
+				}
+			}
+		}
+	}
+	return $felder;
+}
+
+/** Eingegebener Wert eines Feldes aus einer Übermittlung. */
+function kbs_kontakt_wert( $submit, int $feld_id ): string {
+	$w = $submit->meta[ 'field_' . $feld_id ] ?? '';
+	$w = is_array( $w ) ? ( $w['value'] ?? '' ) : $w;
+	return sanitize_text_field( is_array( $w ) ? implode( ', ', $w ) : (string) $w );
 }
 
 add_filter(
 	'etch/dynamic_data/option',
 	function ( $data ) {
 		if ( is_array( $data ) ) {
-			$code  = isset( $_GET['kontakt'] ) ? sanitize_key( wp_unslash( $_GET['kontakt'] ) ) : ''; // phpcs:ignore WordPress.Security.NonceVerification
-			$texte = kbs_kontakt_fehlertexte();
-			$data['kbs']['kontakt'] = array(
-				'action'     => esc_url_raw( admin_url( 'admin-post.php' ) ),
-				'zeit'       => (string) time(),
-				'formular_aktiv' => kbs_kontakt_formular_aktiv(),
-				'gesendet'   => 'gesendet' === $code,
-				'hat_fehler' => isset( $texte[ $code ] ),
-				'fehler'     => $texte[ $code ] ?? '',
-			);
+			$data['kbs']['kontakt'] = array( 'formular_aktiv' => kbs_kontakt_formular_aktiv() );
 		}
 		return $data;
 	}
 );
 
-/** Zurück zur Formularseite mit Status. Nur Pfade dieser Website. */
-function kbs_kontakt_zurueck( string $code ): void {
-	$pfad = isset( $_POST['kbs_zurueck'] ) ? (string) wp_unslash( $_POST['kbs_zurueck'] ) : '/kontakt/'; // phpcs:ignore WordPress.Security.NonceVerification
-	if ( ! str_starts_with( $pfad, '/' ) || str_starts_with( $pfad, '//' ) ) {
-		$pfad = '/kontakt/';
+// Komponente „Kontaktformular“: Block wsf-block/form-add mit kbsFormular „kontakt“ bekommt die ID dieser Umgebung
+add_filter(
+	'render_block_data',
+	function ( $block ) {
+		if ( 'wsf-block/form-add' === ( $block['blockName'] ?? '' ) && 'kontakt' === ( $block['attrs']['kbsFormular'] ?? '' ) ) {
+			$block['attrs']['form_id'] = (string) kbs_kontakt_formular_id();
+		}
+		return $block;
 	}
-	wp_safe_redirect( add_query_arg( 'kontakt', $code, home_url( $pfad ) ) . '#formular-meldung', 303 );
-	exit;
-}
+);
 
-function kbs_kontakt_verarbeiten(): void {
-	// phpcs:disable WordPress.Security.NonceVerification -- öffentliches Formular ohne Anmeldung; Schutz über Falle, Mindestzeit und Begrenzung
-	// Ausgeschaltet (Firmendaten › Kontaktformular): nichts annehmen, auch keine direkt abgeschickten Anfragen
-	if ( ! kbs_kontakt_formular_aktiv() ) {
-		kbs_kontakt_zurueck( 'aus' );
-	}
-	$feld = fn( string $k ) => isset( $_POST[ $k ] ) ? trim( sanitize_textarea_field( wp_unslash( $_POST[ $k ] ) ) ) : '';
+// Ausgeschaltet (Firmendaten › Kontaktformular): auch direkt abgeschickte Anfragen nicht annehmen
+add_filter(
+	'wsf_submit_field_validate',
+	function ( $fehler, $feld_id, $wert, $wiederholung, $modus, $submit ) {
+		$form = $submit->form_object ?? null;
+		if ( 'submit' !== $modus || ! is_object( $form ) || ! kbs_kontakt_ist_formular( (int) ( $submit->form_id ?? 0 ) ) || kbs_kontakt_formular_aktiv() ) {
+			return $fehler;
+		}
+		if ( (int) $feld_id === ( kbs_kontakt_felder( $form )['email'] ?? 0 ) ) {
+			$fehler[] = array( 'action' => 'field_invalid_feedback', 'field_id' => (int) $feld_id, 'section_repeatable_index' => $wiederholung, 'message' => 'Das Kontaktformular ist derzeit nicht verfügbar. Bitte rufen Sie uns an oder schreiben Sie uns eine E-Mail.' );
+		}
+		return $fehler;
+	},
+	10,
+	6
+);
 
-	// Falle: Menschen sehen das Feld nicht. Bots bekommen scheinbar Erfolg.
-	if ( '' !== $feld( 'website' ) ) {
-		kbs_kontakt_zurueck( 'gesendet' );
-	}
-	$zeit = (int) $feld( 'kbs_zeit' );
-	if ( ! $zeit || time() - $zeit < KBS_KONTAKT_MIN_SEKUNDEN ) {
-		kbs_kontakt_zurueck( 'schnell' );
-	}
+// Empfänger immer aus den Firmendaten – eine Änderung dort gilt sofort, ohne das Formular anzufassen
+add_filter(
+	'wsf_action_email_to',
+	function ( $an, $form ) {
+		return kbs_kontakt_ist_formular( $form ) ? array( kbs_kontakt_empfaenger() ) : $an;
+	},
+	10,
+	2
+);
 
-	$name      = sanitize_text_field( $feld( 'name' ) );
-	$firma     = sanitize_text_field( $feld( 'firma' ) );
-	$email     = sanitize_email( $feld( 'email' ) );
-	$telefon   = sanitize_text_field( $feld( 'telefon' ) );
-	$anliegen  = sanitize_text_field( $feld( 'anliegen' ) );
-	$nachricht = $feld( 'nachricht' );
-	if ( '' === $name || '' === $feld( 'email' ) || '' === $nachricht || '1' !== $feld( 'datenschutz' ) ) {
-		kbs_kontakt_zurueck( 'pflicht' );
-	}
-	if ( ! is_email( $email ) ) {
-		kbs_kontakt_zurueck( 'email' );
-	}
-
-	// Begrenzung je IP – gespeichert wird nur ein Hash, höchstens eine Stunde (siehe Datenschutzerklärung)
-	$ip    = isset( $_SERVER['REMOTE_ADDR'] ) ? (string) wp_unslash( $_SERVER['REMOTE_ADDR'] ) : '';
-	$key   = 'kbs_kf_' . substr( hash_hmac( 'sha256', $ip, wp_salt( 'nonce' ) ), 0, 32 );
-	$zahl  = (int) get_transient( $key );
-	if ( $zahl >= KBS_KONTAKT_MAX_JE_STUNDE ) {
-		kbs_kontakt_zurueck( 'limit' );
-	}
-	set_transient( $key, $zahl + 1, HOUR_IN_SECONDS );
-	// phpcs:enable
-
-	$o          = (array) get_option( 'firmendaten', array() );
-	$empfaenger = sanitize_email( (string) ( $o['kontakt_empfaenger'] ?? '' ) ) ?: sanitize_email( (string) ( $o['firma_email'] ?? '' ) ) ?: get_option( 'admin_email' );
-	$betreff    = sprintf( 'Anfrage über die Website%s: %s', $anliegen ? ' – ' . $anliegen : '', $firma ?: $name );
-	$text       = implode(
-		"\n",
-		array(
-			'Neue Anfrage über das Kontaktformular der Website',
-			'',
-			'Name:     ' . $name,
-			'Firma:    ' . ( $firma ?: '–' ),
-			'E-Mail:   ' . $email,
-			'Telefon:  ' . ( $telefon ?: '–' ),
-			'Anliegen: ' . ( $anliegen ?: '–' ),
-			'',
-			'Nachricht:',
-			$nachricht,
-			'',
-			'Die Zustimmung zur Datenschutzerklärung wurde erteilt.',
-			'Gesendet am ' . wp_date( 'd.m.Y \u\m H:i' ) . ' Uhr von ' . home_url( '/' ),
-		)
-	);
-	$headers = array( 'Content-Type: text/plain; charset=UTF-8', 'Reply-To: ' . str_replace( array( "\r", "\n", '<', '>' ), '', $name ) . ' <' . $email . '>' );
-
-	kbs_kontakt_zurueck( wp_mail( $empfaenger, $betreff, $text, $headers ) ? 'gesendet' : 'versand' );
-}
-
-add_action( 'admin_post_nopriv_kbs_kontakt', 'kbs_kontakt_verarbeiten' );
-add_action( 'admin_post_kbs_kontakt', 'kbs_kontakt_verarbeiten' );
+// Betreff wie bisher: „Anfrage über die Website – <Anliegen>: <Firma oder Name>“
+add_filter(
+	'wsf_action_email_subject',
+	function ( $betreff, $form, $submit ) {
+		if ( ! kbs_kontakt_ist_formular( $form ) ) {
+			return $betreff;
+		}
+		$f    = kbs_kontakt_felder( $form );
+		$wert = fn( string $k ) => isset( $f[ $k ] ) ? kbs_kontakt_wert( $submit, $f[ $k ] ) : '';
+		return sprintf( 'Anfrage über die Website%s: %s', $wert( 'anliegen' ) ? ' – ' . $wert( 'anliegen' ) : '', $wert( 'firma' ) ?: $wert( 'name' ) );
+	},
+	10,
+	3
+);

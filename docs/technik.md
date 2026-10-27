@@ -47,6 +47,7 @@ Die Entwicklung läuft auf einer lokalen Kopie (kbs.local). Ablauf einer Änderu
 | **Meta Box AIO** | Felder der Einstellungsseiten „Firmendaten“ und „KI-Kennzeichnung“ und der Mediathek | die Felder sind im Code der Snippets registriert, nicht im Meta-Box-Builder |
 | **Bausteine Backend** | eigenes Plugin: blendet „Individuelle Felder“ aus, öffnet bei Etch-Komponenten die Seitenleiste, räumt deren Felder im Block-Editor auf, fängt eine abgelaufene Anmeldung im Etch-Editor ab | aktualisiert sich selbst vom eigenen Update-Server; ersetzt das frühere Snippet „Backend“ |
 | **KBS Mail** | eigenes Plugin: schickt alle Mails der Website (`wp_mail`, auch das Kontaktformular) über SMTP oder Microsoft 365 und schreibt jede Mail ins Protokoll (Einstellungen › Mailversand) | aktualisiert sich selbst vom eigenen Update-Server. Die Verbindung richtet sich nach der Absenderadresse; Zugangsdaten in der `wp-config.php`. Ohne Verbindung sendet WordPress wie bisher. Kein zweites Mail-Plugin (z. B. FluentSMTP) daneben aktivieren |
+| **WS Form** (freie Version) | Kontaktformular „Kontakt – Anfrage“: Felder, Prüfung, Spam-Schutz (Honeypot), speichert die Anfragen (WS Form › Übermittlungen, 180 Tage) und schickt die Mail | eingebunden in der Komponente „Kontaktformular“; Empfänger, Betreff und der Schalter an/aus kommen aus dem Snippet „KBS – Kontaktformular“. Formular nicht im Backend umbauen, sondern mit `wordpress/tools/kontakt-formular.php` (Stand als JSON in `wordpress/formulare/`) |
 | **WPCodeBox 2** | führt die eigenen PHP-Snippets aus (Ordner „KBS“) | Snippets mit Fehler schaltet WPCodeBox selbst ab |
 | **SEOPress + SEOPress Pro** | Titel, Meta-Beschreibung, Open Graph, Sitemap `/sitemaps.xml`, `/llms.txt` | Titel, strukturierte Daten und Inhalt der `llms.txt` liefert das Snippet „KBS – Suchmaschinen“ |
 | **LiteSpeed Cache** | Seitencache (7 Tage) und Object-Cache | wird beim Speichern der Firmendaten und der KI-Darstellung automatisch komplett geleert, Seiten beim Speichern einzeln |
@@ -64,7 +65,7 @@ Die Entwicklung läuft auf einer lokalen Kopie (kbs.local). Ablauf einer Änderu
 | --- | --- | --- |
 | **KBS – Firmendaten** | Einstellungsseite „Firmendaten“ (Option `firmendaten`) | dynamische Daten `{options.kbs.firma.…}`, `{options.kbs.pcvisit.…}`; Website-Icon als Rückfall; leert nach dem Speichern den Cache |
 | **KBS – Navigation** | Skripte für den Header | im `<head>`: Klasse `js` und gespeichertes Farbschema vor dem ersten Zeichnen; im Footer: mobiles Menü, Untermenüs, Escape, aktueller Menüpunkt (`aria-current`), Umschalter Hell/Dunkel (Wahl im Browser unter `kbs-farbschema`). Der Umschalter lässt sich im Backend ein- und ausschalten: Firmendaten › Firma & Kontakt › „Umschalter Hell/Dunkel“ (Feld `farbschema_umschalter`, ohne gespeicherten Wert eingeschaltet). Ausgeschaltet blendet das Snippet die Schaltfläche aus und wendet eine gespeicherte Wahl nicht mehr an – die Seite folgt dem Gerät. |
-| **KBS – Kontaktformular** | nimmt das Formular an (`admin-post.php`) | prüft Pflichtfelder und Zustimmung, Spam-Schutz ohne Cookies (verstecktes Feld, Mindestzeit, Grenze je Stunde), schickt per E-Mail an den Empfänger aus den Firmendaten; speichert nichts. Daten `{options.kbs.kontakt.…}` |
+| **KBS – Kontaktformular** | verbindet das WS-Form-Formular „Kontakt – Anfrage“ mit der Website | setzt die Formular-ID in die Komponente (Option `kbs_kontakt_formular`, sonst am Namen gefunden), Empfänger der Mail aus den Firmendaten (Filter `wsf_action_email_to`), Betreff „Anfrage über die Website – Anliegen: Firma/Name“, nimmt bei Firmendaten › Kontaktformular „aus“ nichts an. Felder erkannt an der Klasse `kbs-kf-<schlüssel>`. Daten `{options.kbs.kontakt.formular_aktiv}` |
 | **KBS – Suchmaschinen** | SEO und KI-Suche | Seitentitel aus `daten/seo.json`, strukturierte Daten (Firma mit Öffnungszeiten, Leistungen, FAQ), Vorschaubild für geteilte Links, Inhalt von `/llms.txt`, 301-Weiterleitungen von alten Adressen |
 | **KBS – KI-Kennzeichnung** | Kennzeichnung KI-erzeugter oder -veränderter Bilder (EU-KI-Verordnung) | Felder in der Mediathek, Plakette „KI“ am Bild, Hinweis im Alternativtext; Einstellungen unter Medien › KI-Kennzeichnung; Spalte und Filter in der Mediathek |
 | **KBS – Backend** | blendet den Block „Individuelle Felder“ aus | verhindert, dass rohe Metadaten ungeprüft geändert werden |
@@ -111,7 +112,7 @@ Firmendaten › Telefon (gespeichert in der Option `firmendaten`) → Snippet �
 
 ### Kontaktformular
 
-Komponente „Kontaktformular“ auf `/kontakt/` → Absenden an `admin-post.php` (Aktion `kbs_kontakt`) → Snippet „KBS – Kontaktformular“ prüft und sendet per `wp_mail` an den Empfänger aus den Firmendaten (leer = Admin-E-Mail) → zurück auf die Kontaktseite mit Erfolg oder Fehlermeldung. Abschalten unter Firmendaten › Kontaktformular.
+Komponente „Kontaktformular“ auf `/kontakt/` → WS Form zeigt das Formular „Kontakt – Anfrage“ und prüft die Eingaben → beim Absenden speichert WS Form die Anfrage (WS Form › Übermittlungen, gelöscht nach 180 Tagen) und schickt eine Mail über KBS Mail → das Snippet „KBS – Kontaktformular“ setzt dabei Empfänger (Firmendaten › Empfänger Kontaktformular, sonst E-Mail der Firma, sonst Admin-E-Mail) und Betreff; Antworten gehen an den Besucher → Danke-Meldung an Stelle des Formulars. Abschalten unter Firmendaten › Kontaktformular.
 
 ### Seitentitel und Google
 
@@ -140,7 +141,7 @@ Templates: „index“ (Header, Inhalt, Footer für alle Seiten) und „404“.
 | Leistungskarten | Repository (Leistungen), letzte Karte aus Firmendaten › Angebot |
 | PcVisit | Firmendaten › PC-Visit (Karten ohne Link werden ausgeblendet) |
 | Kontaktdaten | Firmendaten |
-| Kontaktformular | Snippet „KBS – Kontaktformular“ |
+| Kontaktformular | Formular in WS Form (`wordpress/tools/kontakt-formular.php`), Empfänger und Schalter im Snippet „KBS – Kontaktformular“ |
 | CtaBand | Firmendaten (Angebot, Telefon) |
 
 ## Was man nicht tun sollte
@@ -158,6 +159,6 @@ Automatische Updates sind aus; Updates werden zuerst auf der lokalen Kopie getes
 
 - Header: Menü, Untermenü „Leistungen“, mobiles Menü, Umschalter Hell/Dunkel, Skip-Link (einmal Tab auf einer Seite)
 - Häufige Fragen auf- und zuklappen, Brotkrumen, Inhaltsverzeichnis der Datenschutzerklärung
-- Kontaktformular absenden (Testnachricht)
+- Kontaktformular absenden (Testnachricht): Pflichtfelder, Fehlermeldungen, Eingang unter WS Form › Übermittlungen, Mail (Protokoll unter Einstellungen › Mailversand)
 - beide Farbschemata, Schriften (Manrope, Sora)
 - WPCodeBox: alle KBS-Snippets eingeschaltet

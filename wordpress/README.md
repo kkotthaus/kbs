@@ -13,7 +13,9 @@ Seiten, Templates, Komponenten und CSS werden im Repo als Code beschrieben, geba
 | `etch/build.mjs` | Schreibt `etch/dist/` |
 | `snippets/kbs-mcp.php` | MCP-Funktionen `kbs/*` (nur Entwicklung) |
 | `snippets/kbs-firma.php` | Einstellungsseite „Firmendaten“, Daten `{options.kbs.firma|pcvisit}` – **live** |
-| `snippets/kbs-kontakt.php` | Kontaktformular – **live** |
+| `snippets/kbs-kontakt.php` | Kontaktformular: verbindet das WS-Form-Formular „Kontakt – Anfrage“ mit der Komponente, Empfänger und Betreff aus den Firmendaten, Schalter an/aus – **live** |
+| `tools/kontakt-formular.php` | legt das Formular „Kontakt – Anfrage“ in WS Form an bzw. baut es neu auf: `wp eval-file wordpress/tools/kontakt-formular.php [neu] --user=<admin>`; mit `KBS_FORMULARE=<Ordner wordpress/formulare>` schreibt es den Stand als JSON nach `formulare/kontakt-anfrage.json`. Formular-ID lokal: 1 (Option `kbs_kontakt_formular`) |
+| `formulare/kontakt-anfrage.json` | Export des Formulars (für den Import live ohne WP-CLI) |
 | `snippets/kbs-navigation.php` | Skript der Hauptnavigation – **live** |
 | `snippets/kbs-ki.php` | KI-Kennzeichnung (Standard aus etch-nodes): Mediathek-Felder `ki_art` (ai, generated, modified; leer = keine KI), `ki_werkzeug`, `ki_position`; Einstellungsseite Medien › KI-Kennzeichnung (Option `kbs_ki`); eigenes Symbol `firmendaten.ki_logo`; Editor-Bilder per `render_block`, Etch über `kbs_ki_daten()` und `kiPlakette()` (lib.mjs); Mediathek: Spalte „KI“ und Filter `ki_filter` (Liste), Plakette auf den Kacheln (Raster, Medien-Fenster) – **live** |
 | `snippets/kbs-seo.php` | SEO-Titel aus `daten/seo.json`, schema.org (ProfessionalService, Service, FAQPage), Inhalt von `/llms.txt`, 301 von alten Adressen; Meta-Beschreibung/Open Graph nur ohne SEOPress – **live** |

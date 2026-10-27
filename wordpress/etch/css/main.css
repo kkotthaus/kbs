@@ -512,24 +512,28 @@ a.contact-list__value { color: var(--primary-dark); text-decoration: none; }
 a.contact-list__value:hover { text-decoration: underline; }
 .contact-list__link { font-size: var(--text-s); }
 
-.contact-form__grid { display: grid; gap: var(--space-m); }
-@media (min-width: 40em) { .contact-form__grid { grid-template-columns: 1fr 1fr; } .form-field--wide { grid-column: 1 / -1; } }
-.form-field { display: grid; gap: 0.35rem; }
-.form-field__label { font-weight: 700; font-size: var(--text-s); }
-.form-field__required { font-weight: 400; color: var(--base-semi-dark); }
-.form-field__control {
-  width: 100%; padding: 0.8em 1em; border: 1px solid var(--base-semi-dark); border-radius: 0.75rem;
-  background: var(--white); color: var(--base); font: inherit; font-size: var(--text-m);
-  box-shadow: inset 0 2px 4px rgb(10 15 20 / 0.07);
-  transition: border-color var(--transition), box-shadow var(--transition);
+/* Kontaktformular aus WS Form: Styler der freien Version auf die ACSS-Farben setzen (beide Farbschemata über die ACSS-Variablen).
+   Felder vertieft wie im Design (Schatten innen), Fokus mit deckendem Rahmen (WCAG 2.4.7). */
+.contact-form .wsf-form {
+  --wsf-form-color-primary: var(--primary);
+  --wsf-form-color-accent: var(--primary);
+  --wsf-form-color-base: var(--base);
+  --wsf-form-color-base-contrast: var(--white);
+  --wsf-form-color-background: var(--white);
+  --wsf-form-color-danger: var(--danger);
+  --wsf-form-color-success: var(--success);
+  --wsf-form-font-family: inherit;
+  --wsf-form-border-radius: 0.75rem;
+  --wsf-field-border-color: var(--base-semi-dark);
+  --wsf-field-border-color-focus: var(--primary);
+  --wsf-field-color: var(--base);
+  --wsf-field-color-background: var(--white);
+  --wsf-field-box-shadow: inset 0 2px 4px rgb(10 15 20 / 0.07);
+  --wsf-field-label-font-weight: 700;
 }
-/* Fokus mit deckendem Rahmen (WCAG 2.4.7, Kontrast ≥ 3:1) statt blassem Schein */
-.form-field__control:focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; border-color: var(--primary); }
-.form-field__control--area { resize: vertical; min-height: 9rem; }
-.form-check { display: flex; gap: 0.7em; align-items: flex-start; margin-top: var(--space-m); font-size: var(--text-s); }
-.form-check__input { width: 1.2rem; height: 1.2rem; margin-top: 0.2em; flex: none; accent-color: var(--primary); }
-.contact-form__submit { margin-top: var(--space-l); }
-.contact-form__trap { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.contact-form .wsf-form :is(input, select, textarea):focus-visible { outline: 2px solid var(--primary); outline-offset: 2px; }
+.contact-form .wsf-form textarea { resize: vertical; min-height: 9rem; }
+.contact-form .wsf-form a { color: var(--primary-dark); }
 .form-message { margin-bottom: var(--space-m); padding: var(--space-s) var(--space-m); border-radius: 0.75rem; border-left: 4px solid currentColor; box-shadow: var(--kbs-kante), var(--kbs-shadow-s); }
 .form-message p { margin: 0; }
 .form-message__title { font-weight: 700; }

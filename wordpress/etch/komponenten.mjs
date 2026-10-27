@@ -198,21 +198,10 @@ const kontaktdatenKomponente = {
   ], { name: 'Kontaktdaten' }),
 };
 
-// Formularfeld mit Label; Pflichtfelder mit sichtbarem Hinweis
-const feld = (id, label, attrs = {}, { tag = 'input', pflicht = false, kinder = [], breit = false } = {}) =>
-  el('div', `form-field${breit ? ' form-field--wide' : ''}`, [
-    el('label', 'form-field__label', [text(label), pflicht ? t('span', 'form-field__required', ' (Pflichtfeld)') : null], { attrs: { for: `kf-${id}` } }),
-    el(tag, `form-field__control${tag === 'textarea' ? ' form-field__control--area' : ''}`, kinder, {
-      attrs: { id: `kf-${id}`, name: id, ...(pflicht ? { required: '' } : {}), ...attrs },
-    }),
-  ]);
-
-const anliegen = ['IT-Betreuung', 'IT-Beratung', 'Neue Website', 'Website-Wartung', 'Fernwartung', 'Sonstiges'];
-
 const kontaktformularKomponente = {
   key: 'Kontaktformular',
   name: 'Kontaktformular',
-  description: 'Anfrageformular (Name, Firma, E-Mail, Telefon, Anliegen, Nachricht, Datenschutz-Zustimmung) mit Spam-Schutz ohne Cookies. Abschaltbar unter Firmendaten › Kontaktformular (dann Hinweis mit Telefon und E-Mail). Daten: snippets/kbs-kontakt.php ({options.kbs.kontakt.…}); Empfänger aus den Firmendaten.',
+  description: 'Anfrageformular aus WS Form (Formular „Kontakt – Anfrage“: Name, Firma, E-Mail, Telefon, Anliegen, Nachricht, Datenschutz-Zustimmung), Spam-Schutz ohne Cookies, Anfragen gespeichert unter WS Form › Übermittlungen. Abschaltbar unter Firmendaten › Kontaktformular (dann Hinweis mit Telefon und E-Mail). Daten: snippets/kbs-kontakt.php ({options.kbs.kontakt.formular_aktiv}, Formular-ID, Empfänger aus den Firmendaten).',
   properties: [],
   content: el('div', 'contact-form', [
     // Ausgeschaltet (Firmendaten › Kontaktformular): Hinweis mit Telefon und E-Mail statt Formular
@@ -228,40 +217,9 @@ const kontaktformularKomponente = {
         ]),
       ], { attrs: { id: 'formular-meldung' } }),
     ], 'isFalsy'),
+    // Eingeschaltet: Formular „Kontakt – Anfrage“ aus WS Form (ID je Umgebung setzt kbs-kontakt.php, angelegt mit tools/kontakt-formular.php)
     wenn(`${KONTAKT}.formular_aktiv`, [
-    wenn(`${KONTAKT}.gesendet`, [
-      el('div', 'form-message form-message--success', [t('p', 'form-message__title', 'Vielen Dank für Ihre Anfrage!'), t('p', '', 'Wir melden uns in der Regel innerhalb eines Werktags bei Ihnen.')], { attrs: { role: 'status', id: 'formular-meldung' } }),
-    ]),
-    wenn(`${KONTAKT}.hat_fehler`, [
-      el('div', 'form-message form-message--error', [t('p', 'form-message__title', 'Die Nachricht wurde nicht gesendet.'), t('p', '', `{${KONTAKT}.fehler}`)], { attrs: { role: 'alert', id: 'formular-meldung' } }),
-    ]),
-    el('form', 'contact-form__form', [
-      el('input', '', [], { attrs: { type: 'hidden', name: 'action', value: 'kbs_kontakt' } }),
-      el('input', '', [], { attrs: { type: 'hidden', name: 'kbs_zeit', value: `{${KONTAKT}.zeit}` } }),
-      el('input', '', [], { attrs: { type: 'hidden', name: 'kbs_zurueck', value: '{this.permalink.relative}' } }),
-      // Falle für Bots: für Menschen unsichtbar, per Tab nicht erreichbar
-      el('div', 'contact-form__trap', [
-        t('label', '', 'Bitte dieses Feld leer lassen', { attrs: { for: 'kf-website' } }),
-        el('input', '', [], { attrs: { id: 'kf-website', type: 'text', name: 'website', tabindex: '-1', autocomplete: 'off' } }),
-      ], { attrs: { 'aria-hidden': 'true' } }),
-      el('div', 'contact-form__grid', [
-        feld('name', 'Ihr Name', { type: 'text', autocomplete: 'name' }, { pflicht: true }),
-        feld('firma', 'Firma', { type: 'text', autocomplete: 'organization' }),
-        feld('email', 'E-Mail', { type: 'email', autocomplete: 'email' }, { pflicht: true }),
-        feld('telefon', 'Telefon', { type: 'tel', autocomplete: 'tel' }),
-        feld('anliegen', 'Worum geht es?', {}, { tag: 'select', breit: true, kinder: anliegen.map((a) => t('option', '', a, { attrs: { value: a } })) }),
-        feld('nachricht', 'Ihre Nachricht', { rows: '6' }, { tag: 'textarea', pflicht: true, breit: true }),
-      ]),
-      el('div', 'form-check', [
-        el('input', 'form-check__input', [], { attrs: { id: 'kf-datenschutz', type: 'checkbox', name: 'datenschutz', value: '1', required: '' } }),
-        el('label', 'form-check__label', [
-          text('Ich bin einverstanden, dass meine Angaben zur Bearbeitung der Anfrage verwendet werden. Mehr dazu in der '),
-          t('a', '', 'Datenschutzerklärung', { attrs: { href: '/datenschutz/#kontakt' } }),
-          text('. (Pflichtfeld)'),
-        ], { attrs: { for: 'kf-datenschutz' } }),
-      ]),
-      el('button', 'btn--primary contact-form__submit', [text('Anfrage senden'), icon('arrow')], { attrs: { type: 'submit' } }),
-    ], { attrs: { method: 'post', action: `{${KONTAKT}.action}`, id: 'formular' } }),
+      el('div', 'contact-form__wsf', ['<!-- wp:wsf-block/form-add {"form_id":"0","kbsFormular":"kontakt"} /-->'], { name: 'Formular', attrs: { id: 'formular' } }),
     ]),
   ], { name: 'Kontaktformular' }),
 };
