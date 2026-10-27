@@ -57,6 +57,12 @@ $feld = function ( string $typ, string $label, string $schluessel, array $meta =
 			$f->meta->$k = $leer;
 		}
 	}
+	// Breiten der Vorlage entfernen (alle Bildschirmgrößen): jedes Feld volle Breite, alle untereinander
+	foreach ( array_keys( (array) $f->meta ) as $k ) {
+		if ( str_starts_with( $k, 'breakpoint_size_' ) || str_starts_with( $k, 'breakpoint_offset_' ) ) {
+			$f->meta->$k = '';
+		}
+	}
 	foreach ( $meta as $k => $wert ) {
 		$f->meta->$k = $wert;
 	}
@@ -68,11 +74,11 @@ $feld = function ( string $typ, string $label, string $schluessel, array $meta =
 $anliegen = array( 'IT-Betreuung', 'IT-Beratung', 'Neue Website', 'Website-Wartung', 'Fernwartung', 'Sonstiges' );
 
 $felder = array(
-	'name'        => $feld( 'text', 'Name', 'name', array( 'required' => 'on', 'autocomplete' => 'name', 'breakpoint_size_25' => '6' ) ),
-	'firma'       => $feld( 'text', 'Firma', 'firma', array( 'autocomplete' => 'organization', 'breakpoint_size_25' => '6' ) ),
-	'email'       => $feld( 'email', 'E-Mail', 'email', array( 'required' => 'on', 'autocomplete' => 'email', 'breakpoint_size_25' => '6' ) ),
-	'telefon'     => $feld( 'tel', 'Telefon', 'telefon', array( 'autocomplete' => 'tel', 'intl_tel_input' => '', 'breakpoint_size_25' => '6' ) ),
-	'anliegen'    => $feld( 'select', 'Worum geht es?', 'anliegen', array( 'select_field_label' => '0', 'select_field_value' => '0', 'placeholder_row' => 'Bitte wählen' ) ),
+	'name'        => $feld( 'text', 'Name', 'name', array( 'required' => 'on', 'autocomplete' => 'name' ) ),
+	'firma'       => $feld( 'text', 'Firma', 'firma', array( 'autocomplete' => 'organization' ) ),
+	'email'       => $feld( 'email', 'E-Mail', 'email', array( 'required' => 'on', 'autocomplete' => 'email' ) ),
+	'telefon'     => $feld( 'tel', 'Telefon', 'telefon', array( 'autocomplete' => 'tel', 'intl_tel_input' => '' ) ),
+	'anliegen'    => $feld( 'select', 'Worum geht es?', 'anliegen', array( 'autocomplete' => 'off', 'select_field_label' => '0', 'select_field_value' => '0', 'placeholder_row' => 'Bitte wählen' ) ),
 	'nachricht'   => $feld( 'textarea', 'Nachricht', 'nachricht', array( 'required' => 'on', 'rows' => '6' ) ),
 	'datenschutz' => $feld( 'checkbox', 'Datenschutz', 'datenschutz', array( 'invalid_feedback' => 'Bitte bestätigen Sie den Hinweis zum Datenschutz.' ) ),
 	'senden'      => $feld( 'submit', 'Anfrage senden', 'senden', array( 'class_field_button_type' => 'primary' ) ),
@@ -102,6 +108,7 @@ $form->label            = KBS_KONTAKT_FORMULAR_NAME;
 $form->groups           = array( $form->groups[0] );
 $form->groups[0]->label = 'Anfrage';
 $form->groups[0]->sections = array( $form->groups[0]->sections[0] );
+$form->groups[0]->sections[0]->label = 'Ihre Angaben'; // Überschrift über den Feldern (Vorlage: „Contact Information“)
 $form->groups[0]->sections[0]->fields = array_values( $felder );
 $m                      = $form->meta;
 $m->honeypot            = 'on'; // Spamschutz ohne fremden Dienst

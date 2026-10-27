@@ -1,27 +1,27 @@
 {
     "label": "Kontakt – Anfrage",
     "status": "publish",
-    "date_publish": "2026-10-27 18:07:14",
-    "checksum": "999b1674b9adca7991dbb8954623e342",
-    "published_checksum": "999b1674b9adca7991dbb8954623e342",
+    "date_publish": "2026-10-27 19:03:45",
+    "checksum": "0a8be2f42829ee493cde18a3ac1ebd59",
+    "published_checksum": "0a8be2f42829ee493cde18a3ac1ebd59",
     "count_stat_view": "0",
     "count_stat_save": "0",
     "count_stat_submit": "0",
     "count_submit": "0",
-    "count_submit_unread": "2",
+    "count_submit_unread": "4",
     "locked": 0,
     "id": "1",
     "groups": [
         {
             "label": "Anfrage",
             "sort_index": "1",
-            "id": "3",
+            "id": "7",
             "sections": [
                 {
-                    "label": "Contact Information",
+                    "label": "Ihre Angaben",
                     "child_count": "0",
                     "sort_index": "1",
-                    "id": "3",
+                    "id": "7",
                     "meta": {
                         "label": "",
                         "label_render": "on",
@@ -48,9 +48,9 @@
                         {
                             "label": "Name",
                             "type": "text",
-                            "date_updated": "2026-10-27 18:07:13",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "1",
-                            "id": "9",
+                            "id": "41",
                             "meta": {
                                 "label": "",
                                 "label_render": "on",
@@ -120,17 +120,17 @@
                                 "datalist_field_text": "1",
                                 "datalist_field_value": "0",
                                 "wc_exclude_cart": "",
-                                "breakpoint_size_25": "6",
+                                "breakpoint_size_25": "",
                                 "wsf-data-grid-auto-group": "0",
-                                "breakpoint_size_75": "3"
+                                "breakpoint_size_75": ""
                             }
                         },
                         {
                             "label": "Firma",
                             "type": "text",
-                            "date_updated": "2026-10-27 18:07:13",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "2",
-                            "id": "10",
+                            "id": "42",
                             "meta": {
                                 "label": "",
                                 "label_render": "on",
@@ -200,17 +200,17 @@
                                 "datalist_field_text": "1",
                                 "datalist_field_value": "0",
                                 "wc_exclude_cart": "",
-                                "breakpoint_size_25": "6",
+                                "breakpoint_size_25": "",
                                 "wsf-data-grid-auto-group": "0",
-                                "breakpoint_size_75": "3"
+                                "breakpoint_size_75": ""
                             }
                         },
                         {
                             "label": "E-Mail",
                             "type": "email",
-                            "date_updated": "2026-10-27 18:07:14",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "3",
-                            "id": "11",
+                            "id": "43",
                             "meta": {
                                 "label": "",
                                 "label_render": "on",
@@ -281,17 +281,16 @@
                                 "wc_exclude_cart": "",
                                 "pattern": "",
                                 "wsf-data-grid-auto-group": "0",
-                                "breakpoint_size_50": "6",
-                                "breakpoint_size_75": "3",
-                                "breakpoint_size_25": "6"
+                                "breakpoint_size_50": "",
+                                "breakpoint_size_75": ""
                             }
                         },
                         {
                             "label": "Telefon",
                             "type": "tel",
-                            "date_updated": "2026-10-27 18:07:14",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "4",
-                            "id": "12",
+                            "id": "44",
                             "meta": {
                                 "label": "",
                                 "label_render": "on",
@@ -373,18 +372,17 @@
                                 "wc_exclude_cart": "",
                                 "breakpoint_sizes": "",
                                 "wsf-data-grid-auto-group": "0",
-                                "breakpoint_size_50": "6",
+                                "breakpoint_size_50": "",
                                 "data_source_id": "",
-                                "breakpoint_size_75": "3",
-                                "breakpoint_size_25": "6"
+                                "breakpoint_size_75": ""
                             }
                         },
                         {
                             "label": "Worum geht es?",
                             "type": "select",
-                            "date_updated": "2026-10-27 18:07:14",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "5",
-                            "id": "13",
+                            "id": "45",
                             "meta": {
                                 "label": "",
                                 "label_render": "on",
@@ -396,7 +394,7 @@
                                 "size": "",
                                 "placeholder_row": "Bitte wählen",
                                 "help": "",
-                                "autocomplete": "country-name",
+                                "autocomplete": "off",
                                 "prepend": "",
                                 "append": "",
                                 "aria_label": "",
@@ -527,9 +525,9 @@
                         {
                             "label": "Nachricht",
                             "type": "textarea",
-                            "date_updated": "2026-10-27 18:07:14",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "6",
-                            "id": "14",
+                            "id": "46",
                             "meta": {
                                 "label": "",
                                 "label_render": "on",
@@ -584,9 +582,9 @@
                         {
                             "label": "Datenschutz",
                             "type": "checkbox",
-                            "date_updated": "2026-10-27 18:07:14",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "7",
-                            "id": "15",
+                            "id": "47",
                             "meta": {
                                 "label": "",
                                 "label_render": "",
@@ -670,9 +668,9 @@
                         {
                             "label": "Anfrage senden",
                             "type": "submit",
-                            "date_updated": "2026-10-27 18:07:14",
+                            "date_updated": "2026-10-27 19:03:45",
                             "sort_index": "8",
-                            "id": "16",
+                            "id": "48",
                             "meta": {
                                 "label": "",
                                 "hidden": "",
@@ -806,7 +804,7 @@
                             "hidden": "",
                             "data": [
                                 "Mail an KBS",
-                                "{\"id\":\"email\",\"meta\":{\"action_email_content_type\":\"text\\/html\",\"action_email_from_email\":\"info@kotthaus-bs.de\",\"action_email_from_name\":\"Website #blog_name\",\"action_email_to\":[{\"action_email_email\":\"info@kotthaus-bs.de\",\"action_email_name\":\"\"}],\"action_email_cc\":[],\"action_email_bcc\":[],\"action_email_reply_to_email\":\"#field(11)\",\"action_email_subject\":\"Anfrage \\u00fcber die Website\",\"action_email_message_editor\":\"text_editor\",\"action_email_message_wrapper\":\"on\",\"action_email_message_textarea\":\"\",\"action_email_message_text_editor\":\"<p>\\u00dcber das Kontaktformular der Website ist eine Anfrage gekommen. Mit \\u201eAntworten\\u201c geht die Mail direkt an den Absender.<\\/p><p>#email_submission<\\/p>\",\"action_email_message_html_editor\":\"\",\"action_email_attachments\":[],\"action_email_headers\":[],\"action_email_charset\":\"#blog_charset\"},\"events\":[\"submit\"]}"
+                                "{\"id\":\"email\",\"meta\":{\"action_email_content_type\":\"text\\/html\",\"action_email_from_email\":\"info@kotthaus-bs.de\",\"action_email_from_name\":\"Website #blog_name\",\"action_email_to\":[{\"action_email_email\":\"info@kotthaus-bs.de\",\"action_email_name\":\"\"}],\"action_email_cc\":[],\"action_email_bcc\":[],\"action_email_reply_to_email\":\"#field(43)\",\"action_email_subject\":\"Anfrage \\u00fcber die Website\",\"action_email_message_editor\":\"text_editor\",\"action_email_message_wrapper\":\"on\",\"action_email_message_textarea\":\"\",\"action_email_message_text_editor\":\"<p>\\u00dcber das Kontaktformular der Website ist eine Anfrage gekommen. Mit \\u201eAntworten\\u201c geht die Mail direkt an den Absender.<\\/p><p>#email_submission<\\/p>\",\"action_email_message_html_editor\":\"\",\"action_email_attachments\":[],\"action_email_headers\":[],\"action_email_charset\":\"#blog_charset\"},\"events\":[\"submit\"]}"
                             ]
                         },
                         {
@@ -914,5 +912,5 @@
         "contact_last_name": "",
         "contact_email": ""
     },
-    "date_publish_wp": "27. Oktober 2026 19:07"
+    "date_publish_wp": "27. Oktober 2026 20:03"
 }
