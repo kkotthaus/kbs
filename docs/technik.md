@@ -69,6 +69,7 @@ Die Entwicklung läuft auf einer lokalen Kopie (kbs.local). Ablauf einer Änderu
 | **KBS – Suchmaschinen** | SEO und KI-Suche | Seitentitel aus `daten/seo.json`, strukturierte Daten (Firma mit Öffnungszeiten, Leistungen, FAQ), Vorschaubild für geteilte Links, Inhalt von `/llms.txt`, 301-Weiterleitungen von alten Adressen |
 | **KBS – KI-Kennzeichnung** | Kennzeichnung KI-erzeugter oder -veränderter Bilder (EU-KI-Verordnung) | Felder in der Mediathek, Plakette „KI“ am Bild, Hinweis im Alternativtext; Einstellungen unter Medien › KI-Kennzeichnung; Spalte und Filter in der Mediathek |
 | **KBS – Backend** | blendet den Block „Individuelle Felder“ aus | verhindert, dass rohe Metadaten ungeprüft geändert werden |
+| **KBS – Schutz** | Härtung (Standard aus etch-nodes) | Autorenseiten leiten auf die Startseite, kein Autor in oEmbed, einheitliche Fehlermeldung bei der Anmeldung (auch bei „Passwort vergessen“), XML-RPC aus; Sperre nach 5 Fehlversuchen in 15 Minuten je IP-Adresse (15 Minuten, jede weitere am selben Tag doppelt so lang, höchstens 24 Stunden; gespeichert nur ein Hash der Adresse); WordPress-Schnittstelle ohne Anmeldung nur für `ws-form/v1` und `oh-my-etch/v1` (`KBS_SCHUTZ_REST_OFFEN`); Sicherheits-Kopfzeilen; keine Versionsnummern im Quelltext; Block „KBS-Schutz“ in der `.htaccess` (sperrt `xmlrpc.php`, `readme.html`, `license.txt`, `wp-content/kbs/daten/`), geschrieben bei der nächsten Anmeldung eines Administrators |
 | **KBS – MCP-Erweiterung** | Funktionen zum Übertragen aus dem Repository | hier ohne Wirkung: aktiv nur in der Entwicklung oder für einen einzelnen Aufruf per WP-CLI |
 
 > Ein Snippet, das WPCodeBox wegen eines Fehlers abgeschaltet hat, fehlt still – etwa das Formular oder die Navigation. Nach Änderungen in WPCodeBox prüfen, dass alle KBS-Snippets eingeschaltet sind.
@@ -151,6 +152,7 @@ Templates: „index“ (Header, Inhalt, Footer für alle Seiten) und „404“.
 - Den MCP Adapter auf 0.7.x aktualisieren.
 - Ein Duplicator-Paket der lokalen Kopie hier installieren.
 - Bei Matomo die Cookies wieder einschalten (bräuchte eine Einwilligung) oder das Tracking betreiben, ohne dass die Datenschutzerklärung Matomo nennt.
+- Eine neue öffentliche Schnittstelle (Plugin mit eigener REST-Route für Besucher) einbauen, ohne sie in `KBS_SCHUTZ_REST_OFFEN` (Snippet „KBS – Schutz“) aufzunehmen – sie antwortet Besuchern sonst mit 401.
 - Felder im Block „Individuelle Felder“ oder per Datenbank ändern – Felder immer über ihre Seiten (Firmendaten, Mediathek).
 
 ## Nach Updates prüfen
@@ -162,3 +164,4 @@ Automatische Updates sind aus; Updates werden zuerst auf der lokalen Kopie getes
 - Kontaktformular absenden (Testnachricht): Pflichtfelder, Fehlermeldungen, Eingang unter WS Form › Übermittlungen, Mail (Protokoll unter Einstellungen › Mailversand)
 - beide Farbschemata, Schriften (Manrope, Sora)
 - WPCodeBox: alle KBS-Snippets eingeschaltet
+- Sicherheitsprüfung: `node tools/sicherheit-pruefen.mjs --bericht` (Ziel 0 Lücken, Berichte in `docs/sicherheit/`)

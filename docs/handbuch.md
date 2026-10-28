@@ -37,3 +37,22 @@ Leer lassen, wenn keine KI im Spiel war. Optional tragen Sie das **Werkzeug** ei
 **Aussehen einstellen:** Menü **Medien › KI-Kennzeichnung** – Position, Stil (dunkel, hell, Markenrot), Größe und ob das Werkzeug genannt wird. Ein eigenes Symbol (z. B. das offizielle EU-Symbol, sobald es veröffentlicht ist) hinterlegen Sie unter **Firmendaten › Firma & Kontakt › KI-Symbol**.
 
 > **Wichtig:** Fotos von Kunden, Mitarbeitern oder anderen Personen nicht ohne deren Einwilligung in KI-Dienste hochladen, auch nicht zum Bearbeiten – das ist eine Datenverarbeitung bei einem fremden Anbieter. Prüfen Sie außerdem, ob die Nutzungsbedingungen des Werkzeugs die Veröffentlichung erlauben.
+
+## Datenschutz und Sicherheit
+
+Die Website ist gegen die üblichen Angriffe gehärtet:
+
+- **Anmeldung:** Nach 5 falschen Versuchen in 15 Minuten ist die Anmeldung von dieser Internet-Adresse für 15 Minuten gesperrt, bei Wiederholung am selben Tag länger (höchstens 24 Stunden). Die Website selbst bleibt erreichbar. Die Fehlermeldung verrät nicht, ob es einen Benutzernamen gibt.
+- **Keine Benutzernamen sichtbar:** Autorenseiten und die WordPress-Schnittstelle zeigen ohne Anmeldung keine Benutzer.
+- **Kontaktformular:** Spamschutz ohne fremden Dienst. Roboter-Anfragen landen unter **WS Form › Übermittlungen › Spam**, ohne Mail. Höchstens 20 Mails je Stunde, weitere Anfragen stehen nur unter Übermittlungen.
+- **Keine Daten an Dritte:** Schriften liegen auf dem eigenen Server, Matomo zählt ohne Cookies.
+
+Was alle tun können: ein eigenes, langes Passwort verwenden und es nicht weitergeben; Zugänge nur für Personen, die sie brauchen.
+
+**Verlauf**
+
+| Datum | Maßnahme |
+| --- | --- |
+| 28.10.2026 | Spamschutz für das Kontaktformular (Zeitfeld, Zufallsnamen, Stundengrenze) |
+| 28.10.2026 | Härtung der Website (Anmeldesperre, Schnittstellen, Kopfzeilen) und regelmäßige Sicherheitsprüfung |
+
