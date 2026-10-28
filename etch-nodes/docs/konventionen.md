@@ -191,7 +191,13 @@ Regeln für Komponenten, Block-Markup, Daten, CSS, Hell/Dunkel und KI-Kennzeichn
 - Empfänger, Betreff und Texte legt das Projekt fest; Empfänger-Adressen kommen aus den Stammdaten bzw. den Einstellungen des Formulars, nicht aus dem Code.
 - Gestaltung über die ACSS-Variablen und das Stylesheet des Projekts, in beiden Farbschemata geprüft (siehe [Hell/Dunkel](#helldunkel)).
 - Barrierefreiheit: jedes Feld mit sichtbarer Beschriftung (kein Platzhalter als Ersatz), Pflichtfelder gekennzeichnet, Fehlermeldungen als Text am Feld, Bedienung per Tastatur, Meldung nach dem Absenden für Screenreader hörbar.
-- Datenschutz: nur Felder abfragen, die gebraucht werden; Hinweis auf die Datenschutzerklärung am Formular; gespeicherte Anfragen nach der Frist des Projekts löschen. Spamschutz ohne fremde Dienste (z. B. Honeypot), kein Dienst, der Daten der Besucher an Dritte überträgt, ohne dass es das Projekt entschieden hat.
+- Datenschutz: nur Felder abfragen, die gebraucht werden; Hinweis auf die Datenschutzerklärung am Formular; gespeicherte Anfragen nach der Frist des Projekts löschen. Kein Dienst, der Daten der Besucher an Dritte überträgt (kein reCAPTCHA, Turnstile o. Ä.), ohne dass es das Projekt entschieden hat.
+- **Spamschutz für jedes öffentliche Formular** (ohne fremden Dienst, im Snippet des Formulars):
+  - Honeypot von WS Form an (`honeypot: on`, `submit_lock: on`).
+  - **Zeitfeld:** Ein kleines Footer-Skript (nur auf Seiten mit dem Formular, per `render_block` am Block `wsf-block/form-add`) hängt beim Absenden ein verstecktes Feld `<prefix>_…_t` mit den Sekunden seit dem Laden der Seite an. Fehlt es oder ist es kleiner als `<PREFIX>_…_MIN_SEKUNDEN` (4), ist es Spam.
+  - **Name aus Zufallsbuchstaben** (z. B. „dHeVUXhroMNsrRAVEEF“): ein Wort ab 8 Buchstaben mit mindestens 3 Großbuchstaben mitten im Wort, nicht alles groß. Nur auf Namensfelder anwenden, nicht auf Firmennamen.
+  - Spam über den Filter `wsf_submit_spam_check` mit Stufe 100 melden: WS Form speichert die Anfrage mit Status „Spam“ und führt keine weitere Aktion aus (keine Mail). Der Grund geht ins Fehlerprotokoll.
+  - **Notbremse:** höchstens `<PREFIX>_…_MAILS_JE_STUNDE` (20) Mails je Stunde (Transient, Filter `wsf_action_post_do` für die Aktion `email`); darüber bleibt die Anfrage nur unter „Übermittlungen“.
 - Formulare leben in der Datenbank, nicht im Repo. Ein Formular nach Änderungen veröffentlichen, als JSON exportieren und im Projekt ablegen; IDs der eingebundenen Formulare im Projekt dokumentieren.
 - Nach einem Update von WS Form und nach jedem Umzug: Formular absenden – Pflichtfelder, Fehlermeldungen, Eingang unter „Übermittlungen“, E-Mail.
 
