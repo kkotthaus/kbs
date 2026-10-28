@@ -9,6 +9,7 @@ Diese Datei wird aus einem Projekt importiert (`@etch-nodes/CLAUDE.md`). Alle Ve
 @docs/development-environment.md
 @docs/konventionen.md
 @docs/betrieb.md
+@docs/sicherheit.md
 
 ## Arbeitsweise
 
@@ -28,6 +29,7 @@ Diese Datei wird aus einem Projekt importiert (`@etch-nodes/CLAUDE.md`). Alle Ve
 - Jede Seite hat einen Skip-Link „Zum Inhalt springen“ auf `<main id="main">` (mit EMMP dessen eingebauten). Siehe [docs/konventionen.md](docs/konventionen.md#barrierefreiheit).
 - Jede Website hat im Backend eine Technik-Doku für Administratoren (Quelle `docs/technik.md`, Snippet `<prefix>-technik.php`); bei Änderungen an Plugins, Snippets, CSS oder Skripten mitpflegen. Siehe [docs/konventionen.md](docs/konventionen.md#backend).
 - Auf jeder Website läuft das eigene Plugin Bausteine Backend (`bausteine-backend`): Es blendet den Block „Individuelle Felder“ aus, öffnet bei Etch-Komponenten die Seitenleiste, räumt deren Felder auf und fängt eine abgelaufene Anmeldung im Etch-Editor ab. Kein Snippet `<prefix>-backend.php` mehr. Siehe [docs/konventionen.md](docs/konventionen.md#backend).
+- **Jede Website wird gehärtet** (Snippet `<prefix>-schutz.php`: keine Benutzernamen, Sperre nach Fehlversuchen, XML-RPC aus, REST ohne Anmeldung nur für freigegebene Schnittstellen, Sicherheits-Kopfzeilen, gesperrte Dateien; bei Fotos von Personen dazu der Fotoschutz), live zusätzlich **Security Ninja** mit den vorgegebenen Einstellungen, und mit `tools/sicherheit-pruefen.mjs` geprüft: auf Staging vor dem Umzug und **auf live nach jedem Umzug erneut**, danach regelmäßig. Maßnahmen im Handbuch-Kapitel „Datenschutz und Sicherheit“ mit Verlauf. Siehe [docs/sicherheit.md](docs/sicherheit.md).
 - PHP-Snippets WPCodeBox-tauglich schreiben (`define()` statt `const`, kein `__DIR__`). Snippets immer in WPCodeBox anlegen, nie als mu-plugin oder Lader (einzige Ausnahme: das Umgebungs-mu-plugin des Server-Werkzeugs, siehe [docs/betrieb.md](docs/betrieb.md#php-als-wpcodebox-snippets)).
 - **Bei einem neuen Projekt** (bzw. in der ersten Sitzung) zuerst die WPCodeBox-Einstellungen prüfen und Abweichungen melden: MCP an, genau die vorgesehenen Werkzeuge frei, Delete/Run Snippet nicht frei, kein Lader. Prüfliste: [docs/betrieb.md](docs/betrieb.md#wpcodebox-einstellungen-prüfen-bei-jedem-neuen-projekt). Freigaben setzt der Nutzer selbst in der Oberfläche.
 - Dieser Ordner ist ein git subtree (siehe [README.md](README.md)). Änderungen hier nur, wenn sie für alle Projekte gelten, und generisch formuliert – ohne Projektnamen, URLs, Prefixe oder Pfade eines Projekts.
