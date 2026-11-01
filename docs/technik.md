@@ -70,6 +70,7 @@ Die Entwicklung läuft auf einer lokalen Kopie (kbs.local). Ablauf einer Änderu
 | **KBS – KI-Kennzeichnung** | Kennzeichnung KI-erzeugter oder -veränderter Bilder (EU-KI-Verordnung) | Felder in der Mediathek, Plakette „KI“ am Bild, Hinweis im Alternativtext; Einstellungen unter Medien › KI-Kennzeichnung; Spalte und Filter in der Mediathek |
 | **KBS – Backend** | blendet den Block „Individuelle Felder“ aus | verhindert, dass rohe Metadaten ungeprüft geändert werden |
 | **KBS – Schutz** | Härtung (Standard aus etch-nodes) | Autorenseiten leiten auf die Startseite, kein Autor in oEmbed, einheitliche Fehlermeldung bei der Anmeldung (auch bei „Passwort vergessen“), XML-RPC aus; Sperre nach 5 Fehlversuchen in 15 Minuten je IP-Adresse (15 Minuten, jede weitere am selben Tag doppelt so lang, höchstens 24 Stunden; gespeichert nur ein Hash der Adresse); WordPress-Schnittstelle ohne Anmeldung nur für `ws-form/v1` und `oh-my-etch/v1` (`KBS_SCHUTZ_REST_OFFEN`); Sicherheits-Kopfzeilen; keine Versionsnummern im Quelltext; Block „KBS-Schutz“ in der `.htaccess` (sperrt `xmlrpc.php`, `readme.html`, `license.txt`, `wp-content/kbs/daten/`), geschrieben bei der nächsten Anmeldung eines Administrators |
+| **KBS – Tempo** | Ladezeit auf dem Handy (seit 2026-11-01) | gibt vom Etch-Stylesheet „DWC Mega Menu“ im Frontend nur die drei Regeln aus, die auf jede Seite wirken (`html` als Flex-Spalte, `body`, Admin-Leiste) – statt rund 160 KB je Seite; gespeichert und im Editor bleibt es vollständig. Startet Matomo erst nach dem Laden der Seite (Filter `matomo_tracking_code_script`). Wird das Mega-Menü eingebunden: `define( 'KBS_EMMP_AKTIV', true );` in der `wp-config.php` oder das Snippet ausschalten |
 | **KBS – MCP-Erweiterung** | Funktionen zum Übertragen aus dem Repository | hier ohne Wirkung: aktiv nur in der Entwicklung oder für einen einzelnen Aufruf per WP-CLI |
 
 > Ein Snippet, das WPCodeBox wegen eines Fehlers abgeschaltet hat, fehlt still – etwa das Formular oder die Navigation. Nach Änderungen in WPCodeBox prüfen, dass alle KBS-Snippets eingeschaltet sind.
@@ -81,7 +82,7 @@ Reihenfolge, in der die Gestaltung zusammenkommt:
 1. **Schriften** – Etch Font Manager (`efm-fonts.css`, Schriften aus `wp-content/fonts/`).
 2. **Etch-Stylesheets** (Etch › Stylesheets, global):
    - „KBS“ – das eigene Aussehen, Quelle `wordpress/etch/css/main.css` im Repository
-   - „DWC Mega Menu“ – **immer behalten**, auch wenn es ungenutzt wirkt; nicht löschen
+   - „DWC Mega Menu“ – **immer behalten**, auch wenn es ungenutzt wirkt; nicht löschen. Im Frontend gibt das Snippet „KBS – Tempo“ davon nur die Regeln aus, die außerhalb des Menüs wirken (Header und Navigation sind eigene Komponenten)
    - „Main“ und „Custom Media Definitions“ – Vorgaben von Etch
 3. **Automatic.css** – lädt danach. Seine Einstellungen (Farben, Buttons, Schrift) kommen aus dem Repository (`acss-farben`, `acss-buttons`, `acss-schrift`).
 4. **OhMyEtch** – Grundverhalten seiner Bausteine; das Aussehen setzt das Stylesheet „KBS“.
@@ -103,7 +104,7 @@ Regeln im Stylesheet „KBS“:
 | Mediathek: Plakette „KI“ auf den Kacheln | Snippet „KBS – KI-Kennzeichnung“ | nur im Backend |
 | Etch-Editor | Etch | nur für angemeldete Administratoren |
 
-Statistik: Matomo (Plugin, eigener Server, ohne Cookies) – in der Datenschutzerklärung beschrieben (Abschnitt 5). Sonst keine Analyse- oder Werbeskripte, keine externen Schriften, keine Cookies außer denen von WordPress für angemeldete Benutzer.
+Statistik: Matomo (Plugin, eigener Server, ohne Cookies) – in der Datenschutzerklärung beschrieben (Abschnitt 5). Das Skript startet erst nach dem Laden der Seite (Snippet „KBS – Tempo“). Matomo speichert seinen Code zwischen: nach einer Änderung an diesem Filter oder einem Matomo-Update, das den Code neu schreibt, prüfen, ob im Quelltext `kbs-tempo` steht; sonst den Code neu erzeugen (WP-CLI: `$s = \WpMatomo::$settings; ( new \WpMatomo\TrackingCode\TrackingCodeGenerator( $s, new \WpMatomo\TrackingCode\GeneratorOptions( $s ) ) )->update_tracking_code( true );`) und den Cache leeren. Sonst keine Analyse- oder Werbeskripte, keine externen Schriften, keine Cookies außer denen von WordPress für angemeldete Benutzer.
 
 ## Datenfluss an Beispielen
 
@@ -148,7 +149,7 @@ Templates: „index“ (Header, Inhalt, Footer für alle Seiten) und „404“.
 ## Was man nicht tun sollte
 
 - Seiten, Templates oder Komponenten im Etch-Editor ändern – die nächste Übertragung aus dem Repository überschreibt das (Ausnahme nur nach Absprache, dann ins Repository übernehmen).
-- Das Etch-Stylesheet „DWC Mega Menu“ löschen.
+- Das Etch-Stylesheet „DWC Mega Menu“ löschen. Wird das Mega-Menü eingebunden, vorher das Snippet „KBS – Tempo“ anpassen (`KBS_EMMP_AKTIV`) – sonst fehlt dem Menü sein CSS.
 - Den MCP Adapter auf 0.7.x aktualisieren.
 - Ein Duplicator-Paket der lokalen Kopie hier installieren.
 - Bei Matomo die Cookies wieder einschalten (bräuchte eine Einwilligung) oder das Tracking betreiben, ohne dass die Datenschutzerklärung Matomo nennt.
