@@ -201,6 +201,23 @@ foreach ( $wpdb->get_results( "SELECT option_name, option_value FROM {$wpdb->opt
 		$n++;
 	}
 }
+// Mit externem Object-Cache (live: Redis) stehen Transients nicht in der Datenbank: Sperre über die Adresse der
+// SSH-Verbindung aufheben. Sieht die Website eine andere Adresse (z. B. IPv6), bleibt die Sperre – sie läuft nach 15 Minuten ab.
+if ( wp_using_ext_object_cache() && function_exists( 'kbs_schutz_schluessel' ) ) {
+	$ssh = strtok( (string) getenv( 'SSH_CLIENT' ), ' ' );
+	if ( $ssh ) {
+		$alt                    = $_SERVER['REMOTE_ADDR'] ?? '';
+		$_SERVER['REMOTE_ADDR'] = $ssh;
+		$s                      = kbs_schutz_schluessel();
+		if ( kbs_schutz_gesperrt() > 0 ) {
+			delete_transient( 'kbs_sperre_' . $s );
+			delete_transient( 'kbs_sperren_' . $s );
+			delete_transient( 'kbs_versuche_' . $s );
+			$n++;
+		}
+		$_SERVER['REMOTE_ADDR'] = $alt;
+	}
+}
 echo "aufgehoben: $n\n";
 `;
 
