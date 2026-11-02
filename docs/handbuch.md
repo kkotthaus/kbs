@@ -53,6 +53,7 @@ Was alle tun können: ein eigenes, langes Passwort verwenden und es nicht weiter
 
 | Datum | Maßnahme |
 | --- | --- |
+| 02.11.2026 | Zusätzlicher Schutz im Test: Abwehr typischer Angriffe, tägliche Prüfung der Website und Virenprüfung hochgeladener Dateien |
 | 28.10.2026 | Spamschutz für das Kontaktformular (Zeitfeld, Zufallsnamen, Stundengrenze) |
 | 28.10.2026 | Härtung der Website (Anmeldesperre, Schnittstellen, Kopfzeilen) und regelmäßige Sicherheitsprüfung |
 
