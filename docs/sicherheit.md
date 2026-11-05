@@ -49,6 +49,19 @@ Ein Snippet je Website (WPCodeBox, gehört auf die Live-Seite). Es setzt um:
 - Inhalt: die gesperrten Dateien und Ordner (`RewriteRule … - [F,L]`), dazu die Kopfzeilen per `mod_headers` für Dateien, die nicht durch PHP laufen.
 - **OpenLiteSpeed** liest Rewrite-Regeln aus der `.htaccess` (nach kurzer Zeit, ohne Neustart), übernimmt aber `Header` daraus nicht für Bilder und andere statische Dateien. Diese Kopfzeilen live in der Konfiguration des virtuellen Hosts setzen (root, macht der Nutzer). Auf nginx (lokal) gilt die `.htaccess` gar nicht – dort nur die PHP-Kopfzeilen prüfen.
 
+## Plugin `bausteine-schutz` (in Erprobung)
+
+Eigenes Plugin aus dem Repo bausteine (`plugins/bausteine-schutz/`, Beschreibung in dessen README). Es soll das Snippet `<prefix>-schutz.php` **und** Security Ninja ablösen, ohne fremde Dienste und ohne die Schwächen von Security Ninja:
+
+- Das Snippet steckt vollständig darin. Projektspezifisches (offene REST-Namensräume, gesperrte Daten-Ordner, Namensräume mit `no-store`) steht in den Einstellungen (Einstellungen → Schutz) oder als Konstante in der `wp-config.php` (`BAUSTEINE_SCHUTZ_REST_OFFEN`, `BAUSTEINE_SCHUTZ_FREI`).
+- Nach Fehlversuchen wird nur die Anmeldung gesperrt, nie die Website; jeder Versuch zählt einmal.
+- Firewall ohne Sperre von Anfragen ohne Browser-Kennung (MCP, `curl`, Apps). Modus `auto`: lokal und Staging nur beobachten – nach einem Duplicator-Import muss nichts abgeschaltet werden.
+- Ausgesperrt? Keine Hintertür, sondern zwei Notausgänge: auf der Sperrmeldung ein Link zum Entsperren per Mail an die Admin-Adresse (einmal, 15 Minuten, nur für die gesperrte Adresse) und der Notschalter `define( 'BAUSTEINE_SCHUTZ_AUS', true );` in der `wp-config.php` (Sperren und Firewall aus, die Härtung bleibt; danach wieder entfernen). Dazu wie bisher: Sperre läuft von selbst ab, `wp bausteine-schutz entsperren`, Freigabeliste.
+- Virenscanner: Läuft auf dem Server ClamAV (clamd), nutzt das Plugin ihn über dessen Socket mit – Uploads werden beim Hochladen geprüft und bei einem Fund abgewiesen, die tägliche Prüfung scannt neue und geänderte Dateien und meldet Funde als Lücke. Ohne ClamAV bleibt es aus; Hinweis nur live (beim Hoster nachfragen). Der Scanner ersetzt keine Updates und keine Prüfsummen, er findet nur bekannte Schadsoftware.
+- Prüfungen von innen (Dateien gegen die Prüfsummen von wordpress.org, Skripte in den Uploads, Konfiguration, Zugänge, Cron) ergänzen `tools/sicherheit-pruefen.mjs`, das weiter von außen prüft.
+
+**Stand:** bis zur Freigabe gilt der bisherige Standard (Snippet + Security Ninja auf live). Einführung: erst auf einer Live-Seite **neben** Security Ninja, nach einigen Wochen ohne Probleme Security Ninja entfernen und das Snippet abschalten (die Prüfung meldet ein noch laufendes Snippet). Gleichzeitig mit dem Snippet zählen Fehlversuche doppelt mit.
+
 ## Security Ninja (nur live)
 
 Auf jeder Live-Seite läuft zusätzlich **Security Ninja Premium** (`security-ninja-premium`). Es ergänzt das Snippet `<prefix>-schutz.php` (Firewall, Sperrlisten, 404-Schutz), ersetzt es aber nicht: Die Sperre des Snippets greift zuerst und gilt auch dort, wo Security Ninja nicht läuft.
