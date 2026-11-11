@@ -9,6 +9,7 @@ Die Prüfung der Anmeldung sperrt die eigene IP-Adresse 15 Minuten für die Anme
 | Datum | Adresse | Ergebnis | Bericht |
 | --- | --- | --- | --- |
 | 2026-10-28 | kbs.local (Probelauf mit kbs-schutz 1.0.0) | 39 ok, 7 Hinweise, 0 Lücken – Hinweise nur lokal (nginx-Version, `.htaccess` gilt lokal nicht, noindex) bzw. `?ver=` von OhMyEtch | – |
+| 2026-11-11 | kotthaus-bs.de (nach Update Etch 1.8.2 und ACSS 4.0.3) | 44 ok, 1 Hinweis (`?ver=` von OhMyEtch), **1 Lücke**: http → https mit 302 statt 301 (schon am 2026-10-28) | [pruefung-2026-11-11-kotthaus-bs.md](pruefung-2026-11-11-kotthaus-bs.md) |
 
 ## Verlauf
 
@@ -18,5 +19,7 @@ Die Prüfung der Anmeldung sperrt die eigene IP-Adresse 15 Minuten für die Anme
 | 2026-10-28 | Härtung nach etch-nodes fehlte | Snippet kbs-schutz angelegt, lokal geprüft: 0 Lücken |
 
 ## Offen
+
+- **Lücke:** `http://` leitet mit 302 statt 301 auf `https://` um (seit mindestens 2026-10-28, live). Die Umleitung kommt vom Server (LiteSpeed), nicht von WordPress – in der Konfiguration des virtuellen Hosts auf 301 stellen (root, macht der Nutzer).
 
 - `?ver=1.6.0` an Skripten von OhMyEtch wird nicht ersetzt (lädt nicht über die üblichen Filter) – Hinweis, keine Lücke.
