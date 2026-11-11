@@ -598,7 +598,7 @@ const datenschutzSeite = markup(
 const marke = ` | ${firma('kurzname')}`;
 export const pages = [
   { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
-    seo: { titel: `IT-Service & Websites in ${firma('ort')}${marke}`, faq: ohneLinks(startFaq) } },
+    seo: { titel: `IT & Websites in ${firma('ort')}${marke}`, faq: ohneLinks(startFaq) } },
   { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung – alles aus einer Hand, mit festem Ansprechpartner.', content: leistungenSeite,
     seo: { titel: `IT & Webdesign in ${firma('ort')}${marke}`, faq: ohneLinks(leistungenFaq), llms: 'Seiten' } },
   ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.beschreibung ?? l.kurz, content: leistungSeite(l),

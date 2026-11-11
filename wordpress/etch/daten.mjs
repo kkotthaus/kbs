@@ -78,7 +78,7 @@ export const leistungen = [
     icon: 'browser',
     titel: 'Webdesign',
     kurz: 'Moderne, schnelle WordPress-Websites mit aktuellen Buildern wie Etch – die Sie danach selbst pflegen können.',
-    beschreibung: 'Webdesign für kleine Unternehmen aus Burscheid und dem Bergischen Land: WordPress-Websites, modern gebaut, schnell, für Smartphones optimiert und selbst pflegbar.',
+    beschreibung: 'Webdesign für kleine Unternehmen aus Burscheid und dem Bergischen Land: WordPress-Websites – modern, schnell, für Smartphones optimiert und selbst pflegbar.',
     punkte: ['Design, das zu Ihrem Unternehmen passt', 'Für Smartphone und Suchmaschine optimiert', 'Inhalte selbst ändern, ohne Programmierkenntnisse'],
   },
   {
@@ -86,7 +86,7 @@ export const leistungen = [
     icon: 'shield',
     titel: 'Website-Wartung',
     kurz: 'Updates, Backups und Sicherheit für Ihre WordPress-Website – regelmäßig erledigt, mit festem Ansprechpartner.',
-    beschreibung: 'Website-Wartung für WordPress in Burscheid und dem Bergischen Land: Updates, Backups, Sicherheit und Überwachung – auch für Websites, die wir nicht gebaut haben.',
+    beschreibung: 'Website-Wartung für WordPress in Burscheid und im Bergischen Land: Updates, Backups, Sicherheit, Überwachung – auch für Websites, die wir nicht gebaut haben.',
     punkte: ['Updates für WordPress und Erweiterungen', 'Regelmäßige Backups und Sicherheitsprüfung', 'Fester Ansprechpartner für Änderungen'],
   },
 ];

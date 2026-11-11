@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: KBS – Suchmaschinen
- * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten, Telefon international, Kartenlink und Leistungskatalog, Geschäftsführer als Person, WebPage/AboutPage/ContactPage je Seite mit Änderungsdatum, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt (nach llmstxt.org, mit Seitencache) und /llms-full.txt mit dem Text aller Seiten samt häufigen Fragen für KI-Suchdienste, 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
+ * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten, Telefon international, Kartenlink und Leistungskatalog, Geschäftsführer als Person, WebPage/AboutPage/ContactPage je Seite mit Änderungsdatum, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt (nach llmstxt.org, mit Seitencache) und /llms-full.txt mit dem Text aller Seiten samt häufigen Fragen für KI-Suchdienste, keine RSS-Feeds (Links entfernt, Feed-Adressen per 301 auf die Startseite), 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-seo.php
  */
@@ -464,6 +464,21 @@ add_filter(
 	},
 	-1
 );
+
+// Keine RSS-Feeds: Die Website hat keine Beiträge. Links im Kopf entfernen, Feed-Adressen per 301 auf die Startseite.
+remove_action( 'wp_head', 'feed_links', 2 );
+remove_action( 'wp_head', 'feed_links_extra', 3 );
+foreach ( array( 'do_feed', 'do_feed_rdf', 'do_feed_rss', 'do_feed_rss2', 'do_feed_atom', 'do_feed_rss2_comments', 'do_feed_atom_comments' ) as $kbs_feed ) {
+	add_action(
+		$kbs_feed,
+		function () {
+			wp_safe_redirect( home_url( '/' ), 301 );
+			exit;
+		},
+		1
+	);
+}
+unset( $kbs_feed );
 
 // 301 von den Adressen der alten Website
 add_action(
