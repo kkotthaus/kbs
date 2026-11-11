@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: KBS – Suchmaschinen
- * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten, Telefon international, Kartenlink und Leistungskatalog, Geschäftsführer als Person, WebPage/AboutPage/ContactPage je Seite mit Änderungsdatum, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt (nach llmstxt.org, mit Seitencache) und /llms-full.txt mit dem Text aller Seiten samt häufigen Fragen für KI-Suchdienste, keine RSS-Feeds (Links entfernt, Feed-Adressen per 301 auf die Startseite), 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
+ * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten, Telefon international, Kartenlink und Leistungskatalog, Geschäftsführer als Person, WebPage/AboutPage/ContactPage je Seite mit Änderungsdatum, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt (nach llmstxt.org, mit Seitencache) und /llms-full.txt mit dem Text aller Seiten samt häufigen Fragen für KI-Suchdienste, keine RSS-Feeds (Links entfernt, Feed-Adressen per 301 auf die Startseite), Bilder-Sitemap ohne Logos und Signets (SVG aus dem Build), 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-seo.php
  */
@@ -479,6 +479,16 @@ foreach ( array( 'do_feed', 'do_feed_rdf', 'do_feed_rss', 'do_feed_rss2', 'do_fe
 	);
 }
 unset( $kbs_feed );
+
+// Bilder-Sitemap: Etch meldet SEOPress alle Bilder der gerenderten Seite, auch Logos und Wasserzeichen.
+// SVG-Grafiken aus dem Build (Logo, Signets) gehören nicht in die Bildersuche, nur echte Bilder (Fotos, Illustrationen).
+add_filter(
+	'seopress_sitemaps_single_img_url',
+	function ( $url ) {
+		$pfad = (string) wp_parse_url( (string) $url, PHP_URL_PATH );
+		return ( false !== strpos( $pfad, '/wp-content/kbs/medien/' ) && preg_match( '/\.svg$/i', $pfad ) ) ? '' : $url;
+	}
+);
 
 // 301 von den Adressen der alten Website
 add_action(
