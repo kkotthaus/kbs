@@ -371,6 +371,20 @@ const leistungSeite = (l) => {
 
 // ---------- Weitere Seiten ----------
 
+// Häufige Fragen der Übersicht und von „Über uns“ (auch für das FAQ-Schema und llms.txt) – nur Angaben, die auch sonst auf der Website stehen
+const leistungenFaq = [
+  ['Welche Leistungen bieten Sie an?', 'Wir übernehmen die [IT-Betreuung](/leistungen/it-betreuung/) für kleine Unternehmen, beraten bei neuen Rechnern, Servern, Cloud und Datenschutz ([IT-Beratung](/leistungen/it-beratung/)), bauen WordPress-Websites ([Webdesign](/leistungen/wordpress-websites/)) und halten sie mit der [Website-Wartung](/leistungen/website-wartung/) aktuell und sicher. Bei Störungen helfen wir schnell per [Fernwartung](/fernwartung/).'],
+  ['Bekomme ich IT und Website aus einer Hand?', 'Ja. Sie haben einen festen Ansprechpartner für Ihre IT und Ihre Website und erklären Ihr Anliegen nur einmal.'],
+  ['Kommen Sie auch vor Ort?', `Ja. Wir sind in ${firma('ort')} zu Hause und kommen bei Bedarf vorbei. Viele Störungen lösen wir aber schneller per [Fernwartung](/fernwartung/) – ohne Anfahrt.`],
+  ['Was kostet das Erstgespräch?', 'Nichts. Im kostenlosen Erstgespräch hören wir zu und sagen Ihnen, was sich lohnt. Danach erhalten Sie ein klares Angebot – Sie wissen vorher, womit Sie rechnen können.'],
+];
+
+const ueberUnsFaq = [
+  ['Für wen arbeiten Sie?', 'Vor allem für kleine Firmen, Selbstständige und Vereine, die keine eigene IT-Abteilung haben – etwa Handwerksbetriebe, Arztpraxen, Kanzleien, Einzelhandel und Büros.'],
+  ['Wo sind Sie im Einsatz?', `Unser Sitz ist in ${firma('ort')}. Wir betreuen Kunden in der Region ${firma('region')}, unter anderem in ${firma('einsatzorte')} – vor Ort, wenn es nötig ist, und per [Fernwartung](/fernwartung/), wenn es schneller geht.`],
+  ['Wer ist mein Ansprechpartner?', `${firma('vertretung')}, Geschäftsführer der ${firma('name')}. Sie haben einen festen Ansprechpartner statt wechselnder Hotline.`],
+];
+
 const leistungenSeite = markup(
   seitenkopf({ eyebrow: 'Leistungen', titel: 'IT-Service und Websites aus einer Hand', lead: 'Wir betreuen kleine Unternehmen, die keine eigene IT-Abteilung haben – von der Hardware bis zur Website.' }),
   abschnitt('', 'Leistungen', [t('h2', 'visually-hidden', 'Unsere Leistungen'), komponente('Leistungskarten')]),
@@ -383,6 +397,7 @@ const leistungenSeite = markup(
       ['shield', 'Sicherheit im Blick', 'Updates, Virenschutz und Datensicherung sind bei uns Standard, nicht Extra.'],
     ]),
   ]),
+  abschnitt('', 'Häufige Fragen', [el('div', 'split', [abschnittKopf('Häufige Fragen', 'Fragen zu unseren Leistungen', null), faq(leistungenFaq)])]),
   komponente('CtaBand', { titel: 'Welche Leistung passt zu Ihnen?' }),
 );
 
@@ -458,6 +473,7 @@ const ueberUnsSeite = markup(
       ['shield', 'Sorgfalt', 'Sicherheit, Datensicherung und Datenschutz gehören immer dazu.'],
     ]),
   ]),
+  abschnitt('', 'Häufige Fragen', [el('div', 'split', [abschnittKopf('Häufige Fragen', 'Fragen an uns', null), faq(ueberUnsFaq)])]),
   komponente('CtaBand', { titel: 'Lernen wir uns kennen.' }),
 );
 
@@ -584,13 +600,13 @@ export const pages = [
   { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
     seo: { titel: `IT-Service & Websites in ${firma('ort')}${marke}`, faq: ohneLinks(startFaq) } },
   { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung – alles aus einer Hand, mit festem Ansprechpartner.', content: leistungenSeite,
-    seo: { titel: `IT & Webdesign in ${firma('ort')}${marke}`, llms: 'Seiten' } },
+    seo: { titel: `IT & Webdesign in ${firma('ort')}${marke}`, faq: ohneLinks(leistungenFaq), llms: 'Seiten' } },
   ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.beschreibung ?? l.kurz, content: leistungSeite(l),
     seo: { titel: `${l.titel} in ${firma('ort')}${marke}`, faq: ohneLinks(leistungInhalte[l.slug]?.faq), leistung: true, llms: 'Leistungen' } })),
   { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite,
     seo: { titel: `Fernwartung mit PC-Visit${marke}`, faq: ohneLinks(fernwartungFaq), llms: 'Seiten' } },
   { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen, Selbstständige und Vereine.', content: ueberUnsSeite,
-    seo: { titel: `Über uns – IT aus ${firma('ort')}${marke}`, llms: 'Seiten' } },
+    seo: { titel: `Über uns – IT aus ${firma('ort')}${marke}`, faq: ohneLinks(ueberUnsFaq), llms: 'Seiten' } },
   { slug: 'kontakt', title: 'Kontakt', order: 40, excerpt: 'Kontakt zu Kotthaus Business Service in Burscheid: Anfrage senden, anrufen oder kostenloses Erstgespräch vereinbaren.', content: kontaktSeite,
     seo: { titel: `Kontakt und Erstgespräch${marke}`, llms: 'Seiten' } },
   { slug: 'impressum', title: 'Impressum', order: 90, excerpt: 'Impressum der Kotthaus Business Service GmbH.', content: impressumSeite, seo: { titel: `Impressum${marke}`, llms: 'Rechtliches' } },

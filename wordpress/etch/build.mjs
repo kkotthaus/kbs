@@ -14,6 +14,7 @@ import { acssButtons } from './acss-buttons.mjs';
 import { acssSchrift } from './acss-schrift.mjs';
 import { firma, weiterleitungen } from './daten.mjs';
 import { handbuchHtml } from './handbuch.mjs';
+import { seitentext } from './seitentext.mjs';
 
 const hier = dirname(fileURLToPath(import.meta.url));
 const dist = join(hier, 'dist');
@@ -57,14 +58,16 @@ schreibe('daten/einstellungen-firmendaten.json', JSON.stringify(firma, null, 2) 
 schreibe('daten/weiterleitungen.json', JSON.stringify(weiterleitungen, null, 2) + '\n');
 
 // Suchmaschinen und KI-Suche (snippets/kbs-seo.php): Titel, Beschreibung, FAQ, Leistung, llms.txt je Seite (pfad wie get_page_uri(), Startseite '')
+// text: sichtbarer Seitentext als Markdown für /llms-full.txt (nicht bei Rechtlichem)
 schreibe(
   'daten/seo.json',
   JSON.stringify(
-    pages.map(({ slug, parent, title, excerpt, front_page, seo = {} }) => ({
+    pages.map(({ slug, parent, title, excerpt, front_page, content, seo = {} }) => ({
       pfad: front_page ? '' : parent ? `${parent}/${slug}` : slug,
       name: title,
       beschreibung: excerpt,
       ...seo,
+      ...(seo.llms !== 'Rechtliches' ? { text: seitentext(content) } : {}),
     })),
     null,
     2,

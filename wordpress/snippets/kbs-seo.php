@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: KBS – Suchmaschinen
- * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten und Geschäftsführer, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt (nach llmstxt.org, mit Seitencache) und /llms-full.txt mit den häufigen Fragen für KI-Suchdienste, 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
+ * Description: Suchmaschinen und KI-Suche. Seitentitel aus dem Repository (daten/seo.json, über SEOPress-Filter; ein im Seiteneditor gesetzter SEOPress-Titel geht vor), strukturierte Daten als @graph (ProfessionalService aus den Firmendaten mit Öffnungszeiten, Telefon international, Kartenlink und Leistungskatalog, Geschäftsführer als Person, WebPage/AboutPage/ContactPage je Seite mit Änderungsdatum, Service auf den Leistungsseiten, FAQPage bei häufigen Fragen, sameAs aus den Profil-Links), Vorschaubild für geteilte Links (og:image, twitter:image aus Firmendaten › Vorschaubild), /llms.txt (nach llmstxt.org, mit Seitencache) und /llms-full.txt mit dem Text aller Seiten samt häufigen Fragen für KI-Suchdienste, 301-Weiterleitungen von den Adressen der alten Website (daten/weiterleitungen.json). Ohne SEO-Plugin zusätzlich Titel, Meta-Beschreibung und Open Graph aus dem Seitenauszug.
  *
  * Gehört auf die Live-Seite. Quelle: Repository kbs, wordpress/snippets/kbs-seo.php
  */
@@ -136,6 +136,30 @@ function kbs_seo_oeffnungszeiten( string $text ): array {
 	return $liste;
 }
 
+/** Telefonnummer international für strukturierte Daten: „02174 666 47 17“ → „+4921746664717“. */
+function kbs_seo_telefon( string $nummer ): string {
+	$z = (string) preg_replace( '/[^\d+]/', '', $nummer );
+	if ( '' === $z || str_starts_with( $z, '+' ) ) {
+		return $z;
+	}
+	if ( str_starts_with( $z, '00' ) ) {
+		return '+' . substr( $z, 2 );
+	}
+	return str_starts_with( $z, '0' ) ? '+49' . substr( $z, 1 ) : $z;
+}
+
+/** Adresse des Vorschaubilds (Firmendaten › Vorschaubild für Links), unabhängig von der Seite. */
+function kbs_seo_vorschaubild_url(): string {
+	$o  = (array) get_option( 'firmendaten', array() );
+	$id = is_array( $o['vorschaubild'] ?? null ) ? (int) ( $o['vorschaubild']['ID'] ?? 0 ) : (int) ( $o['vorschaubild'] ?? 0 );
+	return $id && wp_attachment_is_image( $id ) ? (string) wp_get_attachment_image_url( $id, 'full' ) : '';
+}
+
+/** Adresse einer Seite aus dem Repository (Pfad wie in daten/seo.json). */
+function kbs_seo_url( string $pfad ): string {
+	return home_url( '' === $pfad ? '/' : '/' . $pfad . '/' );
+}
+
 /** Strukturierte Daten der aktuellen Seite als @graph. */
 function kbs_seo_schema(): array {
 	$o = (array) get_option( 'firmendaten', array() );
@@ -145,6 +169,19 @@ function kbs_seo_schema(): array {
 	}
 	$start  = home_url( '/' );
 	$firma  = function_exists( 'kbs_firma_etch' ) ? kbs_firma_etch() : array();
+	$daten  = kbs_seo_daten();
+	// Leistungen als Angebotskatalog der Firma (verweist auf das Service-Schema der Leistungsseiten)
+	$katalog = array();
+	foreach ( $daten as $pfad => $d ) {
+		if ( ! empty( $d['leistung'] ) ) {
+			$katalog[] = array(
+				'@type'       => 'Offer',
+				'itemOffered' => array( '@type' => 'Service', '@id' => kbs_seo_url( (string) $pfad ) . '#leistung', 'name' => (string) $d['name'], 'url' => kbs_seo_url( (string) $pfad ) ),
+			);
+		}
+	}
+	$anschrift = trim( $s( 'firma_strasse' ) . ', ' . $s( 'firma_plz' ) . ' ' . $s( 'firma_ort' ), ', ' );
+	$person    = '' !== $s( 'recht_vertretung' ) ? $start . '#geschaeftsfuehrer' : '';
 	// Einsatzgebiet: alle Einsatzorte als Städte, dazu die Region(en) aus „Region“ (z. B. Bergisches Land, Rheinland)
 	$orte     = function_exists( 'kbs_firma_einsatzorte' ) ? kbs_firma_einsatzorte() : array( $s( 'firma_ort' ) );
 	$regionen = array_values( array_filter( array_map( 'trim', preg_split( '/,|\bund\b/u', $s( 'firma_region' ) ) ), fn( $x ) => '' !== $x && 'Umgebung' !== $x && ! in_array( $x, $orte, true ) ) );
@@ -160,10 +197,12 @@ function kbs_seo_schema(): array {
 		'description'               => $s( 'firma_claim' ),
 		'url'                       => $start,
 		'logo'                      => $firma['logo'] ?? '',
-		'image'                     => $firma['logo'] ?? '',
-		'telephone'                 => $s( 'firma_telefon' ),
-		'faxNumber'                 => $s( 'firma_fax' ),
+		// Fotos/Grafiken als Rasterbild zuerst (Google zeigt kein SVG als Bild), dann das Logo
+		'image'                     => array_values( array_unique( array_filter( array( kbs_seo_vorschaubild_url(), $firma['logo'] ?? '' ) ) ) ),
+		'telephone'                 => kbs_seo_telefon( $s( 'firma_telefon' ) ),
+		'faxNumber'                 => kbs_seo_telefon( $s( 'firma_fax' ) ),
 		'email'                     => $s( 'firma_email' ),
+		'hasMap'                    => '' !== $anschrift ? 'https://www.google.com/maps/search/?api=1&query=' . rawurlencode( $s( 'firma_name' ) . ', ' . $anschrift ) : '',
 		'address'                   => array(
 			'@type'           => 'PostalAddress',
 			'streetAddress'   => $s( 'firma_strasse' ),
@@ -173,14 +212,49 @@ function kbs_seo_schema(): array {
 		),
 		'areaServed'                => $gebiet,
 		'openingHoursSpecification' => kbs_seo_oeffnungszeiten( $s( 'firma_erreichbarkeit' ) ),
-		'founder'                   => '' !== $s( 'recht_vertretung' ) ? array( '@type' => 'Person', 'name' => $s( 'recht_vertretung' ), 'jobTitle' => 'Geschäftsführer' ) : null,
+		'founder'                   => $person ? array( '@id' => $person ) : null,
 		'sameAs'                    => function_exists( 'kbs_firma_profile' ) ? kbs_firma_profile() : array(),
 		'knowsAbout'                => array( 'IT-Betreuung', 'IT-Beratung', 'Netzwerk und WLAN', 'Server', 'Datensicherung', 'IT-Sicherheit', 'Fernwartung', 'WordPress', 'Webdesign' ),
+		'hasOfferCatalog'           => $katalog ? array( '@type' => 'OfferCatalog', 'name' => 'Leistungen', 'itemListElement' => $katalog ) : null,
 	);
 	$graph = array( array_filter( $org ) );
 
+	// Geschäftsführer als eigene Person (Über uns), damit Suchdienste Firma und Person verbinden
+	if ( $person ) {
+		$graph[] = array_filter(
+			array(
+				'@type'    => 'Person',
+				'@id'      => $person,
+				'name'     => $s( 'recht_vertretung' ),
+				'jobTitle' => 'Geschäftsführer',
+				'worksFor' => array( '@id' => $start . '#organisation' ),
+				'url'      => isset( $daten['ueber-uns'] ) ? kbs_seo_url( 'ueber-uns' ) : '',
+			)
+		);
+	}
+
 	$seite = kbs_seo_seite();
 	$url   = is_front_page() ? $start : (string) get_permalink();
+	if ( $seite ) {
+		// Die Seite selbst: Art, Titel, Beschreibung, Sprache, letzte Änderung, Bezug zu Website und Firma
+		$id      = kbs_seo_id();
+		$typ     = array( 'ueber-uns' => 'AboutPage', 'kontakt' => 'ContactPage' )[ (string) $seite['pfad'] ] ?? 'WebPage';
+		$graph[] = array_filter(
+			array(
+				'@type'         => $typ,
+				'@id'           => $url . '#webseite',
+				'url'           => $url,
+				'name'          => kbs_seo_text( (string) ( $seite['titel'] ?? $seite['name'] ) ),
+				'description'   => kbs_seo_beschreibung(),
+				'inLanguage'    => 'de-DE',
+				'isPartOf'      => array( '@id' => $start . '#website' ),
+				'about'         => array( '@id' => ! empty( $seite['leistung'] ) ? $url . '#leistung' : $start . '#organisation' ),
+				'publisher'     => array( '@id' => $start . '#organisation' ),
+				'datePublished' => $id ? (string) get_post_time( 'c', true, $id ) : '',
+				'dateModified'  => $id ? (string) get_post_modified_time( 'c', true, $id ) : '',
+			)
+		);
+	}
 	if ( $seite && ! empty( $seite['leistung'] ) ) {
 		$graph[] = array(
 			'@type'       => 'Service',
@@ -191,6 +265,7 @@ function kbs_seo_schema(): array {
 			'url'         => $url,
 			'provider'    => array( '@id' => $start . '#organisation' ),
 			'areaServed'  => $gebiet,
+			'audience'    => array( '@type' => 'BusinessAudience', 'name' => 'Kleine Unternehmen, Selbstständige und Vereine' ),
 		);
 	}
 	if ( $seite && ! empty( $seite['faq'] ) ) {
@@ -303,7 +378,7 @@ add_filter(
 /**
  * Inhalt von /llms.txt bzw. /llms-full.txt (Markdown nach llmstxt.org).
  * Kurz (llms.txt): Titel, Zusammenfassung, Kontakt, dann nur Abschnitte mit Linklisten; unter „Optional“ der Verweis auf die volle Fassung.
- * Voll (llms-full.txt): dasselbe und dazu die häufigen Fragen mit Antworten je Seite.
+ * Voll (llms-full.txt): dasselbe und dazu der sichtbare Text jeder Seite (aus dem Build, mit den häufigen Fragen; ohne Rechtliches).
  */
 function kbs_seo_llms( bool $voll = false ): string {
 	$f = function_exists( 'kbs_firma_etch' ) ? kbs_firma_etch() : array();
@@ -331,15 +406,16 @@ function kbs_seo_llms( bool $voll = false ): string {
 		$z[] = '- Profile: ' . implode( ', ', $profile );
 	}
 	$abschnitte = array();
-	$fragen     = array();
+	$texte      = array();
 	foreach ( kbs_seo_daten() as $pfad => $s ) {
-		$url = home_url( '' === $pfad ? '/' : '/' . $pfad . '/' );
+		$url = kbs_seo_url( (string) $pfad );
 		if ( ! empty( $s['llms'] ) ) {
 			$abschnitte[ (string) $s['llms'] ][] = '- [' . $s['name'] . '](' . $url . '): ' . kbs_seo_text( (string) ( $s['beschreibung'] ?? '' ) );
 		}
-		// Fragen je Seite gruppiert, damit der Bezug klar ist (Startseite: allgemein)
-		foreach ( (array) ( $s['faq'] ?? array() ) as $faq ) {
-			$fragen[ '' === $pfad ? 'Allgemein' : (string) $s['name'] ][] = '### ' . kbs_seo_text( (string) $faq[0] ) . "\n\n" . kbs_seo_text( (string) $faq[1] );
+		// Volle Fassung: sichtbarer Text jeder Seite (aus dem Build, mit den häufigen Fragen), interne Links als volle Adressen
+		if ( ! empty( $s['text'] ) ) {
+			$text    = (string) preg_replace( '/\]\((\/[^)]*)\)/', '](' . untrailingslashit( home_url() ) . '$1)', kbs_seo_text( (string) $s['text'] ) );
+			$texte[] = '## ' . ( '' === $pfad ? 'Startseite' : $s['name'] ) . "\n\nAdresse: " . $url . "\n\n" . $text;
 		}
 	}
 	// Feste Reihenfolge: Leistungen, Seiten, Rechtliches
@@ -349,13 +425,13 @@ function kbs_seo_llms( bool $voll = false ): string {
 		}
 	}
 	if ( ! $voll ) {
-		if ( $fragen ) {
-			array_push( $z, '', '## Optional', '', '- [Häufige Fragen und Antworten](' . home_url( '/llms-full.txt' ) . '): alle Inhalte dieser Datei und dazu die häufigen Fragen zu IT-Betreuung, Beratung, Websites und Fernwartung mit Antworten' );
+		if ( $texte ) {
+			array_push( $z, '', '## Optional', '', '- [Alle Seiten im Volltext](' . home_url( '/llms-full.txt' ) . '): alle Inhalte dieser Datei und dazu der Text jeder Seite mit den häufigen Fragen und Antworten zu IT-Betreuung, Beratung, Websites, Wartung und Fernwartung' );
 		}
 		return implode( "\n", $z ) . "\n";
 	}
-	foreach ( $fragen as $bereich => $liste ) {
-		array_push( $z, '', '## Häufige Fragen: ' . $bereich, '', implode( "\n\n", $liste ) );
+	foreach ( $texte as $text ) {
+		array_push( $z, '', $text );
 	}
 	return implode( "\n", $z ) . "\n";
 }
