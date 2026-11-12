@@ -217,10 +217,13 @@ const startseite = markup(
 const leistungInhalte = {
   'it-betreuung': {
     eyebrow: 'IT-Betreuung',
-    titel: 'IT-Betreuung für kleine Unternehmen',
+    titel: 'IT-Support und IT-Betreuung für kleine Unternehmen',
+    // Suchbegriffe: Viele suchen „IT-Support“ oder „EDV-Service“ statt „IT-Betreuung“ (Titel, Service-Schema, llms.txt)
+    seoTitel: `IT-Support in ${firma('ort')}`,
+    auchGenannt: ['IT-Support', 'EDV-Service', 'Computer-Service'],
     absaetze: [
       ['h2', 'Wir sind Ihre IT-Abteilung'],
-      'Viele kleine Firmen haben niemanden, der sich hauptberuflich um die IT kümmert. Genau dafür sind wir da: Wir betreuen Ihre Arbeitsplätze, Server, Drucker und Ihr Netzwerk und sorgen dafür, dass alles zuverlässig läuft.',
+      `Viele kleine Firmen haben niemanden, der sich hauptberuflich um die IT kümmert. Genau dafür sind wir da: Als IT-Support für kleine Unternehmen in ${firma('ort')} und Umgebung betreuen wir Ihre Arbeitsplätze, Server, Drucker und Ihr Netzwerk und sorgen dafür, dass alles zuverlässig läuft.`,
       'Statt erst zu reagieren, wenn etwas kaputt ist, halten wir Ihre Systeme aktuell und erkennen Probleme früh. Das spart Ausfallzeiten – und Nerven.',
       ['h2', 'Das übernehmen wir für Sie'],
       ['ul', [
@@ -237,6 +240,8 @@ const leistungInhalte = {
     ],
     faqTitel: 'Fragen zur IT-Betreuung',
     faq: [
+      [`Bieten Sie IT-Support in ${firma('ort')} an?`, `Ja. Wir sind in ${firma('ort')} zu Hause und helfen kleinen Unternehmen in ${firma('ort')} und Umgebung bei Problemen mit PCs, Servern, Druckern und Netzwerk – per Telefon, per [Fernwartung](/fernwartung/) oder vor Ort. Unsere Einsatzorte: ${firma('einsatzorte')}.`],
+      ['Brauche ich einen Vertrag, um Hilfe zu bekommen?', 'Nein. Auch ohne laufende IT-Betreuung helfen wir Ihnen gern per [Fernwartung](/fernwartung/). Rufen Sie uns an, wir besprechen vorher den Aufwand.'],
       ['Für wie viele Arbeitsplätze lohnt sich das?', 'Schon ab einem Arbeitsplatz. Gerade Selbstständige und kleine Teams profitieren davon, einen festen Ansprechpartner zu haben.'],
       ['Wie schnell helfen Sie bei Störungen?', 'Viele Störungen lösen wir noch am selben Tag per [Fernwartung](/fernwartung/). Wenn ein Termin vor Ort nötig ist, stimmen wir ihn kurzfristig mit Ihnen ab.'],
     ],
@@ -597,12 +602,12 @@ const datenschutzSeite = markup(
 // leistung → Service-Schema, llms → Abschnitt in /llms.txt (ohne: nicht aufgeführt). Firmenangaben über firma('<feld>').
 const marke = ` | ${firma('kurzname')}`;
 export const pages = [
-  { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Betreuung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
+  { slug: 'startseite', title: 'Startseite', order: 0, front_page: true, excerpt: 'IT-Support, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung. Schnelle Hilfe per Fernwartung mit PC-Visit.', content: startseite,
     seo: { titel: `IT & Websites in ${firma('ort')}${marke}`, faq: ohneLinks(startFaq) } },
   { slug: 'leistungen', title: 'Leistungen', order: 10, excerpt: 'IT-Betreuung, IT-Beratung, Webdesign und Website-Wartung für kleine Unternehmen in Burscheid und Umgebung – alles aus einer Hand, mit festem Ansprechpartner.', content: leistungenSeite,
     seo: { titel: `IT & Webdesign in ${firma('ort')}${marke}`, faq: ohneLinks(leistungenFaq), llms: 'Seiten' } },
   ...leistungen.map((l, i) => ({ slug: l.slug, parent: 'leistungen', title: l.titel, order: i + 1, excerpt: l.beschreibung ?? l.kurz, content: leistungSeite(l),
-    seo: { titel: `${l.titel} in ${firma('ort')}${marke}`, faq: ohneLinks(leistungInhalte[l.slug]?.faq), leistung: true, llms: 'Leistungen' } })),
+    seo: { titel: `${leistungInhalte[l.slug]?.seoTitel ?? `${l.titel} in ${firma('ort')}`}${marke}`, faq: ohneLinks(leistungInhalte[l.slug]?.faq), leistung: true, auch_genannt: leistungInhalte[l.slug]?.auchGenannt, llms: 'Leistungen' } })),
   { slug: 'fernwartung', title: 'Fernwartung', order: 20, excerpt: 'Schnelle Hilfe per Fernwartung mit PC-Visit: Quick Support herunterladen, Sitzungsnummer nennen, fertig. Ohne Anfahrtskosten.', content: fernwartungSeite,
     seo: { titel: `Fernwartung mit PC-Visit${marke}`, faq: ohneLinks(fernwartungFaq), llms: 'Seiten' } },
   { slug: 'ueber-uns', title: 'Über uns', order: 30, excerpt: 'Kotthaus Business Service GmbH aus Burscheid: persönlicher IT-Service und WordPress-Websites für kleine Unternehmen, Selbstständige und Vereine.', content: ueberUnsSeite,

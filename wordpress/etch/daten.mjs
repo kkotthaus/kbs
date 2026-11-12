@@ -62,7 +62,7 @@ export const leistungen = [
     icon: 'monitor',
     titel: 'IT-Betreuung',
     kurz: 'Wir kümmern uns um PCs, Server, Netzwerk, Drucker und Updates – damit Sie sich um Ihr Geschäft kümmern können.',
-    beschreibung: 'IT-Betreuung für kleine Unternehmen in Burscheid und Umgebung: PCs, Server, Netzwerk, Updates und Datensicherung – mit festem Ansprechpartner und Fernwartung.',
+    beschreibung: 'IT-Support und IT-Betreuung für kleine Unternehmen in Burscheid und Umgebung: PCs, Server, Netzwerk und Datensicherung – per Fernwartung oder vor Ort.',
     punkte: ['Arbeitsplätze, Server und Netzwerk', 'Updates, Virenschutz und Datensicherung', 'Schnelle Hilfe per Fernwartung oder vor Ort'],
   },
   {

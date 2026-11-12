@@ -214,7 +214,7 @@ function kbs_seo_schema(): array {
 		'openingHoursSpecification' => kbs_seo_oeffnungszeiten( $s( 'firma_erreichbarkeit' ) ),
 		'founder'                   => $person ? array( '@id' => $person ) : null,
 		'sameAs'                    => function_exists( 'kbs_firma_profile' ) ? kbs_firma_profile() : array(),
-		'knowsAbout'                => array( 'IT-Betreuung', 'IT-Beratung', 'Netzwerk und WLAN', 'Server', 'Datensicherung', 'IT-Sicherheit', 'Fernwartung', 'WordPress', 'Webdesign' ),
+		'knowsAbout'                => array( 'IT-Support', 'IT-Betreuung', 'IT-Beratung', 'Netzwerk und WLAN', 'Server', 'Datensicherung', 'IT-Sicherheit', 'Fernwartung', 'WordPress', 'Webdesign' ),
 		'hasOfferCatalog'           => $katalog ? array( '@type' => 'OfferCatalog', 'name' => 'Leistungen', 'itemListElement' => $katalog ) : null,
 	);
 	$graph = array( array_filter( $org ) );
@@ -256,17 +256,19 @@ function kbs_seo_schema(): array {
 		);
 	}
 	if ( $seite && ! empty( $seite['leistung'] ) ) {
-		$graph[] = array(
-			'@type'       => 'Service',
-			'@id'         => $url . '#leistung',
-			'name'        => (string) $seite['name'],
-			'serviceType' => (string) $seite['name'],
-			'description' => kbs_seo_text( (string) ( $seite['beschreibung'] ?? '' ) ),
-			'url'         => $url,
-			'provider'    => array( '@id' => $start . '#organisation' ),
-			'areaServed'  => $gebiet,
-			'audience'    => array( '@type' => 'BusinessAudience', 'name' => 'Kleine Unternehmen, Selbstständige und Vereine' ),
-		);
+		$graph[] = array_filter( array(
+			'@type'         => 'Service',
+			'@id'           => $url . '#leistung',
+			'name'          => (string) $seite['name'],
+			// weitere übliche Bezeichnungen (z. B. IT-Support, EDV-Service), damit Suchdienste die Leistung auch unter diesen Begriffen zuordnen
+			'alternateName' => array_values( (array) ( $seite['auch_genannt'] ?? array() ) ),
+			'serviceType'   => (string) $seite['name'],
+			'description'   => kbs_seo_text( (string) ( $seite['beschreibung'] ?? '' ) ),
+			'url'           => $url,
+			'provider'      => array( '@id' => $start . '#organisation' ),
+			'areaServed'    => $gebiet,
+			'audience'      => array( '@type' => 'BusinessAudience', 'name' => 'Kleine Unternehmen, Selbstständige und Vereine' ),
+		) );
 	}
 	if ( $seite && ! empty( $seite['faq'] ) ) {
 		$graph[] = array(
@@ -410,7 +412,8 @@ function kbs_seo_llms( bool $voll = false ): string {
 	foreach ( kbs_seo_daten() as $pfad => $s ) {
 		$url = kbs_seo_url( (string) $pfad );
 		if ( ! empty( $s['llms'] ) ) {
-			$abschnitte[ (string) $s['llms'] ][] = '- [' . $s['name'] . '](' . $url . '): ' . kbs_seo_text( (string) ( $s['beschreibung'] ?? '' ) );
+			$auch                                 = ! empty( $s['auch_genannt'] ) ? ' Auch genannt: ' . implode( ', ', (array) $s['auch_genannt'] ) . '.' : '';
+			$abschnitte[ (string) $s['llms'] ][] = '- [' . $s['name'] . '](' . $url . '): ' . kbs_seo_text( (string) ( $s['beschreibung'] ?? '' ) ) . $auch;
 		}
 		// Volle Fassung: sichtbarer Text jeder Seite (aus dem Build, mit den häufigen Fragen), interne Links als volle Adressen
 		if ( ! empty( $s['text'] ) ) {
