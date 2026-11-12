@@ -173,7 +173,13 @@ Nach dem Umzug ist kotthaus-bs.de für Claude unter dem Namen **kbs-live** errei
 4. **Dateien hochladen:** `wordpress/etch/dist/` nach `/srv/www/kbs/wp-content/kbs/` (`tar -cf - . | ssh kbs-live 'tar -xf - -C /srv/www/kbs/wp-content/kbs --no-same-owner'`). Dateien, die nicht mehr gebaut werden, nur melden, nicht löschen.
 5. **Snippets** (nur wenn PHP geändert), einer von zwei Wegen:
    - **Von Hand:** in WPCodeBox das betroffene Snippet öffnen, Code aus `wordpress/snippets/<datei>.php` einfügen, speichern. Für einzelne Dateien am einfachsten.
-   - **Per Snippet-Sync:** in WPCodeBox › Einstellungen › MCP kurzzeitig „Update Snippet“ (und „List Snippets/Folders“) freigeben, `kbs_mcp_snippets_sync( [ 'nur' => [ '<datei ohne .php>' ] ] )` per WP-CLI, danach die Freigaben wieder entziehen.
+   - **Per Snippet-Sync** (Zugang `kbs-live`): Datei nach `/srv/www/kbs/wp-content/kbs/snippets/` hochladen, dann per WP-CLI mit der Freigabe nur für diesen Aufruf (im Speicher; in WPCodeBox bleiben MCP und Werkzeuge live aus):
+     ```bash
+     /usr/local/lsws/lsphp85/bin/php /usr/local/bin/wp --path=/srv/www/kbs --user=<admin> \
+       --exec='define("KBS_MCP_LIVE", true);' \
+       --exec='WP_CLI::add_wp_hook("pre_option_wpcb_mcp_allowed_tools", function () { return array("wpcodebox_list_snippets", "wpcodebox_get_snippet", "wpcodebox_list_folders", "wpcodebox_list_tags", "wpcodebox_get_revisions", "wpcodebox_list_errored_snippets", "wpcodebox_search_snippets", "wpcodebox_create_folder", "wpcodebox_create_snippet", "wpcodebox_update_snippet", "wpcodebox_enable_snippet", "wpcodebox_disable_snippet"); });' \
+       eval 'print_r( kbs_mcp_snippets_sync( [ "nur" => [ "<datei ohne .php>" ] ] ) );'
+     ```
 
    Danach im Backend prüfen, dass alle KBS-Snippets `enabled` sind (WPCodeBox schaltet fehlerhafte Snippets selbst ab).
 6. **Prüfen, dann übertragen** (Etch-Inhalte):
